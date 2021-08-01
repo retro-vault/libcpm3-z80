@@ -1,3 +1,5 @@
+![status.badge] [![language.badge]][language.url] [![standard.badge]][standard.url] [![license.badge]][license.url]
+
 # libcpm3-z80
 
 **libcpm3-z80** is a **portable**, **readable**, and **minimal** [ISO/IEC 9899:TC2](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf) *Standard C Library* for Digital Research's CP/M 3.
@@ -66,7 +68,7 @@ sdcc -o hello.ihx \
 And, finally, create a *CP/M* `hello.com` file.
 
 ~~~
-
+to do
 ~~~
 
 # Advanced libcpm3-z80 features
@@ -88,6 +90,8 @@ The name can be anything since the source code just checks if the variable `PLAT
 ## Platform dependant functions
 
 # What is implemented?
+
+Click on the header name to see the scope of its implementation.
 
 <details><summary>ctype.h/</summary>
 
@@ -414,3 +418,15 @@ extern time_t mktime(struct tm *tme);
 extern time_t time(time_t *arg);
 ~~~
 </details>  
+
+
+[language.url]:   https://en.wikipedia.org/wiki/ANSI_C
+[language.badge]: https://img.shields.io/badge/language-C-blue.svg
+
+[standard.url]:   https://en.wikipedia.org/wiki/C89/
+[standard.badge]: https://img.shields.io/badge/standard-C89-blue.svg
+
+[license.url]:    https://github.com/tstih/libcpm3-z80/blob/main/LICENSE
+[license.badge]:  https://img.shields.io/badge/license-MIT-blue.svg
+
+[status.badge]:  https://img.shields.io/badge/status-beta-orange.svg
