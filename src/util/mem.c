@@ -40,13 +40,6 @@ void _split(block_t *b, uint16_t size)
     b->hdr.next = nw;
 }
 
-/*
- * ---------- public ----------
- */
-
-/*
- * initialize memory management
- */
 void _memory_init()
 {
     /* Get BDOS address. */
@@ -61,4 +54,3 @@ void _memory_init()
     first->size = size - BLK_SIZE;
     first->stat = NEW;
 }
-
