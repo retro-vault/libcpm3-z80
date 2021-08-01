@@ -5,7 +5,8 @@
  *
  * NOTES:
  *  rand() function uses long, can we do it with int? 
- *  Is there a way to preserve exit status?
+ *  Is there a way to preserve exit code? CPM 3 System control block 
+ *  might have this?
  *  qsort is missing.
  *
  * MIT License (see: LICENSE)

@@ -8,6 +8,9 @@ REQUIRED = sdcc sdar sdasz80
 K := $(foreach exec,$(REQUIRED),\
     $(if $(shell which $(exec)),,$(error "$(exec) not found. Please install or add to path.")))
 
+# Default platform.
+export PLATFORM 	=	0
+
 # Global settings: folders.
 ROOT = $(realpath .)
 export BUILD_DIR	=	$(ROOT)/build
@@ -16,7 +19,7 @@ export INC_DIR		=	$(ROOT)/include
 
 # Globa settings: tools.
 export CC			=	sdcc
-export CFLAGS		=	--std-c11 -mz80 -I. -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib --debug
+export CFLAGS		=	--std-c11 -mz80 -I. -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib --debug -D PLATFORM=$(PLATFORM)
 export AS			=	sdasz80
 export ASFLAGS		=	-xlos -g
 export AR			=	sdar
