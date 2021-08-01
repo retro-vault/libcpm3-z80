@@ -22,23 +22,23 @@
 /* Exit application. */
 extern void exit(int status);
 
-/* String to long using base. */
-extern long strtol(char *nptr, char **endptr, int base);
+/* Absolute value. */
+extern int abs (int i);
 
 /* Covert ascii to integer. */
 extern int atoi(const char *str);
-
-/* String to unsigned long using base, */
-extern unsigned long strtoul(const char *nptr, char **endptr, int base);
-
-/* Absolute value. */
-extern int abs (int i);
 
 /* Return random number */
 extern int rand(void);
 
 /* Set random seed. */
 extern void srand(unsigned int seed);
+
+/* String to long using base. */
+extern long strtol(char *nptr, char **endptr, int base);
+
+/* String to unsigned long using base, */
+extern unsigned long strtoul(const char *nptr, char **endptr, int base);
 
 /* Memory allocation. */
 extern void *malloc(size_t size);

@@ -1,0 +1,98 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 1.
+Hexadecimal [24-Bits]
+
+
+
+                                      1         ;; bdos.s
+                                      2         ;; 
+                                      3         ;; cp/m bdos and extended bdos calls
+                                      4         ;;
+                                      5         ;; MIT License (see: LICENSE)
+                                      6         ;; copyright (c) 2021 tomaz stih
+                                      7         ;;
+                                      8 		;; 26.04.2021   tstih
+                                      9         .module bdos
+                                     10 
+                                     11         .globl __bdos
+                                     12         .globl __bdosex
+                                     13 
+                           000005    14         .equ    BDOS, 5
+                                     15 
+                                     16         .area _CODE
+                                     17 
+                                     18 
+                                     19         ;; ------------------------------
+                                     20         ;; uint8_t _bdos(bdos_call_t *p);
+                                     21         ;; ------------------------------
+                                     22         ;; calls cp/m bdos
+                                     23         ;; input:	bdos_call_t struct on stack
+                                     24         ;; affect:  af, bc, de, hl
+      000000                         25 __bdos::
+      000000 DD E5            [15]   26         push    ix                      ; store ix
+      000002 CD 25 00         [17]   27 		call    rawbdos                 ; raw bdos fn call
+      000005 DD E1            [14]   28 		pop     ix                      ; restore ix
+      000007 C9               [10]   29 		ret
+                                     30 
+                                     31 
+                                     32         ;; ----------------------
+                                     33         ;; uint8_t _bdosex(
+                                     34         ;;     bdos_call_t *p, 
+                                     35         ;;     uint16_t* ret_ba, 
+                                     36         ;;     uint16_t *ret_hl);
+                                     37         ;; ----------------------
+                                     38         ;; calls cp/m bdos and store result to variables
+                                     39         ;; input:	bdos_call_t struct on stack, pointer to ba and hl structures
+                                     40         ;; output: a, b, hl populated with ret. values
+                                     41         ;; affect:  af, bc, de, hl
+      000008                         42 __bdosex::
+                                     43         ;; classic bdos call!
+      000008 DD E5            [15]   44         push    ix
+      00000A CD 25 00         [17]   45         call    rawbdos
+                                     46 
+                                     47 		;; store ret value.
+      00000D E5               [11]   48 		push    hl
+                                     49 
+                                     50         ;; get ptr to ret_ba (ix still points to stack)
+                                     51         ;; and store a and b values into it
+      00000E DD 6E 02         [19]   52 		ld      l,2(ix)
+      000011 DD 66 03         [19]   53 		ld      h,3(ix) 
+      000014 77               [ 7]   54 		ld      (hl),a
+      000015 23               [ 6]   55 		inc     hl
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180 / ZX-Next / eZ80), page 2.
+Hexadecimal [24-Bits]
+
+
+
+      000016 70               [ 7]   56 		ld      (hl),b
+                                     57 
+                                     58         ;; get ptr to ret_hl and store hl into it
+      000017 DD 6E 04         [19]   59 		ld      l,4(ix)
+      00001A DD 66 05         [19]   60 		ld      h,5(ix)
+      00001D C1               [10]   61 		pop     bc		                ; recover the HL we have pushed
+      00001E 71               [ 7]   62 		ld      (hl),c
+      00001F 23               [ 6]   63 		inc     hl
+      000020 70               [ 7]   64 		ld      (hl),b
+                                     65 
+                                     66         ;; finally, return byte in c    
+      000021 69               [ 4]   67         ld      l,c
+                                     68 
+      000022 DD E1            [14]   69 		pop     ix                      ; restore ix
+      000024 C9               [10]   70 		ret
+                                     71 
+                                     72 
+                                     73         ;; raw bdos call
+                                     74         ;; input:	bdos_call_t struct pointer on stack
+                                     75         ;; output:  ix=stack, (a,b,de)=potential result
+                                     76         ;; affect:  af, bc, de, hl, ix
+      000025                         77 rawbdos:
+      000025 DD 21 06 00      [14]   78         ld      ix,#6
+      000029 DD 39            [15]   79 		add     ix,sp                   ; ix=sp
+      00002B DD 6E 00         [19]   80 		ld      l,(ix)                  ; load bdos struct into hl
+      00002E DD 66 01         [19]   81 		ld      h,1(ix)
+      000031 4E               [ 7]   82 		ld      c,(hl)                  ; and bdos function into c.
+      000032 23               [ 6]   83 		inc     hl
+      000033 5E               [ 7]   84 		ld      e,(hl)                  ; load bdos parameter into de
+      000034 23               [ 6]   85 		inc     hl
+      000035 56               [ 7]   86 		ld      d,(hl)
+      000036 CD 05 00         [17]   87 		call    BDOS                    ; make BDOS call!
+      000039 C9               [10]   88         ret

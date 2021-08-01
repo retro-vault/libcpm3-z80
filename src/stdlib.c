@@ -1,7 +1,12 @@
 /*
  * stdlib.c
  *
- * Standard C library stdlib implementation
+ * Standard C library stdlib implementation.
+ *
+ * NOTES:
+ *  rand() function uses long, can we do it with int? 
+ *  Is there a way to preserve exit status?
+ *  qsort is missing.
  *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
@@ -9,32 +14,54 @@
  * 28.04.2021   tstih
  *
  */
+#include <util/bdos.h>
 #include <util/mem.h>
 #include <ctype.h>
 
-int abs (int i)
+void exit(int status)
 {
-  return i < 0 ? -i : i;
+    status; 
+    /* Unfortunately, the status is lost in CP/M. */
+    bdos_call_t bdc = { P_TERMCPM, { (uint16_t)0 } };
+    _bdos(&bdc);
 }
 
-int atoi(const char *str) {
+int abs(int i)
+{
+    return i < 0 ? -i : i;
+}
+
+int atoi(const char *str)
+{
     int res = 0;
     for (int i = 0; str[i] != '\0'; ++i)
         res = res * 10 + str[i] - '0';
     return res;
 }
 
+static unsigned long _next = 1;
+
+int rand(void) /* RAND_MAX assumed to be 32767 */
+{
+    _next = _next * 1103515245 + 12345;
+    return (unsigned int)(_next / 65536) % 32768;
+}
+
+void srand(unsigned int seed)
+{
+    _next = seed;
+}
+
 const static char _cvt_in[] = {
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,		/* '0' - '9' */
-    100, 100, 100, 100, 100, 100, 100,		/* punctuation */
-    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,	/* 'A' - 'Z' */
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,           /* '0' - '9' */
+    100, 100, 100, 100, 100, 100, 100,      /* punctuation */
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19, /* 'A' - 'Z' */
     20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
     30, 31, 32, 33, 34, 35,
-    100, 100, 100, 100, 100, 100,		/* punctuation */
-    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,	/* 'a' - 'z' */
+    100, 100, 100, 100, 100, 100,           /* punctuation */
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19, /* 'a' - 'z' */
     20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-    30, 31, 32, 33, 34, 35
-};
+    30, 31, 32, 33, 34, 35};
 
 unsigned long strtoul(char *string, char **end_ptr, int base)
 {
@@ -45,70 +72,96 @@ unsigned long strtoul(char *string, char **end_ptr, int base)
 
     /* Skip any leading blanks. */
     p = string;
-    while (isspace(*p)) {
+    while (isspace(*p))
+    {
         p += 1;
     }
     if (base == 0)
     {
-        if (*p == '0') {
+        if (*p == '0')
+        {
             p += 1;
-            if (*p == 'x') {
+            if (*p == 'x')
+            {
                 p += 1;
                 base = 16;
-            } else {
+            }
+            else
+            {
                 any_digits = 1;
                 base = 8;
             }
         }
-        else base = 10;
-    } else if (base == 16) {
-        if ((p[0] == '0') && (p[1] == 'x')) {
+        else
+            base = 10;
+    }
+    else if (base == 16)
+    {
+        if ((p[0] == '0') && (p[1] == 'x'))
+        {
             p += 2;
         }
     }
 
-    if (base == 8) {
-        for ( ; ; p += 1) {
+    if (base == 8)
+    {
+        for (;; p += 1)
+        {
             digit = *p - '0';
-            if (digit > 7) {
+            if (digit > 7)
+            {
                 break;
             }
             result = (result << 3) + digit;
             any_digits = 1;
         }
-    } else if (base == 10) {
-        for ( ; ; p += 1) {
+    }
+    else if (base == 10)
+    {
+        for (;; p += 1)
+        {
             digit = *p - '0';
-            if (digit > 9) {
+            if (digit > 9)
+            {
                 break;
             }
-            result = (10*result) + digit;
+            result = (10 * result) + digit;
             any_digits = 1;
         }
-    } else if (base == 16) {
-        for ( ; ; p += 1) {
+    }
+    else if (base == 16)
+    {
+        for (;; p += 1)
+        {
             digit = *p - '0';
-            if (digit > ('z' - '0')) {
+            if (digit > ('z' - '0'))
+            {
                 break;
             }
             digit = _cvt_in[digit];
-            if (digit > 15) {
+            if (digit > 15)
+            {
                 break;
             }
             result = (result << 4) + digit;
             any_digits = 1;
         }
-    } else {
-        for ( ; ; p += 1) {
+    }
+    else
+    {
+        for (;; p += 1)
+        {
             digit = *p - '0';
-            if (digit > ('z' - '0')) {
+            if (digit > ('z' - '0'))
+            {
                 break;
             }
             digit = _cvt_in[digit];
-            if (digit >= base) {
+            if (digit >= base)
+            {
                 break;
             }
-            result = result*base + digit;
+            result = result * base + digit;
             any_digits = 1;
         }
     }
@@ -124,18 +177,23 @@ long strtol(char *nptr, char **endptr, int base)
 {
     long result;
     char *p = nptr;
-    while (isspace(*p)) {
+    while (isspace(*p))
+    {
         p++;
     }
-    if (*p == '-') {
+    if (*p == '-')
+    {
         p++;
         result = -strtoul(p, endptr, base);
     }
-    else {
-        if (*p == '+') p++;
+    else
+    {
+        if (*p == '+')
+            p++;
         result = strtoul(p, endptr, base);
     }
-    if (endptr != 0 && *endptr == p) {
+    if (endptr != 0 && *endptr == p)
+    {
         *endptr = nptr;
     }
     return result;
@@ -147,8 +205,8 @@ void *malloc(size_t size)
     block_t *b;
 
     b = (block_t *)_list_find(
-        (list_header_t *)&_heap, 
-        (list_header_t **)&prev, 
+        (list_header_t *)&_heap,
+        (list_header_t **)&prev,
         _match_free_block, size);
 
     if (b)
@@ -181,14 +239,15 @@ void free(void *p)
             b = prev;
         }
         /* try next */
-        if (b->hdr.next && !(((block_t *)(b->hdr.next))->stat & ALLOCATED)) 
+        if (b->hdr.next && !(((block_t *)(b->hdr.next))->stat & ALLOCATED))
             _merge_with_next(b);
     }
 }
 
-void* calloc (size_t num, size_t size) {
-    size_t bytes=num*size;
-    void *result=malloc(bytes);
-    memset(result,0,bytes);
+void *calloc(size_t num, size_t size)
+{
+    size_t bytes = num * size;
+    void *result = malloc(bytes);
+    memset(result, 0, bytes);
     return result;
 }

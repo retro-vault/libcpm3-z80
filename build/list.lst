@@ -1,0 +1,524 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.1.6 #12391 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module list
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl __list_match_eq
+                                     12 	.globl __list_find
+                                     13 	.globl __list_insert
+                                     14 	.globl __list_append
+                                     15 	.globl __list_remove
+                                     16 	.globl __list_remove_first
+                                     17 ;--------------------------------------------------------
+                                     18 ; special function registers
+                                     19 ;--------------------------------------------------------
+                                     20 ;--------------------------------------------------------
+                                     21 ; ram data
+                                     22 ;--------------------------------------------------------
+                                     23 	.area _DATA
+                                     24 ;--------------------------------------------------------
+                                     25 ; ram data
+                                     26 ;--------------------------------------------------------
+                                     27 	.area _INITIALIZED
+                                     28 ;--------------------------------------------------------
+                                     29 ; absolute external ram data
+                                     30 ;--------------------------------------------------------
+                                     31 	.area _DABS (ABS)
+                                     32 ;--------------------------------------------------------
+                                     33 ; global & static initialisations
+                                     34 ;--------------------------------------------------------
+                                     35 	.area _HOME
+                                     36 	.area _GSINIT
+                                     37 	.area _GSFINAL
+                                     38 	.area _GSINIT
+                                     39 ;--------------------------------------------------------
+                                     40 ; Home
+                                     41 ;--------------------------------------------------------
+                                     42 	.area _HOME
+                                     43 	.area _HOME
+                                     44 ;--------------------------------------------------------
+                                     45 ; code
+                                     46 ;--------------------------------------------------------
+                                     47 	.area _CODE
+                           000000    48 	G$_list_match_eq$0$0	= .
+                                     49 	.globl	G$_list_match_eq$0$0
+                           000000    50 	C$list.c$14$0_0$21	= .
+                                     51 	.globl	C$list.c$14$0_0$21
+                                     52 ;util/list.c:14: uint8_t _list_match_eq(list_header_t *p, uint16_t arg) {
+                                     53 ;	---------------------------------
+                                     54 ; Function _list_match_eq
+                                     55 ; ---------------------------------
+      000000                         56 __list_match_eq::
+                           000000    57 	C$list.c$15$1_0$21	= .
+                                     58 	.globl	C$list.c$15$1_0$21
+                                     59 ;util/list.c:15: return ( ((uint16_t)p) == arg );
+      000000 E1               [10]   60 	pop	hl
+      000001 C1               [10]   61 	pop	bc
+      000002 C5               [11]   62 	push	bc
+      000003 E5               [11]   63 	push	hl
+      000004 FD 21 04 00      [14]   64 	ld	iy, #4
+      000008 FD 39            [15]   65 	add	iy, sp
+      00000A FD 6E 00         [19]   66 	ld	l, 0 (iy)
+      00000D FD 66 01         [19]   67 	ld	h, 1 (iy)
+      000010 BF               [ 4]   68 	cp	a, a
+      000011 ED 42            [15]   69 	sbc	hl, bc
+      000013 3E 01            [ 7]   70 	ld	a, #0x01
+      000015 28 01            [12]   71 	jr	Z, 00104$
+      000017 AF               [ 4]   72 	xor	a, a
+      000018                         73 00104$:
+      000018 6F               [ 4]   74 	ld	l, a
+                                     75 ;	spillPairReg hl
+                                     76 ;	spillPairReg hl
+                           000019    77 	C$list.c$16$1_0$21	= .
+                                     78 	.globl	C$list.c$16$1_0$21
+                                     79 ;util/list.c:16: }
+                           000019    80 	C$list.c$16$1_0$21	= .
+                                     81 	.globl	C$list.c$16$1_0$21
+                           000019    82 	XG$_list_match_eq$0$0	= .
+                                     83 	.globl	XG$_list_match_eq$0$0
+      000019 C9               [10]   84 	ret
+                           00001A    85 	G$_list_find$0$0	= .
+                                     86 	.globl	G$_list_find$0$0
+                           00001A    87 	C$list.c$18$1_0$24	= .
+                                     88 	.globl	C$list.c$18$1_0$24
+                                     89 ;util/list.c:18: list_header_t* _list_find(
+                                     90 ;	---------------------------------
+                                     91 ; Function _list_find
+                                     92 ; ---------------------------------
+      00001A                         93 __list_find::
+      00001A DD E5            [15]   94 	push	ix
+      00001C DD 21 00 00      [14]   95 	ld	ix,#0
+      000020 DD 39            [15]   96 	add	ix,sp
+                           000022    97 	C$list.c$25$1_0$24	= .
+                                     98 	.globl	C$list.c$25$1_0$24
+                                     99 ;util/list.c:25: *prev=NULL;
+      000022 DD 4E 06         [19]  100 	ld	c, 6 (ix)
+      000025 DD 46 07         [19]  101 	ld	b, 7 (ix)
+      000028 69               [ 4]  102 	ld	l, c
+      000029 60               [ 4]  103 	ld	h, b
+      00002A AF               [ 4]  104 	xor	a, a
+      00002B 77               [ 7]  105 	ld	(hl), a
+      00002C 23               [ 6]  106 	inc	hl
+      00002D 77               [ 7]  107 	ld	(hl), a
+                           00002E   108 	C$list.c$26$1_0$24	= .
+                                    109 	.globl	C$list.c$26$1_0$24
+                                    110 ;util/list.c:26: while (first && !match(first,the_arg)) {
+      00002E                        111 00102$:
+      00002E DD 7E 05         [19]  112 	ld	a, 5 (ix)
+      000031 DD B6 04         [19]  113 	or	a, 4 (ix)
+      000034 28 3B            [12]  114 	jr	Z, 00104$
+      000036 C5               [11]  115 	push	bc
+      000037 DD 6E 0A         [19]  116 	ld	l, 10 (ix)
+                                    117 ;	spillPairReg hl
+                                    118 ;	spillPairReg hl
+      00003A DD 66 0B         [19]  119 	ld	h, 11 (ix)
+                                    120 ;	spillPairReg hl
+                                    121 ;	spillPairReg hl
+      00003D E5               [11]  122 	push	hl
+      00003E DD 6E 04         [19]  123 	ld	l, 4 (ix)
+                                    124 ;	spillPairReg hl
+                                    125 ;	spillPairReg hl
+      000041 DD 66 05         [19]  126 	ld	h, 5 (ix)
+                                    127 ;	spillPairReg hl
+                                    128 ;	spillPairReg hl
+      000044 E5               [11]  129 	push	hl
+      000045 DD 6E 08         [19]  130 	ld	l, 8 (ix)
+                                    131 ;	spillPairReg hl
+                                    132 ;	spillPairReg hl
+      000048 DD 66 09         [19]  133 	ld	h, 9 (ix)
+                                    134 ;	spillPairReg hl
+                                    135 ;	spillPairReg hl
+      00004B CDr00r00         [17]  136 	call	___sdcc_call_hl
+      00004E F1               [10]  137 	pop	af
+      00004F F1               [10]  138 	pop	af
+      000050 7D               [ 4]  139 	ld	a, l
+      000051 C1               [10]  140 	pop	bc
+      000052 B7               [ 4]  141 	or	a, a
+      000053 20 1C            [12]  142 	jr	NZ, 00104$
+                           000055   143 	C$list.c$27$2_0$25	= .
+                                    144 	.globl	C$list.c$27$2_0$25
+                                    145 ;util/list.c:27: *prev=first;
+      000055 69               [ 4]  146 	ld	l, c
+      000056 60               [ 4]  147 	ld	h, b
+      000057 DD 7E 04         [19]  148 	ld	a, 4 (ix)
+      00005A 77               [ 7]  149 	ld	(hl), a
+      00005B 23               [ 6]  150 	inc	hl
+      00005C DD 7E 05         [19]  151 	ld	a, 5 (ix)
+      00005F 77               [ 7]  152 	ld	(hl), a
+                           000060   153 	C$list.c$28$2_0$25	= .
+                                    154 	.globl	C$list.c$28$2_0$25
+                                    155 ;util/list.c:28: first=first->next;
+      000060 DD 6E 04         [19]  156 	ld	l, 4 (ix)
+                                    157 ;	spillPairReg hl
+                                    158 ;	spillPairReg hl
+      000063 DD 66 05         [19]  159 	ld	h, 5 (ix)
+                                    160 ;	spillPairReg hl
+                                    161 ;	spillPairReg hl
+      000066 7E               [ 7]  162 	ld	a, (hl)
+      000067 23               [ 6]  163 	inc	hl
+      000068 5E               [ 7]  164 	ld	e, (hl)
+      000069 DD 77 04         [19]  165 	ld	4 (ix), a
+      00006C DD 73 05         [19]  166 	ld	5 (ix), e
+      00006F 18 BD            [12]  167 	jr	00102$
+      000071                        168 00104$:
+                           000071   169 	C$list.c$31$1_0$24	= .
+                                    170 	.globl	C$list.c$31$1_0$24
+                                    171 ;util/list.c:31: return first; 
+      000071 DD 6E 04         [19]  172 	ld	l, 4 (ix)
+                                    173 ;	spillPairReg hl
+                                    174 ;	spillPairReg hl
+      000074 DD 66 05         [19]  175 	ld	h, 5 (ix)
+                                    176 ;	spillPairReg hl
+                                    177 ;	spillPairReg hl
+                           000077   178 	C$list.c$32$1_0$24	= .
+                                    179 	.globl	C$list.c$32$1_0$24
+                                    180 ;util/list.c:32: }
+      000077 DD E1            [14]  181 	pop	ix
+                           000079   182 	C$list.c$32$1_0$24	= .
+                                    183 	.globl	C$list.c$32$1_0$24
+                           000079   184 	XG$_list_find$0$0	= .
+                                    185 	.globl	XG$_list_find$0$0
+      000079 C9               [10]  186 	ret
+                           00007A   187 	G$_list_insert$0$0	= .
+                                    188 	.globl	G$_list_insert$0$0
+                           00007A   189 	C$list.c$34$1_0$27	= .
+                                    190 	.globl	C$list.c$34$1_0$27
+                                    191 ;util/list.c:34: list_header_t *_list_insert(list_header_t** first, list_header_t *el) {
+                                    192 ;	---------------------------------
+                                    193 ; Function _list_insert
+                                    194 ; ---------------------------------
+      00007A                        195 __list_insert::
+      00007A DD E5            [15]  196 	push	ix
+      00007C DD 21 00 00      [14]  197 	ld	ix,#0
+      000080 DD 39            [15]  198 	add	ix,sp
+      000082 F5               [11]  199 	push	af
+                           000083   200 	C$list.c$35$1_0$27	= .
+                                    201 	.globl	C$list.c$35$1_0$27
+                                    202 ;util/list.c:35: el->next=*first;
+      000083 DD 5E 06         [19]  203 	ld	e, 6 (ix)
+      000086 DD 56 07         [19]  204 	ld	d, 7 (ix)
+      000089 DD 4E 04         [19]  205 	ld	c, 4 (ix)
+      00008C DD 46 05         [19]  206 	ld	b, 5 (ix)
+      00008F 69               [ 4]  207 	ld	l, c
+      000090 60               [ 4]  208 	ld	h, b
+      000091 23               [ 6]  209 	inc	hl
+      000092 7E               [ 7]  210 	ld	a, (hl)
+      000093 2B               [ 6]  211 	dec	hl
+      000094 6E               [ 7]  212 	ld	l, (hl)
+                                    213 ;	spillPairReg hl
+      000095 DD 75 FE         [19]  214 	ld	-2 (ix), l
+      000098 DD 77 FF         [19]  215 	ld	-1 (ix), a
+      00009B 6B               [ 4]  216 	ld	l, e
+      00009C 62               [ 4]  217 	ld	h, d
+      00009D DD 7E FE         [19]  218 	ld	a, -2 (ix)
+      0000A0 77               [ 7]  219 	ld	(hl), a
+      0000A1 23               [ 6]  220 	inc	hl
+      0000A2 DD 7E FF         [19]  221 	ld	a, -1 (ix)
+      0000A5 77               [ 7]  222 	ld	(hl), a
+                           0000A6   223 	C$list.c$36$1_0$27	= .
+                                    224 	.globl	C$list.c$36$1_0$27
+                                    225 ;util/list.c:36: *first=el;
+      0000A6 7B               [ 4]  226 	ld	a, e
+      0000A7 02               [ 7]  227 	ld	(bc), a
+      0000A8 03               [ 6]  228 	inc	bc
+      0000A9 7A               [ 4]  229 	ld	a, d
+      0000AA 02               [ 7]  230 	ld	(bc), a
+                           0000AB   231 	C$list.c$37$1_0$27	= .
+                                    232 	.globl	C$list.c$37$1_0$27
+                                    233 ;util/list.c:37: return el;
+      0000AB EB               [ 4]  234 	ex	de, hl
+                           0000AC   235 	C$list.c$38$1_0$27	= .
+                                    236 	.globl	C$list.c$38$1_0$27
+                                    237 ;util/list.c:38: }
+      0000AC DD F9            [10]  238 	ld	sp, ix
+      0000AE DD E1            [14]  239 	pop	ix
+                           0000B0   240 	C$list.c$38$1_0$27	= .
+                                    241 	.globl	C$list.c$38$1_0$27
+                           0000B0   242 	XG$_list_insert$0$0	= .
+                                    243 	.globl	XG$_list_insert$0$0
+      0000B0 C9               [10]  244 	ret
+                           0000B1   245 	G$_list_append$0$0	= .
+                                    246 	.globl	G$_list_append$0$0
+                           0000B1   247 	C$list.c$40$1_0$29	= .
+                                    248 	.globl	C$list.c$40$1_0$29
+                                    249 ;util/list.c:40: list_header_t *_list_append(list_header_t** first, list_header_t *el) {
+                                    250 ;	---------------------------------
+                                    251 ; Function _list_append
+                                    252 ; ---------------------------------
+      0000B1                        253 __list_append::
+      0000B1 DD E5            [15]  254 	push	ix
+      0000B3 DD 21 00 00      [14]  255 	ld	ix,#0
+      0000B7 DD 39            [15]  256 	add	ix,sp
+      0000B9 F5               [11]  257 	push	af
+                           0000BA   258 	C$list.c$44$1_0$29	= .
+                                    259 	.globl	C$list.c$44$1_0$29
+                                    260 ;util/list.c:44: el->next=NULL;		/* it's always the last element */
+      0000BA DD 4E 06         [19]  261 	ld	c, 6 (ix)
+      0000BD DD 46 07         [19]  262 	ld	b, 7 (ix)
+      0000C0 69               [ 4]  263 	ld	l, c
+      0000C1 60               [ 4]  264 	ld	h, b
+      0000C2 AF               [ 4]  265 	xor	a, a
+      0000C3 77               [ 7]  266 	ld	(hl), a
+      0000C4 23               [ 6]  267 	inc	hl
+      0000C5 77               [ 7]  268 	ld	(hl), a
+                           0000C6   269 	C$list.c$46$1_0$29	= .
+                                    270 	.globl	C$list.c$46$1_0$29
+                                    271 ;util/list.c:46: if (*first==NULL)	/* empty list? */
+      0000C6 DD 5E 04         [19]  272 	ld	e, 4 (ix)
+      0000C9 DD 56 05         [19]  273 	ld	d, 5 (ix)
+      0000CC 1A               [ 7]  274 	ld	a, (de)
+      0000CD DD 77 FE         [19]  275 	ld	-2 (ix), a
+      0000D0 13               [ 6]  276 	inc	de
+      0000D1 1A               [ 7]  277 	ld	a, (de)
+      0000D2 DD 77 FF         [19]  278 	ld	-1 (ix), a
+      0000D5 1B               [ 6]  279 	dec	de
+      0000D6 DD 7E FF         [19]  280 	ld	a, -1 (ix)
+      0000D9 DD B6 FE         [19]  281 	or	a, -2 (ix)
+      0000DC 20 07            [12]  282 	jr	NZ, 00105$
+                           0000DE   283 	C$list.c$47$1_0$29	= .
+                                    284 	.globl	C$list.c$47$1_0$29
+                                    285 ;util/list.c:47: *first=el;
+      0000DE 79               [ 4]  286 	ld	a, c
+      0000DF 12               [ 7]  287 	ld	(de), a
+      0000E0 13               [ 6]  288 	inc	de
+      0000E1 78               [ 4]  289 	ld	a, b
+      0000E2 12               [ 7]  290 	ld	(de), a
+      0000E3 18 16            [12]  291 	jr	00106$
+      0000E5                        292 00105$:
+                           0000E5   293 	C$list.c$49$2_0$30	= .
+                                    294 	.globl	C$list.c$49$2_0$30
+                                    295 ;util/list.c:49: current=*first;
+      0000E5 E1               [10]  296 	pop	hl
+      0000E6 E5               [11]  297 	push	hl
+                           0000E7   298 	C$list.c$50$2_0$30	= .
+                                    299 	.globl	C$list.c$50$2_0$30
+                                    300 ;util/list.c:50: while (current->next) current=current->next;
+      0000E7                        301 00101$:
+      0000E7 5E               [ 7]  302 	ld	e, (hl)
+      0000E8 23               [ 6]  303 	inc	hl
+      0000E9 56               [ 7]  304 	ld	d, (hl)
+      0000EA 2B               [ 6]  305 	dec	hl
+      0000EB 7A               [ 4]  306 	ld	a, d
+      0000EC B3               [ 4]  307 	or	a, e
+      0000ED 28 03            [12]  308 	jr	Z, 00103$
+      0000EF EB               [ 4]  309 	ex	de, hl
+      0000F0 18 F5            [12]  310 	jr	00101$
+      0000F2                        311 00103$:
+                           0000F2   312 	C$list.c$51$2_0$30	= .
+                                    313 	.globl	C$list.c$51$2_0$30
+                                    314 ;util/list.c:51: current->next=el;
+      0000F2 DD 7E 06         [19]  315 	ld	a, 6 (ix)
+      0000F5 DD 5E 07         [19]  316 	ld	e, 7 (ix)
+      0000F8 77               [ 7]  317 	ld	(hl), a
+      0000F9 23               [ 6]  318 	inc	hl
+      0000FA 73               [ 7]  319 	ld	(hl), e
+      0000FB                        320 00106$:
+                           0000FB   321 	C$list.c$53$1_0$29	= .
+                                    322 	.globl	C$list.c$53$1_0$29
+                                    323 ;util/list.c:53: return el;
+      0000FB 69               [ 4]  324 	ld	l, c
+                                    325 ;	spillPairReg hl
+                                    326 ;	spillPairReg hl
+      0000FC 60               [ 4]  327 	ld	h, b
+                                    328 ;	spillPairReg hl
+                                    329 ;	spillPairReg hl
+                           0000FD   330 	C$list.c$54$1_0$29	= .
+                                    331 	.globl	C$list.c$54$1_0$29
+                                    332 ;util/list.c:54: }
+      0000FD DD F9            [10]  333 	ld	sp, ix
+      0000FF DD E1            [14]  334 	pop	ix
+                           000101   335 	C$list.c$54$1_0$29	= .
+                                    336 	.globl	C$list.c$54$1_0$29
+                           000101   337 	XG$_list_append$0$0	= .
+                                    338 	.globl	XG$_list_append$0$0
+      000101 C9               [10]  339 	ret
+                           000102   340 	G$_list_remove$0$0	= .
+                                    341 	.globl	G$_list_remove$0$0
+                           000102   342 	C$list.c$56$1_0$32	= .
+                                    343 	.globl	C$list.c$56$1_0$32
+                                    344 ;util/list.c:56: list_header_t *_list_remove(list_header_t **first, list_header_t *el) {
+                                    345 ;	---------------------------------
+                                    346 ; Function _list_remove
+                                    347 ; ---------------------------------
+      000102                        348 __list_remove::
+      000102 DD E5            [15]  349 	push	ix
+      000104 DD 21 00 00      [14]  350 	ld	ix,#0
+      000108 DD 39            [15]  351 	add	ix,sp
+      00010A F5               [11]  352 	push	af
+      00010B F5               [11]  353 	push	af
+                           00010C   354 	C$list.c$58$1_0$32	= .
+                                    355 	.globl	C$list.c$58$1_0$32
+                                    356 ;util/list.c:58: if (el==*first) {
+      00010C DD 4E 04         [19]  357 	ld	c, 4 (ix)
+      00010F DD 46 05         [19]  358 	ld	b, 5 (ix)
+      000112 69               [ 4]  359 	ld	l, c
+      000113 60               [ 4]  360 	ld	h, b
+      000114 5E               [ 7]  361 	ld	e, (hl)
+      000115 23               [ 6]  362 	inc	hl
+      000116 56               [ 7]  363 	ld	d, (hl)
+                           000117   364 	C$list.c$59$1_0$32	= .
+                                    365 	.globl	C$list.c$59$1_0$32
+                                    366 ;util/list.c:59: *first=el->next;
+      000117 DD 7E 06         [19]  367 	ld	a, 6 (ix)
+      00011A DD 77 FE         [19]  368 	ld	-2 (ix), a
+      00011D DD 7E 07         [19]  369 	ld	a, 7 (ix)
+      000120 DD 77 FF         [19]  370 	ld	-1 (ix), a
+                           000123   371 	C$list.c$58$1_0$32	= .
+                                    372 	.globl	C$list.c$58$1_0$32
+                                    373 ;util/list.c:58: if (el==*first) {
+      000123 DD 6E 06         [19]  374 	ld	l, 6 (ix)
+      000126 DD 66 07         [19]  375 	ld	h, 7 (ix)
+      000129 BF               [ 4]  376 	cp	a, a
+      00012A ED 52            [15]  377 	sbc	hl, de
+      00012C 20 10            [12]  378 	jr	NZ, 00105$
+                           00012E   379 	C$list.c$59$2_0$33	= .
+                                    380 	.globl	C$list.c$59$2_0$33
+                                    381 ;util/list.c:59: *first=el->next;
+      00012E DD 6E FE         [19]  382 	ld	l, -2 (ix)
+      000131 DD 66 FF         [19]  383 	ld	h, -1 (ix)
+      000134 5E               [ 7]  384 	ld	e, (hl)
+      000135 23               [ 6]  385 	inc	hl
+      000136 56               [ 7]  386 	ld	d, (hl)
+      000137 7B               [ 4]  387 	ld	a, e
+      000138 02               [ 7]  388 	ld	(bc), a
+      000139 03               [ 6]  389 	inc	bc
+      00013A 7A               [ 4]  390 	ld	a, d
+      00013B 02               [ 7]  391 	ld	(bc), a
+      00013C 18 31            [12]  392 	jr	00106$
+      00013E                        393 00105$:
+                           00013E   394 	C$list.c$61$2_0$34	= .
+                                    395 	.globl	C$list.c$61$2_0$34
+                                    396 ;util/list.c:61: if (!_list_find(*first, &prev, _list_match_eq, (uint16_t) el))
+      00013E DD 4E 06         [19]  397 	ld	c, 6 (ix)
+      000141 DD 46 07         [19]  398 	ld	b, 7 (ix)
+      000144 21 00 00         [10]  399 	ld	hl, #0
+      000147 39               [11]  400 	add	hl, sp
+      000148 C5               [11]  401 	push	bc
+      000149 01r00r00         [10]  402 	ld	bc, #__list_match_eq
+      00014C C5               [11]  403 	push	bc
+      00014D E5               [11]  404 	push	hl
+      00014E D5               [11]  405 	push	de
+      00014F CDr1Ar00         [17]  406 	call	__list_find
+      000152 F1               [10]  407 	pop	af
+      000153 F1               [10]  408 	pop	af
+      000154 F1               [10]  409 	pop	af
+      000155 F1               [10]  410 	pop	af
+      000156 7C               [ 4]  411 	ld	a, h
+      000157 B5               [ 4]  412 	or	a, l
+      000158 20 05            [12]  413 	jr	NZ, 00102$
+                           00015A   414 	C$list.c$62$2_0$34	= .
+                                    415 	.globl	C$list.c$62$2_0$34
+                                    416 ;util/list.c:62: return NULL;
+      00015A 21 00 00         [10]  417 	ld	hl, #0x0000
+      00015D 18 16            [12]  418 	jr	00107$
+      00015F                        419 00102$:
+                           00015F   420 	C$list.c$64$2_0$34	= .
+                                    421 	.globl	C$list.c$64$2_0$34
+                                    422 ;util/list.c:64: prev->next=el->next;
+      00015F C1               [10]  423 	pop	bc
+      000160 C5               [11]  424 	push	bc
+      000161 DD 6E FE         [19]  425 	ld	l, -2 (ix)
+      000164 DD 66 FF         [19]  426 	ld	h, -1 (ix)
+      000167 5E               [ 7]  427 	ld	e, (hl)
+      000168 23               [ 6]  428 	inc	hl
+      000169 56               [ 7]  429 	ld	d, (hl)
+      00016A 7B               [ 4]  430 	ld	a, e
+      00016B 02               [ 7]  431 	ld	(bc), a
+      00016C 03               [ 6]  432 	inc	bc
+      00016D 7A               [ 4]  433 	ld	a, d
+      00016E 02               [ 7]  434 	ld	(bc), a
+      00016F                        435 00106$:
+                           00016F   436 	C$list.c$66$1_0$32	= .
+                                    437 	.globl	C$list.c$66$1_0$32
+                                    438 ;util/list.c:66: return el;
+      00016F DD 6E 06         [19]  439 	ld	l, 6 (ix)
+                                    440 ;	spillPairReg hl
+                                    441 ;	spillPairReg hl
+      000172 DD 66 07         [19]  442 	ld	h, 7 (ix)
+                                    443 ;	spillPairReg hl
+                                    444 ;	spillPairReg hl
+      000175                        445 00107$:
+                           000175   446 	C$list.c$67$1_0$32	= .
+                                    447 	.globl	C$list.c$67$1_0$32
+                                    448 ;util/list.c:67: }
+      000175 DD F9            [10]  449 	ld	sp, ix
+      000177 DD E1            [14]  450 	pop	ix
+                           000179   451 	C$list.c$67$1_0$32	= .
+                                    452 	.globl	C$list.c$67$1_0$32
+                           000179   453 	XG$_list_remove$0$0	= .
+                                    454 	.globl	XG$_list_remove$0$0
+      000179 C9               [10]  455 	ret
+                           00017A   456 	G$_list_remove_first$0$0	= .
+                                    457 	.globl	G$_list_remove_first$0$0
+                           00017A   458 	C$list.c$69$1_0$36	= .
+                                    459 	.globl	C$list.c$69$1_0$36
+                                    460 ;util/list.c:69: list_header_t *_list_remove_first(list_header_t **first) {
+                                    461 ;	---------------------------------
+                                    462 ; Function _list_remove_first
+                                    463 ; ---------------------------------
+      00017A                        464 __list_remove_first::
+      00017A DD E5            [15]  465 	push	ix
+      00017C DD 21 00 00      [14]  466 	ld	ix,#0
+      000180 DD 39            [15]  467 	add	ix,sp
+      000182 F5               [11]  468 	push	af
+                           000183   469 	C$list.c$71$1_0$36	= .
+                                    470 	.globl	C$list.c$71$1_0$36
+                                    471 ;util/list.c:71: if (*first==NULL) return NULL; /* empty list */
+      000183 DD 4E 04         [19]  472 	ld	c, 4 (ix)
+      000186 DD 46 05         [19]  473 	ld	b, 5 (ix)
+      000189 69               [ 4]  474 	ld	l, c
+      00018A 60               [ 4]  475 	ld	h, b
+      00018B 7E               [ 7]  476 	ld	a, (hl)
+      00018C 23               [ 6]  477 	inc	hl
+      00018D 66               [ 7]  478 	ld	h, (hl)
+                                    479 ;	spillPairReg hl
+                                    480 ;	spillPairReg hl
+                                    481 ;	spillPairReg hl
+      00018E 6F               [ 4]  482 	ld	l,a
+      00018F B4               [ 4]  483 	or	a,h
+      000190 20 05            [12]  484 	jr	NZ, 00102$
+      000192 21 00 00         [10]  485 	ld	hl, #0x0000
+      000195 18 15            [12]  486 	jr	00103$
+      000197                        487 00102$:
+                           000197   488 	C$list.c$72$1_0$36	= .
+                                    489 	.globl	C$list.c$72$1_0$36
+                                    490 ;util/list.c:72: result=*first;
+      000197 5D               [ 4]  491 	ld	e, l
+      000198 54               [ 4]  492 	ld	d, h
+                           000199   493 	C$list.c$73$1_0$36	= .
+                                    494 	.globl	C$list.c$73$1_0$36
+                                    495 ;util/list.c:73: *first = (list_header_t*) ((*first)->next);
+      000199 7E               [ 7]  496 	ld	a, (hl)
+      00019A 23               [ 6]  497 	inc	hl
+      00019B 6E               [ 7]  498 	ld	l, (hl)
+                                    499 ;	spillPairReg hl
+      00019C DD 77 FE         [19]  500 	ld	-2 (ix), a
+      00019F DD 75 FF         [19]  501 	ld	-1 (ix), l
+      0001A2 DD 7E FE         [19]  502 	ld	a, -2 (ix)
+      0001A5 02               [ 7]  503 	ld	(bc), a
+      0001A6 03               [ 6]  504 	inc	bc
+      0001A7 DD 7E FF         [19]  505 	ld	a, -1 (ix)
+      0001AA 02               [ 7]  506 	ld	(bc), a
+                           0001AB   507 	C$list.c$74$1_0$36	= .
+                                    508 	.globl	C$list.c$74$1_0$36
+                                    509 ;util/list.c:74: return result;
+      0001AB EB               [ 4]  510 	ex	de, hl
+      0001AC                        511 00103$:
+                           0001AC   512 	C$list.c$75$1_0$36	= .
+                                    513 	.globl	C$list.c$75$1_0$36
+                                    514 ;util/list.c:75: }
+      0001AC DD F9            [10]  515 	ld	sp, ix
+      0001AE DD E1            [14]  516 	pop	ix
+                           0001B0   517 	C$list.c$75$1_0$36	= .
+                                    518 	.globl	C$list.c$75$1_0$36
+                           0001B0   519 	XG$_list_remove_first$0$0	= .
+                                    520 	.globl	XG$_list_remove_first$0$0
+      0001B0 C9               [10]  521 	ret
+                                    522 	.area _CODE
+                                    523 	.area _INITIALIZER
+                                    524 	.area _CABS (ABS)

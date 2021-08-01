@@ -1,0 +1,369 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.1.6 #12391 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module mem
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl __mem_top
+                                     12 	.globl __match_free_block
+                                     13 	.globl __merge_with_next
+                                     14 	.globl __split
+                                     15 	.globl __memory_init
+                                     16 ;--------------------------------------------------------
+                                     17 ; special function registers
+                                     18 ;--------------------------------------------------------
+                                     19 ;--------------------------------------------------------
+                                     20 ; ram data
+                                     21 ;--------------------------------------------------------
+                                     22 	.area _DATA
+                           000000    23 G$_mem_top$0_0$0==.
+      000000                         24 __mem_top::
+      000000                         25 	.ds 2
+                                     26 ;--------------------------------------------------------
+                                     27 ; ram data
+                                     28 ;--------------------------------------------------------
+                                     29 	.area _INITIALIZED
+                                     30 ;--------------------------------------------------------
+                                     31 ; absolute external ram data
+                                     32 ;--------------------------------------------------------
+                                     33 	.area _DABS (ABS)
+                                     34 ;--------------------------------------------------------
+                                     35 ; global & static initialisations
+                                     36 ;--------------------------------------------------------
+                                     37 	.area _HOME
+                                     38 	.area _GSINIT
+                                     39 	.area _GSFINAL
+                                     40 	.area _GSINIT
+                                     41 ;--------------------------------------------------------
+                                     42 ; Home
+                                     43 ;--------------------------------------------------------
+                                     44 	.area _HOME
+                                     45 	.area _HOME
+                                     46 ;--------------------------------------------------------
+                                     47 ; code
+                                     48 ;--------------------------------------------------------
+                                     49 	.area _CODE
+                           000000    50 	G$_match_free_block$0$0	= .
+                                     51 	.globl	G$_match_free_block$0$0
+                           000000    52 	C$mem.c$17$0_0$54	= .
+                                     53 	.globl	C$mem.c$17$0_0$54
+                                     54 ;util/mem.c:17: uint8_t _match_free_block(list_header_t *p, uint16_t size)
+                                     55 ;	---------------------------------
+                                     56 ; Function _match_free_block
+                                     57 ; ---------------------------------
+      000000                         58 __match_free_block::
+                           000000    59 	C$mem.c$19$1_0$54	= .
+                                     60 	.globl	C$mem.c$19$1_0$54
+                                     61 ;util/mem.c:19: block_t *b = (block_t *)p;
+      000000 E1               [10]   62 	pop	hl
+      000001 C1               [10]   63 	pop	bc
+      000002 C5               [11]   64 	push	bc
+      000003 E5               [11]   65 	push	hl
+                           000004    66 	C$mem.c$20$1_0$54	= .
+                                     67 	.globl	C$mem.c$20$1_0$54
+                                     68 ;util/mem.c:20: return !(b->stat & ALLOCATED) && b->size >= size;
+      000004 69               [ 4]   69 	ld	l, c
+                                     70 ;	spillPairReg hl
+                                     71 ;	spillPairReg hl
+      000005 60               [ 4]   72 	ld	h, b
+                                     73 ;	spillPairReg hl
+                                     74 ;	spillPairReg hl
+      000006 23               [ 6]   75 	inc	hl
+      000007 23               [ 6]   76 	inc	hl
+      000008 7E               [ 7]   77 	ld	a, (hl)
+      000009 E6 01            [ 7]   78 	and	a,#0x01
+      00000B 20 12            [12]   79 	jr	NZ, 00103$
+      00000D 21 03 00         [10]   80 	ld	hl, #3
+      000010 09               [11]   81 	add	hl, bc
+      000011 4E               [ 7]   82 	ld	c, (hl)
+      000012 23               [ 6]   83 	inc	hl
+      000013 46               [ 7]   84 	ld	b, (hl)
+      000014 21 04 00         [10]   85 	ld	hl, #4
+      000017 39               [11]   86 	add	hl, sp
+      000018 79               [ 4]   87 	ld	a, c
+      000019 96               [ 7]   88 	sub	a, (hl)
+      00001A 23               [ 6]   89 	inc	hl
+      00001B 78               [ 4]   90 	ld	a, b
+      00001C 9E               [ 7]   91 	sbc	a, (hl)
+      00001D 30 03            [12]   92 	jr	NC, 00104$
+      00001F                         93 00103$:
+      00001F 2E 00            [ 7]   94 	ld	l, #0x00
+                                     95 ;	spillPairReg hl
+                                     96 ;	spillPairReg hl
+      000021 C9               [10]   97 	ret
+      000022                         98 00104$:
+      000022 2E 01            [ 7]   99 	ld	l, #0x01
+                                    100 ;	spillPairReg hl
+                                    101 ;	spillPairReg hl
+                           000024   102 	C$mem.c$21$1_0$54	= .
+                                    103 	.globl	C$mem.c$21$1_0$54
+                                    104 ;util/mem.c:21: }
+                           000024   105 	C$mem.c$21$1_0$54	= .
+                                    106 	.globl	C$mem.c$21$1_0$54
+                           000024   107 	XG$_match_free_block$0$0	= .
+                                    108 	.globl	XG$_match_free_block$0$0
+      000024 C9               [10]  109 	ret
+                           000025   110 	G$_merge_with_next$0$0	= .
+                                    111 	.globl	G$_merge_with_next$0$0
+                           000025   112 	C$mem.c$23$1_0$56	= .
+                                    113 	.globl	C$mem.c$23$1_0$56
+                                    114 ;util/mem.c:23: void _merge_with_next(block_t *b)
+                                    115 ;	---------------------------------
+                                    116 ; Function _merge_with_next
+                                    117 ; ---------------------------------
+      000025                        118 __merge_with_next::
+      000025 DD E5            [15]  119 	push	ix
+      000027 DD 21 00 00      [14]  120 	ld	ix,#0
+      00002B DD 39            [15]  121 	add	ix,sp
+      00002D F5               [11]  122 	push	af
+                           00002E   123 	C$mem.c$25$1_0$56	= .
+                                    124 	.globl	C$mem.c$25$1_0$56
+                                    125 ;util/mem.c:25: block_t *bnext = b->hdr.next;
+      00002E DD 4E 04         [19]  126 	ld	c, 4 (ix)
+      000031 DD 46 05         [19]  127 	ld	b, 5 (ix)
+      000034 69               [ 4]  128 	ld	l, c
+      000035 60               [ 4]  129 	ld	h, b
+      000036 5E               [ 7]  130 	ld	e, (hl)
+      000037 23               [ 6]  131 	inc	hl
+      000038 56               [ 7]  132 	ld	d, (hl)
+      000039 D5               [11]  133 	push	de
+      00003A FD E1            [14]  134 	pop	iy
+                           00003C   135 	C$mem.c$26$1_0$56	= .
+                                    136 	.globl	C$mem.c$26$1_0$56
+                                    137 ;util/mem.c:26: b->size += (BLK_SIZE + bnext->size);
+      00003C 21 03 00         [10]  138 	ld	hl, #0x0003
+      00003F 09               [11]  139 	add	hl, bc
+      000040 E3               [19]  140 	ex	(sp), hl
+      000041 E1               [10]  141 	pop	hl
+      000042 E5               [11]  142 	push	hl
+      000043 5E               [ 7]  143 	ld	e, (hl)
+      000044 23               [ 6]  144 	inc	hl
+      000045 56               [ 7]  145 	ld	d, (hl)
+      000046 FD E5            [15]  146 	push	iy
+      000048 E1               [10]  147 	pop	hl
+      000049 23               [ 6]  148 	inc	hl
+      00004A 23               [ 6]  149 	inc	hl
+      00004B 23               [ 6]  150 	inc	hl
+      00004C 7E               [ 7]  151 	ld	a, (hl)
+      00004D 23               [ 6]  152 	inc	hl
+      00004E 66               [ 7]  153 	ld	h, (hl)
+                                    154 ;	spillPairReg hl
+      00004F 6F               [ 4]  155 	ld	l, a
+                                    156 ;	spillPairReg hl
+                                    157 ;	spillPairReg hl
+      000050 23               [ 6]  158 	inc	hl
+      000051 23               [ 6]  159 	inc	hl
+      000052 23               [ 6]  160 	inc	hl
+      000053 23               [ 6]  161 	inc	hl
+      000054 23               [ 6]  162 	inc	hl
+      000055 19               [11]  163 	add	hl, de
+      000056 EB               [ 4]  164 	ex	de, hl
+      000057 E1               [10]  165 	pop	hl
+      000058 E5               [11]  166 	push	hl
+      000059 73               [ 7]  167 	ld	(hl), e
+      00005A 23               [ 6]  168 	inc	hl
+      00005B 72               [ 7]  169 	ld	(hl), d
+                           00005C   170 	C$mem.c$27$1_0$56	= .
+                                    171 	.globl	C$mem.c$27$1_0$56
+                                    172 ;util/mem.c:27: b->hdr.next = bnext->hdr.next;
+      00005C FD 7E 00         [19]  173 	ld	a, 0 (iy)
+      00005F FD 56 01         [19]  174 	ld	d, 1 (iy)
+      000062 02               [ 7]  175 	ld	(bc), a
+      000063 03               [ 6]  176 	inc	bc
+      000064 7A               [ 4]  177 	ld	a, d
+      000065 02               [ 7]  178 	ld	(bc), a
+                           000066   179 	C$mem.c$28$1_0$56	= .
+                                    180 	.globl	C$mem.c$28$1_0$56
+                                    181 ;util/mem.c:28: }
+      000066 DD F9            [10]  182 	ld	sp, ix
+      000068 DD E1            [14]  183 	pop	ix
+                           00006A   184 	C$mem.c$28$1_0$56	= .
+                                    185 	.globl	C$mem.c$28$1_0$56
+                           00006A   186 	XG$_merge_with_next$0$0	= .
+                                    187 	.globl	XG$_merge_with_next$0$0
+      00006A C9               [10]  188 	ret
+                           00006B   189 	G$_split$0$0	= .
+                                    190 	.globl	G$_split$0$0
+                           00006B   191 	C$mem.c$30$1_0$58	= .
+                                    192 	.globl	C$mem.c$30$1_0$58
+                                    193 ;util/mem.c:30: void _split(block_t *b, uint16_t size)
+                                    194 ;	---------------------------------
+                                    195 ; Function _split
+                                    196 ; ---------------------------------
+      00006B                        197 __split::
+      00006B DD E5            [15]  198 	push	ix
+      00006D DD 21 00 00      [14]  199 	ld	ix,#0
+      000071 DD 39            [15]  200 	add	ix,sp
+      000073 21 FA FF         [10]  201 	ld	hl, #-6
+      000076 39               [11]  202 	add	hl, sp
+      000077 F9               [ 6]  203 	ld	sp, hl
+                           000078   204 	C$mem.c$33$1_0$58	= .
+                                    205 	.globl	C$mem.c$33$1_0$58
+                                    206 ;util/mem.c:33: nw = (block_t *)((uint16_t)(b->data) + size);
+      000078 DD 4E 04         [19]  207 	ld	c, 4 (ix)
+      00007B DD 46 05         [19]  208 	ld	b, 5 (ix)
+      00007E 21 05 00         [10]  209 	ld	hl, #0x0005
+      000081 09               [11]  210 	add	hl, bc
+      000082 EB               [ 4]  211 	ex	de, hl
+      000083 DD 6E 06         [19]  212 	ld	l, 6 (ix)
+      000086 DD 66 07         [19]  213 	ld	h, 7 (ix)
+      000089 19               [11]  214 	add	hl, de
+      00008A E3               [19]  215 	ex	(sp), hl
+                           00008B   216 	C$mem.c$34$1_0$58	= .
+                                    217 	.globl	C$mem.c$34$1_0$58
+                                    218 ;util/mem.c:34: nw->hdr.next = b->hdr.next;
+      00008B 69               [ 4]  219 	ld	l, c
+      00008C 60               [ 4]  220 	ld	h, b
+      00008D 5E               [ 7]  221 	ld	e, (hl)
+      00008E 23               [ 6]  222 	inc	hl
+      00008F 56               [ 7]  223 	ld	d, (hl)
+      000090 E1               [10]  224 	pop	hl
+      000091 E5               [11]  225 	push	hl
+      000092 73               [ 7]  226 	ld	(hl), e
+      000093 23               [ 6]  227 	inc	hl
+      000094 72               [ 7]  228 	ld	(hl), d
+                           000095   229 	C$mem.c$35$1_0$58	= .
+                                    230 	.globl	C$mem.c$35$1_0$58
+                                    231 ;util/mem.c:35: nw->size = b->size - (size + BLK_SIZE);
+      000095 DD 7E FA         [19]  232 	ld	a, -6 (ix)
+      000098 C6 03            [ 7]  233 	add	a, #0x03
+      00009A DD 77 FC         [19]  234 	ld	-4 (ix), a
+      00009D DD 7E FB         [19]  235 	ld	a, -5 (ix)
+      0000A0 CE 00            [ 7]  236 	adc	a, #0x00
+      0000A2 DD 77 FD         [19]  237 	ld	-3 (ix), a
+      0000A5 21 03 00         [10]  238 	ld	hl, #0x0003
+      0000A8 09               [11]  239 	add	hl, bc
+      0000A9 DD 75 FE         [19]  240 	ld	-2 (ix), l
+      0000AC DD 74 FF         [19]  241 	ld	-1 (ix), h
+      0000AF 7E               [ 7]  242 	ld	a, (hl)
+      0000B0 23               [ 6]  243 	inc	hl
+      0000B1 66               [ 7]  244 	ld	h, (hl)
+                                    245 ;	spillPairReg hl
+      0000B2 6F               [ 4]  246 	ld	l, a
+                                    247 ;	spillPairReg hl
+                                    248 ;	spillPairReg hl
+      0000B3 DD 7E 06         [19]  249 	ld	a, 6 (ix)
+      0000B6 C6 05            [ 7]  250 	add	a, #0x05
+      0000B8 5F               [ 4]  251 	ld	e, a
+      0000B9 DD 7E 07         [19]  252 	ld	a, 7 (ix)
+      0000BC CE 00            [ 7]  253 	adc	a, #0x00
+      0000BE 57               [ 4]  254 	ld	d, a
+      0000BF BF               [ 4]  255 	cp	a, a
+      0000C0 ED 52            [15]  256 	sbc	hl, de
+      0000C2 EB               [ 4]  257 	ex	de, hl
+      0000C3 DD 6E FC         [19]  258 	ld	l, -4 (ix)
+      0000C6 DD 66 FD         [19]  259 	ld	h, -3 (ix)
+      0000C9 73               [ 7]  260 	ld	(hl), e
+      0000CA 23               [ 6]  261 	inc	hl
+      0000CB 72               [ 7]  262 	ld	(hl), d
+                           0000CC   263 	C$mem.c$36$1_0$58	= .
+                                    264 	.globl	C$mem.c$36$1_0$58
+                                    265 ;util/mem.c:36: nw->stat = b->stat;
+      0000CC D1               [10]  266 	pop	de
+      0000CD D5               [11]  267 	push	de
+      0000CE 13               [ 6]  268 	inc	de
+      0000CF 13               [ 6]  269 	inc	de
+      0000D0 69               [ 4]  270 	ld	l, c
+                                    271 ;	spillPairReg hl
+                                    272 ;	spillPairReg hl
+      0000D1 60               [ 4]  273 	ld	h, b
+                                    274 ;	spillPairReg hl
+                                    275 ;	spillPairReg hl
+      0000D2 23               [ 6]  276 	inc	hl
+      0000D3 23               [ 6]  277 	inc	hl
+      0000D4 7E               [ 7]  278 	ld	a, (hl)
+      0000D5 12               [ 7]  279 	ld	(de), a
+                           0000D6   280 	C$mem.c$39$1_0$58	= .
+                                    281 	.globl	C$mem.c$39$1_0$58
+                                    282 ;util/mem.c:39: b->size = size;
+      0000D6 DD 6E FE         [19]  283 	ld	l, -2 (ix)
+      0000D9 DD 66 FF         [19]  284 	ld	h, -1 (ix)
+      0000DC DD 7E 06         [19]  285 	ld	a, 6 (ix)
+      0000DF 77               [ 7]  286 	ld	(hl), a
+      0000E0 23               [ 6]  287 	inc	hl
+      0000E1 DD 7E 07         [19]  288 	ld	a, 7 (ix)
+      0000E4 77               [ 7]  289 	ld	(hl), a
+                           0000E5   290 	C$mem.c$40$1_0$58	= .
+                                    291 	.globl	C$mem.c$40$1_0$58
+                                    292 ;util/mem.c:40: b->hdr.next = nw;
+      0000E5 D1               [10]  293 	pop	de
+      0000E6 D5               [11]  294 	push	de
+      0000E7 7B               [ 4]  295 	ld	a, e
+      0000E8 02               [ 7]  296 	ld	(bc), a
+      0000E9 03               [ 6]  297 	inc	bc
+      0000EA 7A               [ 4]  298 	ld	a, d
+      0000EB 02               [ 7]  299 	ld	(bc), a
+                           0000EC   300 	C$mem.c$41$1_0$58	= .
+                                    301 	.globl	C$mem.c$41$1_0$58
+                                    302 ;util/mem.c:41: }
+      0000EC DD F9            [10]  303 	ld	sp, ix
+      0000EE DD E1            [14]  304 	pop	ix
+                           0000F0   305 	C$mem.c$41$1_0$58	= .
+                                    306 	.globl	C$mem.c$41$1_0$58
+                           0000F0   307 	XG$_split$0$0	= .
+                                    308 	.globl	XG$_split$0$0
+      0000F0 C9               [10]  309 	ret
+                           0000F1   310 	G$_memory_init$0$0	= .
+                                    311 	.globl	G$_memory_init$0$0
+                           0000F1   312 	C$mem.c$50$1_0$59	= .
+                                    313 	.globl	C$mem.c$50$1_0$59
+                                    314 ;util/mem.c:50: void _memory_init()
+                                    315 ;	---------------------------------
+                                    316 ; Function _memory_init
+                                    317 ; ---------------------------------
+      0000F1                        318 __memory_init::
+                           0000F1   319 	C$mem.c$53$1_0$59	= .
+                                    320 	.globl	C$mem.c$53$1_0$59
+                                    321 ;util/mem.c:53: _mem_top = (uint16_t *)0x0006;
+      0000F1 21 06 00         [10]  322 	ld	hl, #0x0006
+      0000F4 22r00r00         [16]  323 	ld	(__mem_top), hl
+                           0000F7   324 	C$mem.c$56$1_1$60	= .
+                                    325 	.globl	C$mem.c$56$1_1$60
+                                    326 ;util/mem.c:56: uint16_t size=(uint16_t)(*_mem_top) - (uint16_t)&_heap;
+      0000F7 4E               [ 7]  327 	ld	c, (hl)
+      0000F8 23               [ 6]  328 	inc	hl
+      0000F9 46               [ 7]  329 	ld	b, (hl)
+      0000FA 79               [ 4]  330 	ld	a, c
+      0000FB D6r00            [ 7]  331 	sub	a, #<(__heap)
+      0000FD 4F               [ 4]  332 	ld	c, a
+      0000FE 78               [ 4]  333 	ld	a, b
+      0000FF DEs00            [ 7]  334 	sbc	a, #>(__heap)
+      000101 47               [ 4]  335 	ld	b, a
+                           000102   336 	C$mem.c$59$1_1$60	= .
+                                    337 	.globl	C$mem.c$59$1_1$60
+                                    338 ;util/mem.c:59: block_t *first = (block_t *)&_heap;
+                           000102   339 	C$mem.c$60$1_1$60	= .
+                                    340 	.globl	C$mem.c$60$1_1$60
+                                    341 ;util/mem.c:60: first->hdr.next = NULL;
+      000102 21 00 00         [10]  342 	ld	hl, #0x0000
+      000105 22r00r00         [16]  343 	ld	(__heap), hl
+                           000108   344 	C$mem.c$61$1_1$60	= .
+                                    345 	.globl	C$mem.c$61$1_1$60
+                                    346 ;util/mem.c:61: first->size = size - BLK_SIZE;
+      000108 79               [ 4]  347 	ld	a, c
+      000109 C6 FB            [ 7]  348 	add	a, #0xfb
+      00010B 4F               [ 4]  349 	ld	c, a
+      00010C 78               [ 4]  350 	ld	a, b
+      00010D CE FF            [ 7]  351 	adc	a, #0xff
+      00010F 47               [ 4]  352 	ld	b, a
+      000110 ED 43r03r00      [20]  353 	ld	((__heap + 3)), bc
+                           000114   354 	C$mem.c$62$1_1$60	= .
+                                    355 	.globl	C$mem.c$62$1_1$60
+                                    356 ;util/mem.c:62: first->stat = NEW;
+      000114 21r02r00         [10]  357 	ld	hl, #(__heap + 2)
+      000117 36 00            [10]  358 	ld	(hl), #0x00
+                           000119   359 	C$mem.c$63$1_1$59	= .
+                                    360 	.globl	C$mem.c$63$1_1$59
+                                    361 ;util/mem.c:63: }
+                           000119   362 	C$mem.c$63$1_1$59	= .
+                                    363 	.globl	C$mem.c$63$1_1$59
+                           000119   364 	XG$_memory_init$0$0	= .
+                                    365 	.globl	XG$_memory_init$0$0
+      000119 C9               [10]  366 	ret
+                                    367 	.area _CODE
+                                    368 	.area _INITIALIZER
+                                    369 	.area _CABS (ABS)

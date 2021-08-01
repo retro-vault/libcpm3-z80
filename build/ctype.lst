@@ -1,0 +1,288 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.1.6 #12391 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module ctype
+                                      6 	.optsdcc -mz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _strchr
+                                     12 	.globl _isalpha
+                                     13 	.globl _isspace
+                                     14 	.globl _ispunct
+                                     15 	.globl _tolower
+                                     16 ;--------------------------------------------------------
+                                     17 ; special function registers
+                                     18 ;--------------------------------------------------------
+                                     19 ;--------------------------------------------------------
+                                     20 ; ram data
+                                     21 ;--------------------------------------------------------
+                                     22 	.area _DATA
+                           000000    23 Lctype.ispunct$punct$1_0$25==.
+      000000                         24 _ispunct_punct_65536_25:
+      000000                         25 	.ds 2
+                                     26 ;--------------------------------------------------------
+                                     27 ; ram data
+                                     28 ;--------------------------------------------------------
+                                     29 	.area _INITIALIZED
+                                     30 ;--------------------------------------------------------
+                                     31 ; absolute external ram data
+                                     32 ;--------------------------------------------------------
+                                     33 	.area _DABS (ABS)
+                                     34 ;--------------------------------------------------------
+                                     35 ; global & static initialisations
+                                     36 ;--------------------------------------------------------
+                                     37 	.area _HOME
+                                     38 	.area _GSINIT
+                                     39 	.area _GSFINAL
+                                     40 	.area _GSINIT
+                           000000    41 	G$ispunct$0$0	= .
+                                     42 	.globl	G$ispunct$0$0
+                           000000    43 	C$ctype.c$28$1_0$25	= .
+                                     44 	.globl	C$ctype.c$28$1_0$25
+                                     45 ;ctype.c:28: static const char *punct = ".;!?...";
+      000000 21r92r00         [10]   46 	ld	hl, #___str_0+0
+      000003 22r00r00         [16]   47 	ld	(_ispunct_punct_65536_25), hl
+                                     48 ;--------------------------------------------------------
+                                     49 ; Home
+                                     50 ;--------------------------------------------------------
+                                     51 	.area _HOME
+                                     52 	.area _HOME
+                                     53 ;--------------------------------------------------------
+                                     54 ; code
+                                     55 ;--------------------------------------------------------
+                                     56 	.area _CODE
+                           000000    57 	G$isalpha$0$0	= .
+                                     58 	.globl	G$isalpha$0$0
+                           000000    59 	C$ctype.c$16$0_0$21	= .
+                                     60 	.globl	C$ctype.c$16$0_0$21
+                                     61 ;ctype.c:16: bool isalpha(int c)
+                                     62 ;	---------------------------------
+                                     63 ; Function isalpha
+                                     64 ; ---------------------------------
+      000000                         65 _isalpha::
+                           000000    66 	C$ctype.c$18$1_0$21	= .
+                                     67 	.globl	C$ctype.c$18$1_0$21
+                                     68 ;ctype.c:18: return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+      000000 FD 21 02 00      [14]   69 	ld	iy, #2
+      000004 FD 39            [15]   70 	add	iy, sp
+      000006 FD 7E 00         [19]   71 	ld	a, 0 (iy)
+      000009 D6 61            [ 7]   72 	sub	a, #0x61
+      00000B FD 7E 01         [19]   73 	ld	a, 1 (iy)
+      00000E 17               [ 4]   74 	rla
+      00000F 3F               [ 4]   75 	ccf
+      000010 1F               [ 4]   76 	rra
+      000011 DE 80            [ 7]   77 	sbc	a, #0x80
+      000013 38 12            [12]   78 	jr	C, 00108$
+      000015 3E 7A            [ 7]   79 	ld	a, #0x7a
+      000017 FD BE 00         [19]   80 	cp	a, 0 (iy)
+      00001A 3E 00            [ 7]   81 	ld	a, #0x00
+      00001C FD 9E 01         [19]   82 	sbc	a, 1 (iy)
+      00001F E2r24r00         [10]   83 	jp	PO, 00122$
+      000022 EE 80            [ 7]   84 	xor	a, #0x80
+      000024                         85 00122$:
+      000024 F2r52r00         [10]   86 	jp	P, 00104$
+      000027                         87 00108$:
+      000027 FD 21 02 00      [14]   88 	ld	iy, #2
+      00002B FD 39            [15]   89 	add	iy, sp
+      00002D FD 7E 00         [19]   90 	ld	a, 0 (iy)
+      000030 D6 41            [ 7]   91 	sub	a, #0x41
+      000032 FD 7E 01         [19]   92 	ld	a, 1 (iy)
+      000035 17               [ 4]   93 	rla
+      000036 3F               [ 4]   94 	ccf
+      000037 1F               [ 4]   95 	rra
+      000038 DE 80            [ 7]   96 	sbc	a, #0x80
+      00003A 38 12            [12]   97 	jr	C, 00103$
+      00003C 3E 5A            [ 7]   98 	ld	a, #0x5a
+      00003E FD BE 00         [19]   99 	cp	a, 0 (iy)
+      000041 3E 00            [ 7]  100 	ld	a, #0x00
+      000043 FD 9E 01         [19]  101 	sbc	a, 1 (iy)
+      000046 E2r4Br00         [10]  102 	jp	PO, 00123$
+      000049 EE 80            [ 7]  103 	xor	a, #0x80
+      00004B                        104 00123$:
+      00004B F2r52r00         [10]  105 	jp	P, 00104$
+      00004E                        106 00103$:
+      00004E 2E 00            [ 7]  107 	ld	l, #0x00
+                                    108 ;	spillPairReg hl
+                                    109 ;	spillPairReg hl
+      000050 18 02            [12]  110 	jr	00105$
+      000052                        111 00104$:
+      000052 2E 01            [ 7]  112 	ld	l, #0x01
+                                    113 ;	spillPairReg hl
+                                    114 ;	spillPairReg hl
+      000054                        115 00105$:
+      000054 26 00            [ 7]  116 	ld	h, #0x00
+                                    117 ;	spillPairReg hl
+                                    118 ;	spillPairReg hl
+                           000056   119 	C$ctype.c$19$1_0$21	= .
+                                    120 	.globl	C$ctype.c$19$1_0$21
+                                    121 ;ctype.c:19: }
+                           000056   122 	C$ctype.c$19$1_0$21	= .
+                                    123 	.globl	C$ctype.c$19$1_0$21
+                           000056   124 	XG$isalpha$0$0	= .
+                                    125 	.globl	XG$isalpha$0$0
+      000056 C9               [10]  126 	ret
+                           000057   127 	G$isspace$0$0	= .
+                                    128 	.globl	G$isspace$0$0
+                           000057   129 	C$ctype.c$21$1_0$23	= .
+                                    130 	.globl	C$ctype.c$21$1_0$23
+                                    131 ;ctype.c:21: bool isspace(int c)
+                                    132 ;	---------------------------------
+                                    133 ; Function isspace
+                                    134 ; ---------------------------------
+      000057                        135 _isspace::
+                           000057   136 	C$ctype.c$23$1_0$23	= .
+                                    137 	.globl	C$ctype.c$23$1_0$23
+                                    138 ;ctype.c:23: return c == ' ' || c == '\t'; // || whatever other char you consider space
+      000057 FD 21 02 00      [14]  139 	ld	iy, #2
+      00005B FD 39            [15]  140 	add	iy, sp
+      00005D FD 7E 00         [19]  141 	ld	a, 0 (iy)
+      000060 D6 20            [ 7]  142 	sub	a, #0x20
+      000062 FD B6 01         [19]  143 	or	a, 1 (iy)
+      000065 28 0C            [12]  144 	jr	Z, 00104$
+      000067 FD 7E 00         [19]  145 	ld	a, 0 (iy)
+      00006A D6 09            [ 7]  146 	sub	a, #0x09
+      00006C FD B6 01         [19]  147 	or	a, 1 (iy)
+                                    148 ;	spillPairReg hl
+                                    149 ;	spillPairReg hl
+                                    150 ;	spillPairReg hl
+                                    151 ;	spillPairReg hl
+      00006F 2E 00            [ 7]  152 	ld	l, #0x00
+      000071 20 02            [12]  153 	jr	NZ, 00105$
+      000073                        154 00104$:
+      000073 2E 01            [ 7]  155 	ld	l, #0x01
+      000075                        156 00105$:
+      000075 26 00            [ 7]  157 	ld	h, #0x00
+                                    158 ;	spillPairReg hl
+                                    159 ;	spillPairReg hl
+                           000077   160 	C$ctype.c$24$1_0$23	= .
+                                    161 	.globl	C$ctype.c$24$1_0$23
+                                    162 ;ctype.c:24: }
+                           000077   163 	C$ctype.c$24$1_0$23	= .
+                                    164 	.globl	C$ctype.c$24$1_0$23
+                           000077   165 	XG$isspace$0$0	= .
+                                    166 	.globl	XG$isspace$0$0
+      000077 C9               [10]  167 	ret
+                           000078   168 	G$ispunct$0$0	= .
+                                    169 	.globl	G$ispunct$0$0
+                           000078   170 	C$ctype.c$26$1_0$25	= .
+                                    171 	.globl	C$ctype.c$26$1_0$25
+                                    172 ;ctype.c:26: bool ispunct(int c)
+                                    173 ;	---------------------------------
+                                    174 ; Function ispunct
+                                    175 ; ---------------------------------
+      000078                        176 _ispunct::
+                           000078   177 	C$ctype.c$29$1_0$25	= .
+                                    178 	.globl	C$ctype.c$29$1_0$25
+                                    179 ;ctype.c:29: return strchr(punct, c) == NULL ? FALSE : TRUE; // you can make this shorter
+      000078 D1               [10]  180 	pop	de
+      000079 E1               [10]  181 	pop	hl
+      00007A E5               [11]  182 	push	hl
+      00007B D5               [11]  183 	push	de
+      00007C E5               [11]  184 	push	hl
+      00007D 2Ar00r00         [16]  185 	ld	hl, (_ispunct_punct_65536_25)
+      000080 E5               [11]  186 	push	hl
+      000081 CDr00r00         [17]  187 	call	_strchr
+      000084 F1               [10]  188 	pop	af
+      000085 F1               [10]  189 	pop	af
+      000086 7C               [ 4]  190 	ld	a, h
+      000087 B5               [ 4]  191 	or	a, l
+      000088 20 04            [12]  192 	jr	NZ, 00103$
+      00008A 21 00 00         [10]  193 	ld	hl, #0x0000
+      00008D C9               [10]  194 	ret
+      00008E                        195 00103$:
+      00008E 21 01 00         [10]  196 	ld	hl, #0x0001
+                           000091   197 	C$ctype.c$30$1_0$25	= .
+                                    198 	.globl	C$ctype.c$30$1_0$25
+                                    199 ;ctype.c:30: }
+                           000091   200 	C$ctype.c$30$1_0$25	= .
+                                    201 	.globl	C$ctype.c$30$1_0$25
+                           000091   202 	XG$ispunct$0$0	= .
+                                    203 	.globl	XG$ispunct$0$0
+      000091 C9               [10]  204 	ret
+                           000092   205 Fctype$__str_0$0_0$0 == .
+      000092                        206 ___str_0:
+      000092 2E 3B 21 3F 2E 2E 2E   207 	.ascii ".;!?..."
+      000099 00                     208 	.db 0x00
+                           00009A   209 	G$tolower$0$0	= .
+                                    210 	.globl	G$tolower$0$0
+                           00009A   211 	C$ctype.c$32$1_0$27	= .
+                                    212 	.globl	C$ctype.c$32$1_0$27
+                                    213 ;ctype.c:32: int tolower(int c)
+                                    214 ;	---------------------------------
+                                    215 ; Function tolower
+                                    216 ; ---------------------------------
+      00009A                        217 _tolower::
+      00009A DD E5            [15]  218 	push	ix
+      00009C DD 21 00 00      [14]  219 	ld	ix,#0
+      0000A0 DD 39            [15]  220 	add	ix,sp
+                           0000A2   221 	C$ctype.c$34$1_0$27	= .
+                                    222 	.globl	C$ctype.c$34$1_0$27
+                                    223 ;ctype.c:34: if ( !isalpha(c) ) return c;
+      0000A2 DD 6E 04         [19]  224 	ld	l, 4 (ix)
+                                    225 ;	spillPairReg hl
+                                    226 ;	spillPairReg hl
+      0000A5 DD 66 05         [19]  227 	ld	h, 5 (ix)
+                                    228 ;	spillPairReg hl
+                                    229 ;	spillPairReg hl
+      0000A8 E5               [11]  230 	push	hl
+      0000A9 CDr00r00         [17]  231 	call	_isalpha
+      0000AC F1               [10]  232 	pop	af
+      0000AD 7C               [ 4]  233 	ld	a, h
+      0000AE B5               [ 4]  234 	or	a, l
+      0000AF 20 08            [12]  235 	jr	NZ, 00102$
+      0000B1 DD 6E 04         [19]  236 	ld	l, 4 (ix)
+                                    237 ;	spillPairReg hl
+                                    238 ;	spillPairReg hl
+      0000B4 DD 66 05         [19]  239 	ld	h, 5 (ix)
+                                    240 ;	spillPairReg hl
+                                    241 ;	spillPairReg hl
+      0000B7 18 33            [12]  242 	jr	00103$
+      0000B9                        243 00102$:
+                           0000B9   244 	C$ctype.c$35$1_0$27	= .
+                                    245 	.globl	C$ctype.c$35$1_0$27
+                                    246 ;ctype.c:35: return (c >= 'A' && c <= 'Z') ? c + 32 : c;
+      0000B9 DD 7E 04         [19]  247 	ld	a, 4 (ix)
+      0000BC D6 41            [ 7]  248 	sub	a, #0x41
+      0000BE DD 7E 05         [19]  249 	ld	a, 5 (ix)
+      0000C1 17               [ 4]  250 	rla
+      0000C2 3F               [ 4]  251 	ccf
+      0000C3 1F               [ 4]  252 	rra
+      0000C4 DE 80            [ 7]  253 	sbc	a, #0x80
+      0000C6 38 1E            [12]  254 	jr	C, 00105$
+      0000C8 3E 5A            [ 7]  255 	ld	a, #0x5a
+      0000CA DD BE 04         [19]  256 	cp	a, 4 (ix)
+      0000CD 3E 00            [ 7]  257 	ld	a, #0x00
+      0000CF DD 9E 05         [19]  258 	sbc	a, 5 (ix)
+      0000D2 E2rD7r00         [10]  259 	jp	PO, 00124$
+      0000D5 EE 80            [ 7]  260 	xor	a, #0x80
+      0000D7                        261 00124$:
+      0000D7 FArE6r00         [10]  262 	jp	M, 00105$
+      0000DA DD 6E 04         [19]  263 	ld	l, 4 (ix)
+      0000DD DD 66 05         [19]  264 	ld	h, 5 (ix)
+      0000E0 11 20 00         [10]  265 	ld	de, #0x0020
+      0000E3 19               [11]  266 	add	hl, de
+      0000E4 18 06            [12]  267 	jr	00106$
+      0000E6                        268 00105$:
+      0000E6 DD 6E 04         [19]  269 	ld	l, 4 (ix)
+                                    270 ;	spillPairReg hl
+                                    271 ;	spillPairReg hl
+      0000E9 DD 66 05         [19]  272 	ld	h, 5 (ix)
+                                    273 ;	spillPairReg hl
+                                    274 ;	spillPairReg hl
+      0000EC                        275 00106$:
+      0000EC                        276 00103$:
+                           0000EC   277 	C$ctype.c$36$1_0$27	= .
+                                    278 	.globl	C$ctype.c$36$1_0$27
+                                    279 ;ctype.c:36: }
+      0000EC DD E1            [14]  280 	pop	ix
+                           0000EE   281 	C$ctype.c$36$1_0$27	= .
+                                    282 	.globl	C$ctype.c$36$1_0$27
+                           0000EE   283 	XG$tolower$0$0	= .
+                                    284 	.globl	XG$tolower$0$0
+      0000EE C9               [10]  285 	ret
+                                    286 	.area _CODE
+                                    287 	.area _INITIALIZER
+                                    288 	.area _CABS (ABS)
