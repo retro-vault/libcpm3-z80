@@ -26,11 +26,12 @@ export AR			=	sdar
 export ARFLAGS		=	-rc
 
 # Subfolders for make.
-SUBDIRS = src
+SUBDIRS 			=	src
+SUBMODULES 			= 	lib/libsdcc-z80
 
 # Rules.
 .PHONY: all
-all:	$(BUILD_DIR) $(SUBDIRS)
+all:	$(BUILD_DIR) $(SUBMODULES) $(SUBDIRS)
 	cp $(BUILD_DIR)/*.lib $(BIN_DIR)
 
 .PHONY: $(BUILD_DIR)
@@ -45,6 +46,11 @@ $(BUILD_DIR):
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
 	$(MAKE) -C $@
+
+.PHONY: $(SUBMODULES)
+$(SUBMODULES):
+	# Pass current build and bin directories.
+	$(MAKE) -C $@ BUILD_DIR=$(BUILD_DIR) BIN_DIR=$(BIN_DIR)
 	
 .PHONY: clean
 clean:

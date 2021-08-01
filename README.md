@@ -28,10 +28,64 @@ You need to link all three with your CP/M program.
 
 # Compiling my program
 
+Create a sample program `hello.c`.
+
+~~~cpp
+#include <stdio.h>
+
+void main(int argc, char *argv[]) {
+    if (argc==2)
+        printf("Hello %s!\n",argv[1]);
+    else
+        printf("Hello world!\n");
+}
+~~~
+
+Set the `LC3DIR` variable to point to your **libcpm3-z80** rot directory, or simmply replace it in following commands.
+
+Compile your program.
+
+~~~
+sdcc -o hello.rel \
+    -c --std-c11 -mz80 --debug \
+    --nostdinc --no-std-crt0 --nostdinc --nostdlib \
+    -I$(LC3DIR)/include \
+    hello.c
+~~~
+
+Link it to address `0x100`.
+
+~~~
+sdcc -o hello.ihx \
+    -mz80 -Wl -y --code-loc 0x100 --data-loc 0x200 \
+    --no-std-crt0 --nostdinc --nostdlib \
+    -L$(LC3DIR)/bin -llibsdcc-z80 -llibcpm3-z80 \
+    crt0cpm-z80.rel hello.rel
+~~~
+
+And, finally, create a *CP/M* `hello.com` file.
+
+~~~
+
+~~~
+
 # Advanced libcpm3-z80 features
 
-The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement most features. But some are not covered by the *BDOS*. An example is reading and writing system time. The library still implements almost complete `time.h`. If you provide your own platform dependant functions you will unlock full features of the **libcpm3-z80**.
+The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement most features. But some are not covered by the *BDOS*. An example is reading and writing system time. The library still implements almost complete `time.h`. By providing your own platform dependant functions you can unlock full features of the **libcpm3-z80**.
+
+To compile the platform dependant library add your platform name to the arguments. 
+
+~~~
+make PLATFORM=iskra-delta-partner
+~~~
+
+The name can be anything since the source code just checks if the variable `PLATFORM` is not zero. The system will then ignore the existing basic *(proxy!)* platform dependant code and expect that the missing functions are found at link time in another library or object file.
+
+ > If platform dependant functions are not linked with your file 
+ > the *unresolved external* error will be thrown for each undefined 
+ > function.
 
 ## Platform dependant functions
 
-# Implementation scope
+# What is implemented?
+

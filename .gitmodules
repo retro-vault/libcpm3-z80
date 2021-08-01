@@ -1,0 +1,3 @@
+[submodule "lib/libsdcc-z80"]
+	path = lib/libsdcc-z80
+	url = https://github.com/tstih/libsdcc-z80.git
