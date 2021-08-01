@@ -7,3 +7,31 @@ only known to god and a few earthlings.
 
 **libcpm3-z80** is an attempt to provide a library, written in purest C, with a clear separation of platform independent and platform dependent code. To port it to your architecture you need to provide a handful of well documented platform specific functions that the standard requires and are not available in CP/M's BDOS.
 
+# Compiling the libcpm3-z80
+
+You need a Linux with the **latest** version of SDCC development tools intalled.
+
+Then get the repository by executing 
+
+`git clone https://github.com/tstih/libcpm3-z80.git --recurse-submodules`
+
+This will download **libcpm3-z80** and submodule [libsdcc-z80](https://github.com/tstih/libsdcc-z80). 
+
+After that you can compile a basic version of **libcpm3-z80** by issuing a `make` command in root folder.
+
+Make will produce three files in the `bin` folder.
+ * `crt0cpm3-z80.rel` This is the C runtime start-up file.
+ * `libcpm3-z80.lib` This is the CP/M 3 standard C library.
+ * `libsdcc-z80.lib` This is the SDCC bare metal library.
+
+You need to link all three with your CP/M program.
+
+# Compiling my program
+
+# Advanced libcpm3-z80 features
+
+The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement most features. But some are not covered by the *BDOS*. An example is reading and writing system time. The library still implements almost complete `time.h`. If you provide your own platform dependant functions you will unlock full features of the **libcpm3-z80**.
+
+## Platform dependant functions
+
+# Implementation scope
