@@ -72,7 +72,7 @@ extern int printf(char *fmt, ...);
 extern int sprintf(char *buf, char *fmt, ...);
 
 /* Prints a char. */
-extern void putchar(int c);
+extern int putchar(int c);
 
 /* Reads a char (blocks). */
 extern int getchar(void);

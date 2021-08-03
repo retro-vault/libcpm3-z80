@@ -17,10 +17,13 @@ TARGET = libcpm3-z80
 
 # Rules.
 .PHONY: all
-all:	$(BUILD_DIR)/$(TARGET).lib
+all:	$(BUILD_DIR)/$(TARGET).lib $(BUILD_DIR)/$(CRT0).rel
 
 $(BUILD_DIR)/$(TARGET).lib: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
+
+$(BUILD_DIR)/$(CRT0).rel: $(CRT0).s0
+	$(AS) $(ASFLAGS) $(BUILD_DIR)/$(@F) $<
 
 $(BUILD_DIR)/%.rel:	%.s
 	$(AS) $(ASFLAGS) $(BUILD_DIR)/$(@F) $<

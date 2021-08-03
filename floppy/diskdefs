@@ -1,0 +1,23 @@
+# Directory index is 4096 bytes
+diskdef idpfdd
+  seclen 256
+  tracks 146
+  sectrk 18
+  blocksize 2048
+  maxdir 128
+  skew 0
+  boottrk 2
+  os 3
+end
+
+# Directory index is 32768  bytes
+diskdef idphdd
+  seclen 256
+  tracks 1224
+  sectrk 32
+  blocksize 4096 
+  maxdir 1024
+  skew 0
+  boottrk 1
+  os 3
+end

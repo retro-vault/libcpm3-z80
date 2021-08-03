@@ -1,0 +1,79 @@
+		;; crt0cpm.s
+		;; cp/m app startup code
+		;;
+		;; tomaz stih, fri mar 26 2021
+		.module crt0cpm
+
+       	.globl  _main
+        .globl  __heap
+        .globl  __stdlib_init
+
+
+		.area 	_CODE
+start:
+        ;; define a stack   
+        ld      sp,#stack
+
+        ;; SDCC init global variables
+        ;; no need to copy data seg. in this scenario
+        call    gsinit
+
+        ;; load argc and argv to stack for the main function
+        ld      hl, #argv
+        push    hl
+        ld      hl, (#argc)
+        push    hl
+
+        ;; call the main
+	    call    _main
+
+        ;; BDOS exit (reset) return control to CP/M.
+        ld      c,#0
+	    jp      5
+
+		;; Ordering of segments for the linker (after header)
+		.area 	_CODE
+        .area   _GSINIT
+        .area   _GSFINAL	
+        .area   _HOME
+        .area   _INITIALIZER
+        .area   _INITFINAL
+        .area   _INITIALIZED
+        .area   _DATA
+        .area   _BSS
+        .area   _HEAP
+
+
+        ;; init code for functions/var.
+        .area   _GSINIT
+gsinit::      
+        ;; copy statics.
+        ld      bc, #l__INITIALIZER
+        ld      a, b
+        or      a, c
+        jr      Z, gsinit_done
+        ld      de, #s__INITIALIZED
+        ld      hl, #s__INITIALIZER
+        ldir
+gsinit_done:
+        ;; and call initialize function of standard library
+        call    __stdlib_init
+
+        .area   _GSFINAL
+        ret
+
+
+        .area   _DATA
+argc:
+        .dw     1                       ; default argc is 1 (filename!)
+argv:
+        .ds     16                      ; max 8 argv arguments
+
+
+        .area	_STACK
+	    .ds	    1024
+stack:
+
+
+        .area   _HEAP
+__heap::                                ; start of our heap.

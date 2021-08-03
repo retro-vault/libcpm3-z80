@@ -15,7 +15,21 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <util/bdos.h>
 #include <util/print.h>
+
+int putchar(int c) {
+    bdos_call_t cwrite = { C_WRITE, { (uint16_t)c } };
+    _bdos(&cwrite);
+    return c;
+}
+
+int puts(const char *s)
+{
+   int i = 0;
+   while(s[i]) putchar(s[i++]);
+   return 1;
+}
 
 int printf(char *fmt, ...)
 {

@@ -12,7 +12,7 @@ K := $(foreach exec,$(REQUIRED),\
 export PLATFORM 	=	0
 
 # Global settings: folders.
-ROOT = $(realpath .)
+export ROOT			=	$(realpath .)
 export BUILD_DIR	=	$(ROOT)/build
 export BIN_DIR		=	$(ROOT)/bin
 export INC_DIR		=	$(ROOT)/include
@@ -25,6 +25,9 @@ export ASFLAGS		=	-xlos -g
 export AR			=	sdar
 export ARFLAGS		=	-rc
 
+# crt0.s
+export CRT0			=	crt0cpm3-z80
+
 # Subfolders for make.
 SUBDIRS 			=	src
 SUBMODULES 			= 	lib/libsdcc-z80
@@ -33,6 +36,7 @@ SUBMODULES 			= 	lib/libsdcc-z80
 .PHONY: all
 all:	$(BUILD_DIR) $(SUBMODULES) $(SUBDIRS)
 	cp $(BUILD_DIR)/*.lib $(BIN_DIR)
+	cp $(BUILD_DIR)/$(CRT0).rel $(BIN_DIR)
 
 .PHONY: $(BUILD_DIR)
 $(BUILD_DIR):
@@ -55,3 +59,11 @@ $(SUBMODULES):
 .PHONY: clean
 clean:
 	rm -f -r $(BUILD_DIR)
+
+.PHONY: install
+install:
+	cp $(ROOT)/floppy/diskdefs .
+	mkfs.cpm -f idpfdd -t $(BUILD_DIR)/fddb.img
+	cpmcp -f idpfdd $(BUILD_DIR)/fddb.img $(BIN_DIR)/hello.com 0:hello.com
+	cp $(BUILD_DIR)/fddb.img $(BIN_DIR)/fddb.img
+	rm diskdefs
