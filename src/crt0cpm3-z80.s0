@@ -6,6 +6,8 @@
 
        	.globl  _main
         .globl  __heap
+        .globl  __argv
+        .globl  __argc
         .globl  __stdlib_init
 
 
@@ -19,9 +21,9 @@ start:
         call    gsinit
 
         ;; load argc and argv to stack for the main function
-        ld      hl, #argv
+        ld      hl, #__argv
         push    hl
-        ld      hl, (#argc)
+        ld      hl, (__argc)
         push    hl
 
         ;; call the main
@@ -64,10 +66,10 @@ gsinit_done:
 
 
         .area   _DATA
-argc:
-        .dw     1                       ; default argc is 1 (filename!)
-argv:
-        .ds     16                      ; max 8 argv arguments
+__argc::
+        .dw 1                           ; default argc is 1 (filename!)
+__argv::
+        .ds 16                          ; max 8 argv arguments
 
 
         .area	_STACK

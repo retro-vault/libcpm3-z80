@@ -1,5 +1,5 @@
 XL3
-H B areas 8 global symbols
+H B areas A global symbols
 M crt0cpm
 S _main Ref000000
 S __stdlib_init Ref000000
@@ -16,6 +16,8 @@ A _INITIALIZER size 0 flags 0 addr 0
 A _INITFINAL size 0 flags 0 addr 0
 A _INITIALIZED size 0 flags 0 addr 0
 A _DATA size 12 flags 0 addr 0
+S __argc Def000000
+S __argv Def000002
 A _BSS size 0 flags 0 addr 0
 A _HEAP size 0 flags 0 addr 0
 S __heap Def000000

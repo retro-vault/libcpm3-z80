@@ -9,9 +9,14 @@
  * 03.08.2012   tstih
  *
  */
+#include <util/cmdline.h>
 #include <util/mem.h>
 
 void _stdlib_init() {
-    /* ininitalize memory */
+
+    /* initialize comamnd line args */
+    _init_cmdline();
+
+    /* ininitalize memory management */
     _memory_init();
 }
