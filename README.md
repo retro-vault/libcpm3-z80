@@ -486,6 +486,9 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 | fcntl.h    | open, creat, fcntl                |
 | stdlib.h   | libplatform, libinit              |
 
+# To Do
+
+File functions from `stdio.h` are not working yet!
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
 [language.badge]: https://img.shields.io/badge/language-C-blue.svg
