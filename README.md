@@ -30,46 +30,7 @@ You need to link all three with your CP/M program.
 
 # Compiling my program
 
-Create a sample program `hello.c`.
-
-~~~cpp
-#include <stdio.h>
-
-void main(int argc, char *argv[]) {
-    if (argc==2)
-        printf("Hello %s!\n",argv[1]);
-    else
-        printf("Hello world!\n");
-}
-~~~
-
-Set the `LC3DIR` variable to point to your **libcpm3-z80** rot directory, or simmply replace it in following commands.
-
-Compile your program.
-
-~~~
-sdcc -o hello.rel \
-    -c --std-c11 -mz80 --debug \
-    --nostdinc --no-std-crt0 --nostdinc --nostdlib \
-    -I$(LC3DIR)/include \
-    hello.c
-~~~
-
-Link it to address `0x100`.
-
-~~~
-sdcc -o hello.ihx \
-    -mz80 -Wl -y --code-loc 0x100 --data-loc 0x200 \
-    --no-std-crt0 --nostdinc --nostdlib \
-    -L$(LC3DIR)/bin -llibsdcc-z80 -llibcpm3-z80 \
-    crt0cpm-z80.rel hello.rel
-~~~
-
-And, finally, create a *CP/M* `hello.com` file.
-
-~~~
-to do
-~~~
+Check the `Makefile` in the `hello` sample folder.
 
 # Advanced libcpm3-z80 features
 
