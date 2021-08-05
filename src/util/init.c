@@ -13,10 +13,12 @@
 #include <util/mem.h>
 
 void _stdlib_init() {
-
     /* initialize comamnd line args */
     _init_cmdline();
 
     /* ininitalize memory management */
     _memory_init();
+
+    /* Finalize initialization, call the hook*/
+    libinit();
 }

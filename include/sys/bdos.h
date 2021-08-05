@@ -1,5 +1,5 @@
 /*
- * bdos.h
+ * sys/bdos.h
  *
  * bdos calls for cp/m
  * 
@@ -34,8 +34,8 @@
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
 
-/* BDOS function codes
- * See here: http://www.seasip.demon.co.uk/Cpm/bdos.html 
+/* CP/M 3 BDOS function codes
+ * See here: https://www.seasip.info/Cpm/bdos.html
  */
 #define P_TERMCPM   0
 #define C_READ      1
@@ -45,19 +45,17 @@
 #define L_WRITE     5
 #define C_RAWIO     6
 
-/* BDOS call parameters */
-typedef struct bdos_call_s {
-	uint8_t func8;
-	uint16_t  parm16;
-} bdos_call_t;
+/* BDOS return code */
+typedef struct bdos_ret_s {
+    uint8_t reta;                       /* return code in reg A */
+    uint8_t retb;                       /* return code in reg B */
+    uint16_t rethl;                     /* return code in HL */
+} bdos_ret_t;
 
-/* call bdos, ignore result */
-extern uint8_t _bdos(bdos_call_t *p);
+/* call bdos, return register A */
+extern uint8_t bdos(uint8_t fn, uint16_t param);
 
-/* call bods, return results to ret_ba and ret_hl */
-extern uint8_t _bdosex
-    (bdos_call_t *p, 
-    uint16_t* ret_ba, 
-    uint16_t *ret_hl);
+/* call bdos, return results */
+extern bdos_ret_t *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p);
 
 #endif /* __BDOS_H__ */

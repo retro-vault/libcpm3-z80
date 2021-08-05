@@ -78,16 +78,40 @@ The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement
 To compile the platform dependant library add your platform name to the arguments. 
 
 ~~~
-make PLATFORM=iskra-delta-partner
+make PLATFORM=partner
 ~~~
 
-The name can be anything since the source code just checks if the variable `PLATFORM` is not zero. The system will then ignore the existing basic *(proxy!)* platform dependant code and expect that the missing functions are found at link time in another library or object file.
+The system will then ignore the existing basic *(proxy!)* platform dependant code and expect that the missing functions are found at link time in another library or object file.
 
  > If platform dependant functions are not linked with your file 
  > the *unresolved external* error will be thrown for each undefined 
  > function.
 
 ## Platform dependant functions
+
+Following functions are defined by the standard library and an empty implementation is provided if you don't set the `PLATFORM`.
+
+You should provide implementations for these functions.
+
+~~~cpp
+/* Non standard function to get system date and time.
+   Declared in: time.h */
+extern int gettimeofday(struct timeval *tp, void *tzp);
+
+/* Non standard function to set system date and time 
+   Declared in: time.h*/
+extern int settimeofday(const struct timeval *tp, const struct timezone *tzp);
+
+/* Sleep in milliseconds
+   Declared in: unistd.h */
+extern void msleep(int millisec);
+
+/* Called just after the libcpm3-z80 library initializes!
+   Implement this to initialize your own libraries at the same time.
+   Declared in: stdlib.h */
+extern void libinit();
+~~~
+
 
 # What is implemented?
 
@@ -272,6 +296,11 @@ extern int getchar(void);
 #define NULL 0
 #endif /* NULL */
 
+/* Non standard extension, the name of the platform on
+   which library was build i.e. z80-none or z80-partner.
+   This is changed when adding PLATFORM=name to make call. */
+extern char *libplatform;
+
 /* Exit application. */
 extern void exit(int status);
 
@@ -301,6 +330,13 @@ extern void *calloc (size_t num, size_t size);
 
 /* Free allocated memory block. */
 extern void free(void *ptr);
+
+/* Quick sort */
+extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void*));
+
+/* Non standard extension, this is a hook, called just
+   after intialization of the Standard library */
+extern void libinit();
 ~~~
 </details>  
 
@@ -392,6 +428,18 @@ struct tm {
     int tm_isdst;
 };
 
+/* non standard for settimeofday and gettimeofday functions */
+struct timeval { 
+    time_t tv_sec;                      /* seconds since Jan. 1, 1970 */ 
+    int tv_msec;                        /* and milliseconds */ 
+}; 
+
+/* non standard for settimeofday and gettimeofday functions */
+struct timezone { 
+    int tz_minuteswest;                 /* of Greenwich */
+    int tz_dsttime;                     /* type of dst correction to apply */
+};
+
 /* Converts given calendar time tm to a textual representation of 
 the following fixed 25-character form: Www Mmm dd hh:mm:ss yyyy. */
 extern char* asctime(const struct tm* time_ptr);
@@ -416,8 +464,27 @@ extern time_t mktime(struct tm *tme);
 	
 /* Get current time. */
 extern time_t time(time_t *arg);
+
+/* Non standard function to get system date and time. */
+extern int gettimeofday(struct timeval *tp, void *tzp);
+
+/* Non standard function to set system date and time */
+extern int settimeofday(const struct timeval *tp, const struct timezone *tzp);
+
 ~~~
 </details>  
+
+# Non-standard extensions
+
+Following functions and variables in *libcpm3-z80* are not part of the *Standard C library*.
+
+| Header     | Function                          |
+|------------|-----------------------------------| 
+| sys/bdos.h | bdos, bdosret                     |
+| time.h     | gettimeofday, settimeofday        |
+| unistd.h   | msleep, lseek, close, read, write |
+| fcntl.h    | open, creat, fcntl                |
+| stdlib.h   | libplatform, libinit              |
 
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C

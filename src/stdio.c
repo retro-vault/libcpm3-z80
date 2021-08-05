@@ -15,12 +15,12 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <util/bdos.h>
 #include <util/print.h>
 
+#include <sys/bdos.h>
+
 int putchar(int c) {
-    bdos_call_t cwrite = { C_WRITE, { (uint16_t)c } };
-    _bdos(&cwrite);
+    bdos(C_WRITE,c);
     return c;
 }
 

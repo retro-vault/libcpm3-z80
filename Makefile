@@ -8,8 +8,8 @@ REQUIRED = sdcc sdar sdasz80
 K := $(foreach exec,$(REQUIRED),\
     $(if $(shell which $(exec)),,$(error "$(exec) not found. Please install or add to path.")))
 
-# Default platform.
-export PLATFORM 	=	0
+# Default platform is no platform.
+export PLATFORM 	=	
 
 # Global settings: folders.
 export ROOT			=	$(realpath .)

@@ -15,16 +15,17 @@
  * 28.04.2021   tstih
  *
  */
-#include <util/bdos.h>
-#include <util/mem.h>
 #include <ctype.h>
+
+#include <util/mem.h>
+
+#include <sys/bdos.h>
 
 void exit(int status)
 {
     status; 
     /* Unfortunately, the status is lost in CP/M. */
-    bdos_call_t bdc = { P_TERMCPM, { (uint16_t)0 } };
-    _bdos(&bdc);
+    bdos(P_TERMCPM,0);
 }
 
 int abs(int i)

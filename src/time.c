@@ -18,8 +18,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <util/platform.h>
-
 /* Partner ports */
 #define THOUS_S 0xa0
 #define HUNDR_S 0xa1
@@ -113,15 +111,16 @@ char* asctime(const struct tm* pt) {
     return &(_at[0]); /* return ptr to internal buffer (unsafe, I know) */
 }
 
-/* Return current clock in ticks */
+/* Return current clock in ticks 
+   NOTE: Assume date is always >= 1.1.2021 */
+#define TV_SEC_20210101 1609459200      /* 1.1.2021 00:00:00 */
 clock_t clock(void) {
-        uint8_t y,m,d,ho,mi,se,cl;
-        get_time(&y, &m, &d, &ho, &mi, &se, &cl);
-        return
-            (cl) + 
-            (se*CLOCKS_PER_SEC) +
-            (mi*60L*CLOCKS_PER_SEC) +
-            (ho*60L*60L*CLOCKS_PER_SEC);  
+    /* Read clock from platform */
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+    /* milli second plus seconds from 1.1.2021 */
+    return (tv.tv_sec - TV_SEC_20210101) * CLOCKS_PER_SEC + tv.tv_msec;
 }
 
 /* Convert current time to textual representation using the following
@@ -136,7 +135,6 @@ long difftime(time_t time_end,time_t time_beg) {
 }
 
 /* Get Greenwich mean time (politically correct: UTC) */
-#undef DEBUG
 struct tm *gmtime(const time_t *timer) {
 
     time_t time=*timer;
@@ -209,30 +207,15 @@ time_t mktime(struct tm *ptim) {
 /* Get current time. */
 time_t time(time_t *arg) {
 
-    /* init... */
-    struct tm tim;
-
     /* Read clock from platform */
-    uint8_t y,m,d,ho,mi,se,cl;
-    get_time(&y, &m, &d, &ho, &mi, &se, &cl);
-
-    /* populate */
-    tim.tm_sec=se;
-    tim.tm_min=mi;
-    tim.tm_hour=ho;
-    tim.tm_mday=d;
-    tim.tm_mon=m-1; /* Normalize */      
-    
-    if (y<70) y+=100;
-    tim.tm_year=y;
-
-    /* convert */
-    time_t t = mktime(&tim);
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
 
     /* copy to arg if not NULL? */
     if (arg!=NULL)
-        *arg=t;
+        *arg=tv.tv_sec;
 
     /* and return it */
-    return t;
+    return tv.tv_sec;
 }

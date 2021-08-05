@@ -53,6 +53,18 @@ struct tm {
     int tm_isdst;
 };
 
+/* non standard for settimeofday and gettimeofday functions */
+struct timeval { 
+    time_t tv_sec;                      /* seconds since Jan. 1, 1970 */ 
+    int tv_msec;                        /* and milliseconds */ 
+}; 
+
+/* non standard for settimeofday and gettimeofday functions */
+struct timezone { 
+    int tz_minuteswest;                 /* of Greenwich */
+    int tz_dsttime;                     /* type of dst correction to apply */
+};
+
 /* Converts given calendar time tm to a textual representation of 
 the following fixed 25-character form: Www Mmm dd hh:mm:ss yyyy. */
 extern char* asctime(const struct tm* time_ptr);
@@ -78,7 +90,10 @@ extern time_t mktime(struct tm *tme);
 /* Get current time. */
 extern time_t time(time_t *arg);
 
-/* Non standard function to set system time. */
-extern void setdatetime(struct tm *tme);
+/* Non standard function to get system date and time. */
+extern int gettimeofday(struct timeval *tv, struct timezone *tz);
+
+/* Non standard function to set system date and time */
+extern int settimeofday(const struct timeval *tv, const struct timezone *tz);
 
 #endif /* __TIME_H__ */

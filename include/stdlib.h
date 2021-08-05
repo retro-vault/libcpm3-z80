@@ -19,6 +19,11 @@
 #define NULL 0
 #endif /* NULL */
 
+/* Non standard extension, the name of the platform on
+   which library was build i.e. z80-none or z80-partner.
+   This is changed when adding PLATFORM=name to make call. */
+extern char *libplatform;
+
 /* Exit application. */
 extern void exit(int status);
 
@@ -51,5 +56,9 @@ extern void free(void *ptr);
 
 /* Quick sort */
 extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void*));
+
+/* Non standard extension, this is a hook, called just
+   after intialization of the Standard library */
+extern void libinit();
 
 #endif /* __STDLIB_H__ */
