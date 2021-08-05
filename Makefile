@@ -59,11 +59,3 @@ $(SUBMODULES):
 .PHONY: clean
 clean:
 	rm -f -r $(BUILD_DIR)
-
-.PHONY: install
-install:
-	cp $(ROOT)/floppy/diskdefs .
-	mkfs.cpm -f idpfdd -t $(BUILD_DIR)/fddb.img
-	cpmcp -f idpfdd $(BUILD_DIR)/fddb.img $(BIN_DIR)/hello.com 0:hello.com
-	cp $(BUILD_DIR)/fddb.img $(BIN_DIR)/fddb.img
-	rm diskdefs
