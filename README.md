@@ -1,25 +1,40 @@
 ![status.badge] [![language.badge]][language.url] [![standard.badge]][standard.url] [![license.badge]][license.url]
 
-# libcpm3-z80
+# Standard C library for CP/M 3 Z80
+
+## Table of content
+
+- [Introduction](#introduction)
+- [Compiling the libcpm3-z80](#compiling-the-libcpm3-z80)
+- [Compiling your CP/M program](#compiling-your-cpm-program)
+- [Advanced libcpm3-z80 features](#advanced-libcpm3-z80-features)
+  * [Platform dependant functions](#platform-dependant-functions)
+      + [Injecting your platform dependant functions](#injecting-your-platform-dependant-functions)
+- [What is implemented?](#what-is-implemented-)
+    * [Non-standard extensions](#non-standard-extensions)
+- [To Do](#to-do)
+
+## Introduction
 
 **libcpm3-z80** is a **portable**, **readable**, and **minimal** [ISO/IEC 9899:TC2](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf) *Standard C Library* for Digital Research's CP/M 3.
 
 Implementing a standard library shouldn't be a daunting task. Unless the library immoderately aspires to target all architectures and all compilers by using sophisticated preprocessor directives and tricks, 
 only known to god and a few earthlings.
 
-**libcpm3-z80** is an attempt to provide a library, written in purest C, with a clear separation of platform independent and platform dependent code. To port it to your architecture you need to provide a handful of well documented platform specific functions that the standard requires and are not available in CP/M's BDOS.
+**libcpm3-z80** is an attempt to provide a library, written in purest *C*, with a clear separation of platform independent and platform dependent code. To port it to your architecture you need to provide a handful of well documented platform specific functions that the standard requires and are not available in *CP/M*'s *BDOS*.
 
-# Compiling the libcpm3-z80
 
-You need a Linux with the **latest** version of SDCC development tools intalled.
+## Compiling the libcpm3-z80
+
+You need a Linux with the **latest** version of *SDCC* development tools intalled.
 
 Then get the repository by executing 
 
 `git clone https://github.com/tstih/libcpm3-z80.git --recurse-submodules`
 
-This will download **libcpm3-z80** and submodule [libsdcc-z80](https://github.com/tstih/libsdcc-z80). 
+This will download *libcpm3-z80* and submodule [libsdcc-z80](https://github.com/tstih/libsdcc-z80). 
 
-After that you can compile a basic version of **libcpm3-z80** by issuing a `make` command in root folder.
+After that you can compile a basic version of *libcpm3-z80* by issuing a `make` command in root folder.
 
 Make will produce three files in the `bin` folder.
  * `crt0cpm3-z80.rel` This is the C runtime start-up file.
@@ -28,13 +43,13 @@ Make will produce three files in the `bin` folder.
 
 You need to link all three with your CP/M program.
 
-# Compiling my program
+## Compiling your CP/M program
 
 Check the `Makefile` in the `hello` sample folder.
 
-# Advanced libcpm3-z80 features
+## Advanced libcpm3-z80 features
 
-The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement most features. But some are not covered by the *BDOS*. An example is reading and writing system time. The library still implements almost complete `time.h`. By providing your own platform dependant functions you can unlock full features of the **libcpm3-z80**.
+The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement most features. But some are not covered by the *BDOS*. An example is reading and writing system time. The library still implements almost complete `time.h`. By providing your own platform dependant functions you can unlock full features of the *libcpm3-z80*.
 
 To compile the platform dependant library add your platform name to the arguments. 
 
@@ -42,26 +57,46 @@ To compile the platform dependant library add your platform name to the argument
 make PLATFORM=partner
 ~~~
 
+ > The value `partner` is an example, use the name of your
+ > platform instead. 
+ 
 The system will then ignore the existing basic *(proxy!)* platform dependant code and expect that the missing functions are found at link time in another library or object file.
 
- > If platform dependant functions are not linked with your file 
- > the *unresolved external* error will be thrown for each undefined 
- > function.
+ > If platform dependant functions are not linked with your program 
+ > the linker will not be able to resolve them and will throw errors.
 
-## Platform dependant functions
+### Platform dependant functions
 
-Following functions are defined by the standard library and an empty implementation is provided if you don't set the `PLATFORM`.
+The platform dependant functions are defined with empty bodies
+by the *libcpm3-z80*. If you compile a basic *libcpm3-z80* version
+you should not only avoid platform dependant functions, but also
+following standard C because they depend on platform dependant
+functions.
 
-You should provide implementations for these functions.
+
+| Header     | Platform dependant function       |
+|------------|-----------------------------------| 
+| time.h     | clock()                           |
+| time.h     | time()                            |
+
+
+#### Injecting your platform dependant functions
+
+If you compile with the `make PLATFORM=<name>` command then
+the empty functions are not compiled with the library. 
+
+You can provide implementations for these functions in another
+library or object file and link with your program. Here is a list
+of functions you need to provide.
 
 ~~~cpp
 /* Non standard function to get system date and time.
    Declared in: time.h */
-extern int gettimeofday(struct timeval *tp, void *tzp);
+extern int gettimeofday(struct timeval *tv);
 
 /* Non standard function to set system date and time 
    Declared in: time.h*/
-extern int settimeofday(const struct timeval *tp, const struct timezone *tzp);
+extern int settimeofday(const struct timeval *tv);
 
 /* Sleep in milliseconds
    Declared in: unistd.h */
@@ -73,8 +108,7 @@ extern void msleep(int millisec);
 extern void libinit();
 ~~~
 
-
-# What is implemented?
+## What is implemented?
 
 Click on the header name to see the scope of its implementation.
 
@@ -395,12 +429,6 @@ struct timeval {
     int tv_msec;                        /* and milliseconds */ 
 }; 
 
-/* non standard for settimeofday and gettimeofday functions */
-struct timezone { 
-    int tz_minuteswest;                 /* of Greenwich */
-    int tz_dsttime;                     /* type of dst correction to apply */
-};
-
 /* Converts given calendar time tm to a textual representation of 
 the following fixed 25-character form: Www Mmm dd hh:mm:ss yyyy. */
 extern char* asctime(const struct tm* time_ptr);
@@ -427,29 +455,44 @@ extern time_t mktime(struct tm *tme);
 extern time_t time(time_t *arg);
 
 /* Non standard function to get system date and time. */
-extern int gettimeofday(struct timeval *tp, void *tzp);
+extern int gettimeofday(struct timeval *tv);
 
 /* Non standard function to set system date and time */
-extern int settimeofday(const struct timeval *tp, const struct timezone *tzp);
+extern int settimeofday(const struct timeval *tv);
 
 ~~~
 </details>  
 
-# Non-standard extensions
+
+<details><summary>unistd.h/</summary>
+
+~~~cpp
+/* Non standard function to sleep (in milliseconds).
+   NOTE: The libcpm3-z80 only provides an empty proxy 
+   to this function. If you want to use it you need to
+   compile the libcpm3-z80 with the PLATFORM switch and
+   inject your own implementation.  */
+extern void msleep(int millisec);
+~~~
+</details>  
+
+
+### Non-standard extensions
 
 Following functions and variables in *libcpm3-z80* are not part of the *Standard C library*.
 
-| Header     | Function                          |
-|------------|-----------------------------------| 
-| sys/bdos.h | bdos, bdosret                     |
-| time.h     | gettimeofday, settimeofday        |
-| unistd.h   | msleep, lseek, close, read, write |
-| fcntl.h    | open, creat, fcntl                |
-| stdlib.h   | libplatform, libinit              |
+| Header     | Function                                   |
+|------------|--------------------------------------------| 
+| sys/bdos.h | bdos(), bdosret()                          |
+| time.h     | gettimeofday(), settimeofday()             |
+| unistd.h   | mslee(), lseek(), close(), read(), write() |
+| fcntl.h    | open(), creat(), fcntl()                   |
+| stdlib.h   | libplatform, libinit()                     |
 
-# To Do
+## To Do
 
-File functions from `stdio.h` are not working yet!
+The library is in beta test. The only remaining feature 
+in implementation are file functions from `stdio.h`. 
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
 [language.badge]: https://img.shields.io/badge/language-C-blue.svg

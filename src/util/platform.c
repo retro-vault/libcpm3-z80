@@ -30,19 +30,17 @@ void msleep(int millisec) {
 }
 
 /* Non standard function to set system date and time */
-int settimeofday(const struct timeval *tv, const struct timezone *tz) {
-    tv; tz;
+int settimeofday(const struct timeval *tv) {
+    tv;
     return 0;
 }
 
 /* Non standard function to get system date and time,
    return 1.1.2021, zone 0, daylight saving 0. */
 #define TV_SEC_20210101 1609459200      /* 1.1.2021 00:00:00 */
-int gettimeofday(struct timeval *tv, struct timezone *tz) {
+int gettimeofday(struct timeval *tv) {
     tv->tv_sec=TV_SEC_20210101;
-    tv->tv_msec=0;
-    tz->tz_minuteswest=0;
-    tz->tz_dsttime=0;
+    tv->tv_hsec=0;
     return 0;
 }
 

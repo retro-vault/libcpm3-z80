@@ -44,6 +44,10 @@ static int _mdays[2][12] = {
   {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
 
+/* Set by firsta call to clock(). Subsequent calls are delta to
+   this value. */
+static time_t _first_clk = 0;
+
 /* days in month */
 #define _dim(x,dfeb) ((x == 1) ? dfeb : mdays[x])
 /* days in year */
@@ -112,15 +116,17 @@ char* asctime(const struct tm* pt) {
 }
 
 /* Return current clock in ticks 
-   NOTE: Assume date is always >= 1.1.2021 */
-#define TV_SEC_20210101 1609459200      /* 1.1.2021 00:00:00 */
+   NOTE: Only works if CLOCKS_PER_SEC is in milliseconds! */
 clock_t clock(void) {
     /* Read clock from platform */
     struct timeval tv;
-    struct timezone tz;
-    gettimeofday(&tv, &tz);
-    /* milli second plus seconds from 1.1.2021 */
-    return (tv.tv_sec - TV_SEC_20210101) * CLOCKS_PER_SEC + tv.tv_msec;
+    gettimeofday(&tv);
+    if (_first_clk==0) {
+        _first_clk=tv.tv_sec;
+        return 0;
+    } else 
+        return (tv.tv_sec - _first_clk) * CLOCKS_PER_SEC 
+            + tv.tv_hsec * (CLOCKS_PER_SEC / 100);
 }
 
 /* Convert current time to textual representation using the following
@@ -209,8 +215,7 @@ time_t time(time_t *arg) {
 
     /* Read clock from platform */
     struct timeval tv;
-    struct timezone tz;
-    gettimeofday(&tv, &tz);
+    gettimeofday(&tv);
 
     /* copy to arg if not NULL? */
     if (arg!=NULL)
