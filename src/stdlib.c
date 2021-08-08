@@ -270,7 +270,7 @@ int splitpath(
     strcpy(ext,"   ");                  /* 3 ext */
 
     /* is filename empty? */
-    if (strlen(path)==0) return ENOENT;
+    if (strlen(path)==0) return -1;
 
     /* does it start with a digit?*/
     unsigned char i=0;
@@ -295,7 +295,7 @@ int splitpath(
     if (c==0) return 0;
 
     /* must be dot! */
-    if (c!='.') return ENOENT; 
+    if (c!='.') return -1; 
     else {
         i++;
         c=toupper(path[i])&0x7f; /* next char */
@@ -314,7 +314,7 @@ int splitpath(
     if (c==0) return 0;
 
     /* if not, then check for user area */
-    if (c!='[') return ENOENT;
+    if (c!='[') return -1;
     else {
         i++;
         c=toupper(path[i])&0x7f; /* next char */
@@ -329,7 +329,7 @@ int splitpath(
     /* prepare user */
     len=0; char u[3];
     /* must be digit */
-    if (!isdigit(c)) return ENOENT;
+    if (!isdigit(c)) return -1;
     else {
         u[len]=c;
         len++;i++;
@@ -346,10 +346,10 @@ int splitpath(
     u[len]=0;
     *user=atoi(u);
     /* user area must be in range */
-    if (*user<0 || *user>15) return ENOENT;
+    if (*user<0 || *user>15) return -1;
 
     /* must conclude with ] */
-    if (c!=']') return ENOENT;
+    if (c!=']') return -1;
     
     /* and that's it. ignore the rest! */
     return 0;   
