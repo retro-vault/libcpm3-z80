@@ -15,22 +15,38 @@
 
 bool isalpha(int c)
 {
-   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 bool isspace(int c)
 {
-   return c == ' ' || c == '\t'; // || whatever other char you consider space
+    return c == ' ' || c == '\t'; // || whatever other char you consider space
 }
 
 bool ispunct(int c)
 {
-   static const char *punct = ".;!?...";
-   return strchr(punct, c) == NULL ? FALSE : TRUE; // you can make this shorter
+    /* ...also CP/M 2 forbidden characters in files */
+    static const char *punct = "<>.,;:=?*[]%|()/\\";
+    return strchr(punct, c) == NULL ? FALSE : TRUE; // you can make this shorter
 }
 
 int tolower(int c)
 {
-   if ( !isalpha(c) ) return c;
-   return (c >= 'A' && c <= 'Z') ? c + 32 : c;
+    if (('A' <= c) && (c <= 'Z'))
+        return 'a' + (c - 'A');
+    else
+        return c;
+}
+
+int toupper(int c)
+{
+    if (('a' <= c) && (c <= 'z'))
+        return 'A' + (c - 'a');
+    else
+        return c;
+}
+
+bool isdigit(int c)
+{
+    return (c >= '0' && c <= '9');
 }

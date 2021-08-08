@@ -246,8 +246,14 @@ char *strerror(int en)
     return "Unknown error!";
 }
 
+void stoupper(char *s)
+{
+    for(; *s; s++)
+        *s=toupper(*s);
+}
 
-
-
-
-
+void stolower(char *s)
+{
+    for(; *s; s++)
+        *s=tolower(*s);
+}

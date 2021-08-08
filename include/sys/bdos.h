@@ -44,6 +44,8 @@
 #define A_WRITE     4
 #define L_WRITE     5
 #define C_RAWIO     6
+#define DRV_GET     25
+#define F_USERNUM   32
 
 /* BDOS return code */
 typedef struct bdos_ret_s {

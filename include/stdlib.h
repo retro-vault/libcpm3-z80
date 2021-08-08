@@ -61,4 +61,19 @@ extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const vo
    after intialization of the Standard library */
 extern void libinit();
 
+/* Non standard extension: path parser. 
+   Supported path formats are:
+   [<drive>:]filename.typ[[g]<user area>]
+   Returns 0 for success */
+#define MAX_DRIVE   1
+#define MAX_FNAME   8
+#define MAX_EXT     3
+extern int splitpath(
+   const char *path,
+   char *drive,
+   int *user,
+   char *fname,
+   char *ext
+);
+
 #endif /* __STDLIB_H__ */

@@ -124,8 +124,14 @@ extern bool isspace(int c);
 /* True if char is punctuation. */
 extern bool ispunct(int c);
 
+/* True if char is a digit */
+extern bool isdigit(int c);
+
 /* Returns char, converted to lowercase. */
 extern int tolower(int c);
+
+/* Return char converted to uppercase */
+extern int toupper(int c);
 ~~~
 </details>  
 
@@ -332,6 +338,20 @@ extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const vo
 /* Non standard extension, this is a hook, called just
    after intialization of the Standard library */
 extern void libinit();
+
+/* Non standard extension: path parser.
+   Supported path formats are:
+   [<drive>:]filename.typ[[g]<user area>] */
+#define MAX_DRIVE   1
+#define MAX_FNAME   8
+#define MAX_EXT     3
+extern void splitpath(
+   const char *path,
+   char *drive,
+   int *user,
+   char *fname,
+   char *ext
+);
 ~~~
 </details>  
 
@@ -388,6 +408,12 @@ extern char *strtok(char *s, const char *delim);
 
 /* Return text of the errnum system error. */
 extern char *strerror(int errnum);
+
+/* Non standard extension: stoupper */
+extern void stoupper(char *s);
+
+/* Non standard extension: stolower */
+extern void stolower(char *s);
 ~~~
 </details>  
 
@@ -487,7 +513,9 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 | time.h     | gettimeofday(), settimeofday()             |
 | unistd.h   | mslee(), lseek(), close(), read(), write() |
 | fcntl.h    | open(), creat(), fcntl()                   |
-| stdlib.h   | libplatform, libinit()                     |
+| stdlib.h   | libplatform, libinit(), splitpath()        |
+| string.h   | stoupper(), stolower()                     |
+
 
 ## To Do
 

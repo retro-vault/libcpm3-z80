@@ -65,4 +65,10 @@ extern char *strtok(char *s, const char *delim);
 /* Return text of the errnum system error. */
 extern char *strerror(int errnum);
 
+/* Non standard extension: stoupper */
+extern void stoupper(char *s);
+
+/* Non standard extension: stolower */
+extern void stolower(char *s);
+
 #endif /* __STRING_H__ */

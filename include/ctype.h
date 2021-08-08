@@ -26,4 +26,10 @@ extern bool ispunct(int c);
 /* Returns char, converted to lowercase. */
 extern int tolower(int c);
 
+/* Return char converted to uppercase */
+extern int toupper(int c);
+
+/* True if char is a digit */
+extern bool isdigit(int c);
+
 #endif /* __CTYPE_H__ */
