@@ -74,10 +74,11 @@ following standard C because they depend on platform dependant
 functions.
 
 
-| Header     | Platform dependant function       |
-|------------|-----------------------------------| 
-| time.h     | clock()                           |
-| time.h     | time()                            |
+| Header     | Platform dependant function    |
+|------------|--------------------------------| 
+| time.h     | clock()                        |
+| time.h     | time()                         |
+| stdarg.h   | argv[0]                        |
 
 
 #### Injecting your platform dependant functions
@@ -107,6 +108,16 @@ extern void msleep(int millisec);
    Declared in: stdlib.h */
 extern void libinit();
 ~~~
+
+There is also one platform dependant variable: `progname`, defined
+in `stdlib.h`. By default it is empty, but if you implement the
+`libinit()` and set it to name of your running program, then the
+`argv[0]` will be populated correctly. Otherwise the `argv[0]` 
+will be an empty string. Other arguments are picked up from the 
+program tail correctly.
+
+ > We just didn't know how to implement the `argv[0]` safely.
+ > If you do please send us a message via github **Issues**.
 
 ## What is implemented?
 
@@ -301,6 +312,10 @@ extern int getchar(void);
    which library was build i.e. z80-none or z80-partner.
    This is changed when adding PLATFORM=name to make call. */
 extern char *libplatform;
+
+/* Non standard extension: running program name.
+   Used by argv[0]. */
+extern char *progname;
 
 /* Exit application. */
 extern void exit(int status);
@@ -507,14 +522,14 @@ extern void msleep(int millisec);
 
 Following functions and variables in *libcpm3-z80* are not part of the *Standard C library*.
 
-| Header     | Function                                   |
-|------------|--------------------------------------------| 
-| sys/bdos.h | bdos(), bdosret()                          |
-| time.h     | gettimeofday(), settimeofday()             |
-| unistd.h   | mslee(), lseek(), close(), read(), write() |
-| fcntl.h    | open(), creat(), fcntl()                   |
-| stdlib.h   | libplatform, libinit(), splitpath()        |
-| string.h   | stoupper(), stolower()                     |
+| Header     | Function                                            |
+|------------|-----------------------------------------------------| 
+| sys/bdos.h | bdos(), bdosret()                                   |
+| time.h     | gettimeofday(), settimeofday()                      |
+| unistd.h   | mslee(), lseek(), close(), read(), write()          |
+| fcntl.h    | open(), creat(), fcntl()                            |
+| stdlib.h   | libplatform, progname, libinit(), splitpath()       |
+| string.h   | stoupper(), stolower()                              |
 
 
 ## To Do

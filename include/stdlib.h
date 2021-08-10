@@ -24,6 +24,10 @@
    This is changed when adding PLATFORM=name to make call. */
 extern char *libplatform;
 
+/* Non standard extension, running program name.
+   Used for argv[0]. */
+extern char *progname;
+
 /* Exit application. */
 extern void exit(int status);
 

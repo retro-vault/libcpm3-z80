@@ -19,6 +19,7 @@
    https://stackoverflow.com/questions/3781520/how-to-test-if-preprocessor-symbol-is-defined-but-has-no-value */
 #if !defined(PLATFORM) || (EXPAND(PLATFORM) == 1) 
 
+/* Identified platform */
 char *libplatform="z80-none";
 
 /* init hook */

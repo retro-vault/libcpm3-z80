@@ -11,14 +11,18 @@
  */
 #include <util/cmdline.h>
 #include <util/mem.h>
+#include <file/fd.h>
 
 void _stdlib_init() {
-    /* initialize comamnd line args */
+    /* Initialize comamnd line args. */
     _init_cmdline();
 
-    /* ininitalize memory management */
+    /* Ininitalize memory management. */
     _memory_init();
 
-    /* Finalize initialization, call the hook*/
+    /* Initialize file descriptors. */
+    _init_fds();
+
+    /* Finalize initialization, call the hook. */
     libinit();
 }

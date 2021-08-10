@@ -28,5 +28,6 @@
 #define LONG_MIN    -2147483648
 #define LONG_MAX    +2147483647
 #define ULONG_MAX   4294967295
+#define SSIZE_MAX   65535               /* Max bytes for file read */
 
 #endif /* __LIMITS_H__ */

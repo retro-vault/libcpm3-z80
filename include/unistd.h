@@ -13,6 +13,15 @@
 #ifndef __UNISTD_H__
 #define __UNISTD_H__
 
+#include <sys/types.h>
+#include <stddef.h>
+
+/* Posix read. */
+extern ssize_t read(int fd, void *buf, size_t count);
+
+/* Posix close. */
+extern int close(int fd);
+
 /* Non standard function to sleep (in milliseconds).
    NOTE: The libcpm3-z80 only provides an empty proxy 
    to this function. If you want to use it you need to

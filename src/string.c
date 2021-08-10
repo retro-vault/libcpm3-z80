@@ -220,9 +220,6 @@ char *strerror(int en)
     case EIO:
         return (const char *) "I/O error";
         break;
-    case E2BIG:
-        return (const char *) "Argument list too long";
-        break;
     case EBADF:
         return (const char *) "Bad file descriptor";
         break;
@@ -231,12 +228,6 @@ char *strerror(int en)
         break;
     case ENFILE:
         return (const char *) "File table overflow";
-        break;
-    case ENOTTY:
-        return (const char *) "Not a typewriter";
-        break;
-    case EPIPE:
-        return (const char *) "Transport endpoint not connected";
         break;
     case EAGAIN:
         return (const char *) "Try again";

@@ -37,15 +37,22 @@
 /* CP/M 3 BDOS function codes
  * See here: https://www.seasip.info/Cpm/bdos.html
  */
-#define P_TERMCPM   0
-#define C_READ      1
-#define C_WRITE     2
-#define A_READ      3
-#define A_WRITE     4
-#define L_WRITE     5
-#define C_RAWIO     6
-#define DRV_GET     25
-#define F_USERNUM   32
+#define P_TERMCPM       0
+#define C_READ          1
+#define C_WRITE         2
+#define A_READ          3
+#define A_WRITE         4
+#define L_WRITE         5
+#define C_RAWIO         6
+#define DRV_SET         14
+#define F_OPEN          15
+#define F_CLOSE         16  
+#define DRV_LOGINVEC    24
+#define DRV_GET         25
+#define DRV_DPB         31
+#define F_USERNUM       32
+#define SCB_GET         49
+#define P_CODE          108             /* program ret code */
 
 /* BDOS return code */
 typedef struct bdos_ret_s {

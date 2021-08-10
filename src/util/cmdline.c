@@ -39,7 +39,7 @@ void _init_cmdline() {
     /* first argv is filename, populated by crt0.s */
     uint16_t *argv_ptr = (uint16_t*)&_argv;
     memset((void *)argv_ptr, 0, 0x10);
-    argv_ptr[0]=NULL;
+    argv_ptr[0]=(uint16_t)NULL;
     argv_ptr++;    
     abytes=argptr[0];
     for (i = 1; i < (abytes+2 ); i++) {
