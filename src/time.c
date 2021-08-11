@@ -18,6 +18,11 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <util/leanmean.h>
+
+/* Exclude all for LEAN_AND_MEAN */
+#ifndef LEAN_AND_MEAN
+
 /* Partner ports */
 #define THOUS_S 0xa0
 #define HUNDR_S 0xa1
@@ -224,3 +229,5 @@ time_t time(time_t *arg) {
     /* and return it */
     return tv.tv_sec;
 }
+
+#endif /* LEAN_AND_MEAN */

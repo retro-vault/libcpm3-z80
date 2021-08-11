@@ -66,12 +66,20 @@ int _prints(char **out, const char *string, int width, int flags)
 	return pc;
 }
 
+#ifndef LEAN_AND_MEAN
 int _outputi(char **out, long long i, int base, int sign, int width, int flags, int letbase)
+#else
+int _outputi(char **out, int i, int base, int sign, int width, int flags, int letbase)
+#endif
 {
 	char print_buf[PRINT_BUF_LEN];
 	char *s;
 	int t, neg = 0, pc = 0;
+#ifndef LEAN_AND_MEAN
 	unsigned long long u = i;
+#else
+    unsigned int u = i;
+#endif
 
 	if (i == 0) {
 		print_buf[0] = '0';
@@ -119,15 +127,17 @@ int _vsprintf(char **out, char *format, va_list ap)
 		char *s;
 		int i;
 		unsigned int u;
-		long li;
-		unsigned long lu;
-		long long lli;
-		unsigned long long llu;
 		short hi;
 		unsigned short hu;
 		signed char hhi;
 		unsigned char hhu;
 		void *p;
+#ifndef LEAN_AND_MEAN
+		long li;
+		unsigned long lu;
+		long long lli;
+		unsigned long long llu;
+#endif
 	} u;
 
 	for (; *format != 0; ++format) {
@@ -188,6 +198,8 @@ int _vsprintf(char **out, char *format, va_list ap)
                     #pragma disable_warning 196
 					pc += _prints(out, u.s ? u.s : "(null)", width, flags);
 					break;
+
+#ifndef LEAN_AND_MEAN
 				case('l'):
 					++format;
 					switch (*format) {
@@ -249,7 +261,6 @@ int _vsprintf(char **out, char *format, va_list ap)
 							u.hi = va_arg(ap, int);
 							pc += _outputi(out, u.hi, 10, 1, width, flags, 'a');
 							break;
-
 						case('u'):
 							u.hu = va_arg(ap, unsigned int);
 							pc += _outputi(out, u.lli, 10, 0, width, flags, 'a');
@@ -264,7 +275,6 @@ int _vsprintf(char **out, char *format, va_list ap)
 							u.hu = va_arg(ap, unsigned int);
 							pc += _outputi(out, u.lli, 16, 0, width, flags, 'A');
 							break;
-
 						case('h'):
 							++format;
 							switch (*format) {
@@ -296,6 +306,8 @@ int _vsprintf(char **out, char *format, va_list ap)
 							break;
 					}
 					break;
+#endif /* LEAN_AND_MEAN */
+
 				default:
 					break;
 			}

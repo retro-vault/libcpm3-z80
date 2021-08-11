@@ -323,11 +323,11 @@ extern void exit(int status);
 /* String to long using base. */
 extern long strtol(char *nptr, char **endptr, int base);
 
-/* Covert ascii to integer. */
-extern int atoi(const char *str);
-
 /* Strin to unsigned long using base, */
 extern unsigned long int strtoul(const char *nptr, char **endptr, int base);
+
+/* Covert ascii to integer. */
+extern int atoi(const char *str);
 
 /* Absolute value. */
 extern int abs (int i);

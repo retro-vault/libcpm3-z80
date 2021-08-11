@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include <util/mem.h>
+#include <util/leanmean.h>
 
 #include <sys/bdos.h>
 
@@ -43,6 +44,8 @@ int atoi(const char *str)
     return res;
 }
 
+#ifndef LEAN_AND_MEAN
+
 static unsigned long _next = 1;
 
 int rand(void) /* RAND_MAX assumed to be 32767 */
@@ -51,10 +54,24 @@ int rand(void) /* RAND_MAX assumed to be 32767 */
     return (unsigned int)(_next / 65536) % 32768;
 }
 
+#else 
+
+static unsigned int _next = 1;
+
+int rand(void) /* RAND_MAX assumed to be 32767 */
+{
+    _next = _next * 753 + 22444;
+    return (unsigned int)(_next % 32768);
+}
+
+#endif /* LEAN_AND_MEAN */
+
 void srand(unsigned int seed)
 {
     _next = seed;
 }
+
+
 
 const static char _cvt_in[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,           /* '0' - '9' */
@@ -66,6 +83,9 @@ const static char _cvt_in[] = {
     10, 11, 12, 13, 14, 15, 16, 17, 18, 19, /* 'a' - 'z' */
     20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
     30, 31, 32, 33, 34, 35};
+
+
+#ifndef LEAN_AND_MEAN
 
 unsigned long strtoul(char *string, char **end_ptr, int base)
 {
@@ -202,6 +222,8 @@ long strtol(char *nptr, char **endptr, int base)
     }
     return result;
 }
+
+#endif /* LEAN_AND_MEAN */
 
 void *malloc(size_t size)
 {

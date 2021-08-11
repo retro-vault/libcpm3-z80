@@ -17,9 +17,12 @@ export BUILD_DIR	=	$(ROOT)/build
 export BIN_DIR		=	$(ROOT)/bin
 export INC_DIR		=	$(ROOT)/include
 
+# Build reduced version of libraries?
+export SLIM			=
+
 # Globa settings: tools.
 export CC			=	sdcc
-export CFLAGS		=	--std-c11 -mz80 -I. -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib --debug -D PLATFORM=$(PLATFORM)
+export CFLAGS		=	--std-c11 -mz80 -I. -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib --debug -D PLATFORM=$(PLATFORM) -D SLIM=$(SLIM)
 export AS			=	sdasz80
 export ASFLAGS		=	-xlos -g
 export AR			=	sdar

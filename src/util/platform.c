@@ -11,8 +11,7 @@
  */
 #include <time.h>
 
-#define _EXPAND(VAL)    VAL ## 1
-#define EXPAND(VAL)     _EXPAND(VAL)
+#include <util/leanmean.h>
 
 /* If platform is defined but has no value 
    I modified hack from here
@@ -30,6 +29,8 @@ void msleep(int millisec) {
     millisec;
 }
 
+#ifndef LEAN_AND_MEAN
+
 /* Non standard function to set system date and time */
 int settimeofday(const struct timeval *tv) {
     tv;
@@ -44,6 +45,8 @@ int gettimeofday(struct timeval *tv) {
     tv->tv_hsec=0;
     return 0;
 }
+
+#endif /* LEAN_AND_MEAN */
 
 #else
 

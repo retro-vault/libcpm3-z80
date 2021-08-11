@@ -13,6 +13,7 @@
 #define __PRINT_H__
 
 #include <stdarg.h>
+#include <util/leanmean.h>
 
 /*
  * Utility functions. 
