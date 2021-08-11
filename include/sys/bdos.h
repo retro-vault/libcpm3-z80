@@ -47,8 +47,10 @@
 #define DRV_SET         14
 #define F_OPEN          15
 #define F_CLOSE         16  
+#define F_READ          20
 #define DRV_LOGINVEC    24
 #define DRV_GET         25
+#define F_DMAOFF        26
 #define DRV_DPB         31
 #define F_USERNUM       32
 #define SCB_GET         49

@@ -535,7 +535,12 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 ## To Do
 
 The library is in beta test. The only remaining feature 
-in implementation are file functions from `stdio.h`. 
+in implementation are file functions from `stdio.h` (also:
+`fcntl.h` and `unistd.h` for Posix versions)
+
+`dirent.h` is not documented yet.
+
+`types.h` is not documented yet.
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
 [language.badge]: https://img.shields.io/badge/language-C-blue.svg

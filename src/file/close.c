@@ -28,13 +28,18 @@ int close(int fd) {
 
     /* Call file close on BDOS 
        TODO: Manage hardware error. */
-    if (bdos(F_CLOSE,(uint16_t)&(fdblk->fcb))==0xff) {
+    bdos_ret_t ret;
+    bdosret(F_CLOSE,(uint16_t)&(fdblk->fcb),&ret);
+    if (ret.reta==0xff) {
         errno=EIO;
         return -1;
     }
 
     /* Finally, release the file descriptor. */
     _fd_set(fd,NULL);
+
+    /* Free the memory. */
+    free(fdblk);
 
     /* And return success. */
     errno = 0;

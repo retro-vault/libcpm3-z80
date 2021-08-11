@@ -21,8 +21,9 @@
 #include <file/fcb.h>
 
 /* Reserve 16 spaces for file descriptors. */
-#define MAX_FILES   16
-#define DMA_SIZE    128
+#define MAX_FILES       16
+#define DMA_SIZE        128
+#define DMA_INVALID_POS 0xff    /* Signals the DMA is invalid */
 
 typedef struct fd_s {
     long fpos;                  /* Current file position */

@@ -52,6 +52,7 @@ int open(const char *pathname, int flags)
     _to_fcb_name(fdblk->fcb.filename, fname, MAX_FNAME);
     _to_fcb_name(fdblk->fcb.filetype, ext, MAX_EXT);
     fdblk->fcb.drive=drive;
+    fdblk->dmapos=DMA_INVALID_POS; /* Not read yet. */
 
     /* And open file. No magic here. */
     bdos_ret_t result;
