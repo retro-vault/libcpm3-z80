@@ -1,24 +1,8 @@
 /*
  * sys/bdos.h
  *
- * bdos calls for cp/m
- * 
- * NOTES:
- *  From http://www.tassos-oak.com/NB2/toolbook.html
- *  The BDOS is located at some address in high storage; that is, it begins at an address higher than the end of our program.
- *  We don't know what that address is. It varies from system to system, and it can vary from one command to the next in a single
- *  system, although it normally doesn't. However, there is always a jump instruction at location 5 (address 0005h) which is
- *  aimed at the lowest instruction in the BDOS.
- *  To call upon the BDOS, we need only place the correct arguments in registers and call location 5.
- *  One BDOS argument is a service number that specifies what we want done. It is always passed in register C.
- *  The other argument depends on the service being requested, but if it's a byte, it is passed in register E, and if a word, in DE.
- *  The second argument is the byte to be typed; it's passed in register E.
+ * BDOS calls for CP/M.
  *
- * Copyright (C) Douglas W. Goodall
- * For Non-Commercial use by N8VEM
- * 5/10/2011 dwg - initial version
- * hkzlab - modified version
- * 
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *
@@ -30,31 +14,42 @@
 
 #include <stdint.h>
 
-/* exit codes */
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
+/* The usual exit codes. */
+#define BDOS_SUCCESS 0
+#define BDOS_FAILURE 0xff
 
 /* CP/M 3 BDOS function codes
  * See here: https://www.seasip.info/Cpm/bdos.html
  */
-#define P_TERMCPM       0
-#define C_READ          1
-#define C_WRITE         2
-#define A_READ          3
-#define A_WRITE         4
-#define L_WRITE         5
-#define C_RAWIO         6
-#define DRV_SET         14
-#define F_OPEN          15
-#define F_CLOSE         16  
-#define F_READ          20
-#define DRV_LOGINVEC    24
-#define DRV_GET         25
-#define F_DMAOFF        26
-#define DRV_DPB         31
-#define F_USERNUM       32
-#define SCB_GET         49
-#define P_CODE          108             /* program ret code */
+
+/* Process commands */
+#define P_TERMCPM       0               /* Process terminate */
+#define P_CODE          108             /* Set process return code */
+/* Console commands */
+#define C_READ          1               /* Console read */
+#define C_WRITE         2               /* Console write */
+#define C_RAWIO         6               /* Console raw input */
+#define C_DELIMIT       110             /* Get or set delimiter $ */
+#define C_WRITEBLK      111             /* Send block of text to console */
+/* Drive commands */
+#define DRV_SET         14              /* Set drive */
+#define DRV_LOGINVEC    24              /* Enumerate drives */
+#define DRV_GET         25              /* Get current drive */
+#define DRV_DPB         31              /* Get drive info block */
+/* File commands */
+#define F_OPEN          15              /* Open file */
+#define F_CLOSE         16              /* Close file */
+#define F_READ          20              /* Read from file */
+#define F_WRITE         21              /* Write to file */
+#define F_MAKE          22              /* Create file */
+#define F_DMAOFF        26              /* Set DMA offset */
+#define F_USERNUM       32              /* Get/set user area */
+#define F_READRAND      33              /* Read random record */
+#define F_WRITERAND     34              /* Write random record */
+#define F_SIZE          35              /* Get file size in blocks */
+#define F_RANDREC       36              /* Store current pos. */
+#define F_TRUNCATE      99              /* Truncate a file */
+#define F_PARSE         152             /* Parse filename into FCB. */
 
 /* BDOS return code */
 typedef struct bdos_ret_s {
@@ -63,10 +58,24 @@ typedef struct bdos_ret_s {
     uint16_t rethl;                     /* return code in HL */
 } bdos_ret_t;
 
-/* call bdos, return register A */
+
+/* Hadrware errors, returned in the H register. */
+#define HWERR_SOFTWARE  0               /* Software error (i.e. file not found)*/
+#define HWERR_DRV_SEL   1               /* Cant access drive */
+#define HWERR_DISK_RO   2               /* Disk is read only */
+#define HWERR_FILE_RO   3               /* File is read only */
+#define HWERR_INV_DRV   4               /* Invalid drive */
+#define HWERR_FOPEN     5               /* File is already open */
+#define HWERR_CHECKSUM  6               /* FCB checksum error */
+#define HWERR_PASSWORD  7               /* Password error */
+#define HWERR_FEXISTS   8               /* File already exists */
+#define HWERR_INV_FNME  9               /* Name contains ? */
+
+
+/* Call bdos, return register A. */
 extern uint8_t bdos(uint8_t fn, uint16_t param);
 
-/* call bdos, return results */
+/* Call bdos, return results. */
 extern bdos_ret_t *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p);
 
 #endif /* __BDOS_H__ */

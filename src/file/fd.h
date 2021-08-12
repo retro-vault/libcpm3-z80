@@ -28,8 +28,10 @@
 typedef struct fd_s {
     long fpos;                  /* Current file position */
     uint8_t dmapos;             /* Current position in DMA */
+    bool dmadirty;              /* Write DMA on close? */
     uint8_t dma[DMA_SIZE];      /* DMA for this descriptor */
-    int oflags;                 /* File open flags */
+    uint8_t lrb;                /* Last record byte count */
+    int oflags;                 /* File flags */
     fcb_t fcb;                  /* fcb for this descriptor */
 } fd_t;
 

@@ -22,6 +22,15 @@ extern ssize_t read(int fd, void *buf, size_t count);
 /* Posix close. */
 extern int close(int fd);
 
+/* Posix flush. */
+extern int fsync(int fd);
+
+/* Posix write. */
+ssize_t write(int fd, const void *buf, size_t count); 
+
+/* Posix lseek function */
+off_t lseek(int fd, off_t offset, int whence);
+
 /* Non standard function to sleep (in milliseconds).
    NOTE: The libcpm3-z80 only provides an empty proxy 
    to this function. If you want to use it you need to

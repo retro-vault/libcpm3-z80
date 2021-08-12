@@ -53,16 +53,22 @@ int open(const char *pathname, int flags)
     _to_fcb_name(fdblk->fcb.filetype, ext, MAX_EXT);
     fdblk->fcb.drive=drive;
     fdblk->dmapos=DMA_INVALID_POS; /* Not read yet. */
+    fdblk->fcb.seqreq=0xff; /* Get file length. */
+    fdblk->dmadirty=false; /* Nothing to write. */
 
     /* And open file. No magic here. */
     bdos_ret_t result;
     bdosret(F_OPEN,(uint16_t)&(fdblk->fcb),&result);
-    if (result.reta==0xff) {
+    if (result.reta==BDOS_FAILURE) {
         /* TODO: Is O_CREAT on? */
         errno=EIO;
         return -1;
     }
     
+    /* Get last record byte count */
+    fdblk->lrb=fdblk->fcb.seqreq;
+    fdblk->fcb.seqreq=0;
+
     /* If we are here, we're good.*/
     errno=0;
     return fd;

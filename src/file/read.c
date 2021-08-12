@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <sys/bdos.h>
 #include <sys/types.h>
@@ -30,7 +31,10 @@
 #endif 
 
 ssize_t read(int fd, void *buf, size_t count) {
-    
+
+    /* If DMA dirty then write. */
+    fsync(fd);
+
     /* We'll need bytes */
     uint8_t *bbuf=(uint8_t*)buf;
 
@@ -41,10 +45,13 @@ ssize_t read(int fd, void *buf, size_t count) {
         return -1;
     }
 
+#ifdef DEBUG
+        printf("LRB=%d\n\r", fdblk->lrb);
+#endif
+
     /* Fetch the data sequentially! */
     size_t bread=0;
-    bool eof=false;
-    while (!eof && bread < count) {
+    while (bread < count) {
 #ifdef DEBUG
         printf("Enter loop, bread=%d, count=%d\n\r", bread, count);
 #endif
@@ -59,14 +66,14 @@ ssize_t read(int fd, void *buf, size_t count) {
             bdos_ret_t result;
             bdosret(F_READ,(uint16_t)&(fdblk->fcb),&result);
             if (result.reta==1) { /* end of file? */
-                return bread;
 #ifdef DEBUG
-        printf("EOF! bread=%d\n\r", bread);
+                printf("EOF! bread=%d\n\r", bread);
 #endif    
+                return bread;
             }
             else if (result.reta!=0) { /* error */
 #ifdef DEBUG
-        printf("Can't read hl=%04x, a=%02x\n\r", result.rethl, result.reta);
+                printf("Can't read hl=%04x, a=%02x\n\r", result.rethl, result.reta);
 #endif      
                 errno=EIO;
                 return -1;
@@ -102,5 +109,6 @@ ssize_t read(int fd, void *buf, size_t count) {
     }
     /* If we did not read anything, and it is an eof
        return 0. Else return bytes read. */
+    errno=0;
     return bread;
 }

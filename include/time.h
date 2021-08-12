@@ -24,7 +24,7 @@
 #ifndef __TIME_H__
 #define __TIME_H__
 
-/* we need a resolution of 1/100 sec */
+/* We need a resolution of 1/100 sec. */
 #define CLOCKS_PER_SEC  100L
 typedef long clock_t;
 
@@ -53,7 +53,7 @@ struct tm {
     int tm_isdst;
 };
 
-/* non standard for settimeofday and gettimeofday functions */
+/* Non standard for settimeofday and gettimeofday functions */
 struct timeval { 
     time_t tv_sec;                      /* seconds since Jan. 1, 1970 */ 
     int tv_hsec;                        /* and 1/100 sec */ 

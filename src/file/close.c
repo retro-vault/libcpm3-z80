@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/bdos.h>
 #include <file/fcb.h>
@@ -26,11 +27,15 @@ int close(int fd) {
         return -1;
     }
 
+    /* Flush dirty DMA block. */
+    if (fdblk->dmadirty) 
+        fsync(fd); 
+
     /* Call file close on BDOS 
        TODO: Manage hardware error. */
     bdos_ret_t ret;
     bdosret(F_CLOSE,(uint16_t)&(fdblk->fcb),&ret);
-    if (ret.reta==0xff) {
+    if (ret.reta==BDOS_FAILURE) {
         errno=EIO;
         return -1;
     }

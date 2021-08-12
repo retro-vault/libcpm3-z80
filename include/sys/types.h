@@ -12,7 +12,10 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
-/* this should be signed size, but it is too short */
+/* This should be signed size, but it is too short. */
 typedef long ssize_t;
+
+/* Used to represent file sizes. */
+typedef long off_t;
 
 #endif /* __TYPES_H__ */
