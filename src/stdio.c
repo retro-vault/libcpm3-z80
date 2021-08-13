@@ -20,14 +20,29 @@
 #include <sys/bdos.h>
 
 int putchar(int c) {
-    bdos(C_WRITE,c);
+    /* Extend newline if DOS. */
+    if (c=='\n') {
+        switch(nltype) {
+            case NL_LF:
+                bdos(C_WRITE,'\n');
+                break;
+            case NL_CRLF:
+                bdos(C_WRITE,'\r');
+                bdos(C_WRITE,'\n');
+                break;
+            case NL_LFCR:
+                bdos(C_WRITE,'\n');
+                bdos(C_WRITE,'\r');
+                break;
+        }
+    } else bdos(C_WRITE,c);
     return c;
 }
 
 int puts(const char *s)
 {
    int i = 0;
-   while(s[i]) putchar(s[i++]);
+   while(s[i]) { putchar(s[i]); i++; }
    return 1;
 }
 

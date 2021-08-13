@@ -140,7 +140,7 @@ int _vsprintf(char **out, char *format, va_list ap)
 #endif
 	} u;
 
-	for (; *format != 0; ++format) {
+	for (; *format != 0; format++) {
 		if (*format == '%') {
 			++format;
 			width = flags = 0;

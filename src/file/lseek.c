@@ -22,6 +22,7 @@
 #include <file/fd.h>
 
 off_t lseek(int fd, off_t offset, int whence) {
+    whence;
 
     /* If dirty, write. */
     fsync(fd);

@@ -528,7 +528,7 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 | time.h     | gettimeofday(), settimeofday()                      |
 | unistd.h   | mslee(), lseek(), close(), read(), write()          |
 | fcntl.h    | open(), creat(), fcntl()                            |
-| stdlib.h   | libplatform, progname, libinit(), splitpath()       |
+| stdlib.h   | libplatform, libinit(), splitpath(), nl             |
 | string.h   | stoupper(), stolower()                              |
 
 

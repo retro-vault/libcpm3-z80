@@ -24,6 +24,9 @@
 
 #include <sys/bdos.h>
 
+/* Newline type. */
+char nltype=NL_LF;
+
 void exit(int status)
 {
     status;

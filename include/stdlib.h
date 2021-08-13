@@ -19,6 +19,12 @@
 #define NULL 0
 #endif /* NULL */
 
+/* How console functions interpret \n? As \n or as \r\n? */
+#define NL_LF       0
+#define NL_CRLF     1
+#define NL_LFCR     2
+extern char nltype;
+
 /* Non standard extension, the name of the platform on
    which library was build i.e. z80-none or z80-partner.
    This is changed when adding PLATFORM=name to make call. */
