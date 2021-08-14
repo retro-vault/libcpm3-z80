@@ -43,6 +43,7 @@ start:
         .area   _INITIALIZED
         .area   _DATA
         .area   _BSS
+        .area	_STACK
         .area   _HEAP
 
 
