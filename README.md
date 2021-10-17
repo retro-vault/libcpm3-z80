@@ -329,6 +329,9 @@ extern unsigned long int strtoul(const char *nptr, char **endptr, int base);
 /* Covert ascii to integer. */
 extern int atoi(const char *str);
 
+/* Convert integer to ascii. */
+extern char *itoa(int num, char *str, int base);
+
 /* Absolute value. */
 extern int abs (int i);
 
@@ -410,6 +413,9 @@ extern char *strchr(const char *s, int c);
 
 /* Find first occurence of c in s frin the right (=last occurence). */
 extern char *strrchr(const char *s, int c);
+
+/* Reverse a string. */
+extern void strrev(char *s, register size_t n);
 
 /* Non standard (unix) tokenizer. */
 extern char *strsep(char **stringp, const char *delim);
@@ -529,7 +535,7 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 | unistd.h   | mslee(), lseek(), close(), read(), write()          |
 | fcntl.h    | open(), creat(), fcntl()                            |
 | stdlib.h   | libplatform, libinit(), splitpath(), nl             |
-| string.h   | stoupper(), stolower()                              |
+| string.h   | stoupper(), stolower(), strrev()                    |
 
 
 ## To Do

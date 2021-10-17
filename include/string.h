@@ -52,6 +52,9 @@ extern char *strchr(const char *s, int c);
 /* Find first occurence of c in s frin the right (=last occurence). */
 extern char *strrchr(const char *s, int c);
 
+/* Reverse a string. */
+extern void strrev(char *s, register size_t n);
+
 /* Non standard (unix) tokenizer. */
 extern char *strsep(char **stringp, const char *delim);
 

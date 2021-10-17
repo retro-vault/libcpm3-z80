@@ -43,6 +43,9 @@ extern int abs (int i);
 /* Covert ascii to integer. */
 extern int atoi(const char *str);
 
+/* Convert integer to ascii. */
+extern char *itoa(int num, char *str, int base);
+
 /* Return random number */
 extern int rand(void);
 
