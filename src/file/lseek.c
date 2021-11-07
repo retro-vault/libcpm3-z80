@@ -39,8 +39,6 @@ off_t lseek(int fd, off_t offset, int whence) {
     long dmaoffs=offset%DMA_SIZE;
     fdblk->fcb.rrec=rec;
 
-    /* Set DMA. */
-
     /* And move */
     bdos_ret_t result;
     bdosret(F_READRAND,(uint16_t)&(fdblk->fcb),&result);

@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 #include <sys/bdos.h>
 #include <file/fcb.h>
@@ -60,9 +61,18 @@ int open(const char *pathname, int flags)
     bdos_ret_t result;
     bdosret(F_OPEN,(uint16_t)&(fdblk->fcb),&result);
     if (result.reta==BDOS_FAILURE) {
-        /* TODO: Is O_CREAT on? */
-        errno=EIO;
-        return -1;
+        /* Is O_CREAT on? */
+        if (fdblk->oflags|O_CREAT) {
+            /* Try to crate... */
+            bdosret(F_MAKE,(uint16_t)&(fdblk->fcb),&result);
+            if (result.reta==BDOS_FAILURE) {
+                errno=EIO;
+                return -1;
+            }
+        } else {
+            errno=EIO;
+            return -1;
+        }
     }
     
     /* Get last record byte count */
