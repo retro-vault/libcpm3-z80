@@ -29,7 +29,13 @@
 #define SEEK_CUR    1
 #define SEEK_END    2
 
-#define FILE        void
+/* FILE type. */
+typedef struct _iobuf {
+  char      flags[4];
+  int       fd;
+  bool      eof;
+} FILE; 
+
 extern FILE *stdin;
 extern FILE *stdout;
 extern FILE *stderr;
@@ -37,27 +43,26 @@ extern FILE *stderr;
 /* Open file. */
 extern FILE *fopen(const char *path, const char *mode);
 
-/* Move to fpos. */
-extern int fseek(FILE *stream, long offset, int whence);
-
-/* Read a record. */
-extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
-
-/* EOF reached? */
-extern int feof(FILE *stream);
-
 /* Close a file. */
-extern int fclose(FILE *stream);
-
-/* Get file position. */
-extern long ftell(FILE *stream);
+extern int fclose(FILE *fp);
 
 /* Write a record. */
-extern size_t fwrite(
-    const void *ptr, 
-    size_t size, 
-    size_t nmemb, 
-    FILE *stream);
+extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *fp);
+
+/* Read a record. */
+extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp);
+
+/* Move to fpos. */
+extern int fseek(FILE *fp, long offset, int whence);
+
+/* EOF reached? */
+extern int feof(FILE *fp);
+
+/* Get file position. */
+extern long ftell(FILE *fp);
+
+/* Get char. */
+extern int fgetc(FILE *fp);
 
 /* Prints a string. */
 extern int puts(const char *s);

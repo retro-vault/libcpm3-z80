@@ -540,13 +540,12 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 
 ## To Do
 
-The library is in beta test. The only remaining feature 
-in implementation are file functions from `stdio.h` (also:
-`fcntl.h` and `unistd.h` for Posix versions)
+`dirent.h` has no implementation.
 
-`dirent.h` is not documented yet.
+Several header files are not documented yet.
 
-`types.h` is not documented yet.
+CP/M 3 Plus has date and time functions and the library should 
+use them as default implementation.
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
 [language.badge]: https://img.shields.io/badge/language-C-blue.svg

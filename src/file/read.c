@@ -45,36 +45,19 @@ ssize_t read(int fd, void *buf, size_t count) {
         return -1;
     }
 
-#ifdef DEBUG
-        printf("LRB=%d\n\r", fdblk->lrb);
-#endif
-
     /* Fetch the data sequentially! */
     size_t bread=0;
     while (bread < count) {
-#ifdef DEBUG
-        printf("Enter loop, bread=%d, count=%d\n\r", bread, count);
-#endif
         /* Is DMA block empty? */
         if (fdblk->dmapos==DMA_INVALID_POS) {
-#ifdef DEBUG
-            printf("Read DMA block\n\r");
-#endif
             /* First set the DMA to our block!*/
             bdos(F_DMAOFF,(uint16_t)&(fdblk->dma));
             /* Now read next disk block */
             bdos_ret_t result;
             bdosret(F_READ,(uint16_t)&(fdblk->fcb),&result);
-            if (result.reta==1) { /* end of file? */
-#ifdef DEBUG
-                printf("EOF! bread=%d\n\r", bread);
-#endif    
+            if (result.reta==1)  /* end of file? */
                 return bread;
-            }
-            else if (result.reta!=0) { /* error */
-#ifdef DEBUG
-                printf("Can't read hl=%04x, a=%02x\n\r", result.rethl, result.reta);
-#endif      
+            else if (result.reta!=0) { /* error */ 
                 errno=EIO;
                 return -1;
             }
@@ -90,22 +73,16 @@ ssize_t read(int fd, void *buf, size_t count) {
         if (left > (DMA_SIZE - fdblk->dmapos))
             left = DMA_SIZE - fdblk->dmapos;
 
-#ifdef DEBUG
-        printf("Bytes left to read=%d\n\r", left);
-#endif
-
         /* And copy from DMA */
         memcpy(&(bbuf[bread]), &(fdblk->dma[fdblk->dmapos]), left );
         /* Update DMA position */
         fdblk->dmapos+=left;
+        /* And current file position. */
+        fdblk->fpos+=left;
         /* Did we reach the end of DMA block? */
         if (fdblk->dmapos==DMA_SIZE)
             fdblk->dmapos=DMA_INVALID_POS;
         bread+=left;
-
-#ifdef DEBUG
-        printf("dmapos=%d and bread=%d\n\r", fdblk->dmapos,bread);
-#endif
     }
     /* If we did not read anything, and it is an eof
        return 0. Else return bytes read. */

@@ -56,6 +56,7 @@ int open(const char *pathname, int flags)
     fdblk->dmapos=DMA_INVALID_POS; /* Not read yet. */
     fdblk->fcb.seqreq=0xff; /* Get file length. */
     fdblk->dmadirty=false; /* Nothing to write. */
+    fdblk->fpos=0; /* Current file position is 0. */
 
     /* And open file. No magic here. */
     bdos_ret_t result;

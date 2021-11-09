@@ -83,6 +83,7 @@ ssize_t write(int fd, void *buf, size_t count) {
             fdblk->dmapos = DMA_INVALID_POS;
 
         } else { /* Just write to DMA and mark it as dirty. */
+        
             /* Populate DMA. */
             memcpy
                 (&(fdblk->dma[fdblk->dmapos]),  /* copy to DMA */
