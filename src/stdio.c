@@ -222,7 +222,7 @@ int fgetc(FILE *fp) {
         return 0;
     }
     else if (rd == -1) 
-        return 0; /* errno is propagated. */
+        return -1; /* errno is propagated. */
     else if (rd == 1) {
         /* If text mode file, check eof... */
         if (memchr(&fp->flags, 'b', 3) == NULL && ch==EOF) {
