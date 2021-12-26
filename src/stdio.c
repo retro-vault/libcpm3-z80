@@ -37,6 +37,9 @@ FILE *fopen(const char *path, const char *mode)
     /* Reset errno. */
     errno = 0;
 
+    /* Initialize oflags. */
+    oflags=0;
+
     /* Extract mode. */
     if (strncmp(mode, "r", 1) == 0) {
         oflags = O_RDONLY;
