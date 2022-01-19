@@ -72,7 +72,7 @@ ssize_t write(int fd, void *buf, size_t count) {
 
             /* Now write. */
             bdos_ret_t result;
-            bdosret(F_WRITE, (uint16_t)&(fdblk->dma),&result);
+            bdosret(F_WRITE, (uint16_t)&(fdblk->fcb),&result);
             if (result.reta!=BDOS_SUCCESS) {
                 errno=EIO;
                 return -1;

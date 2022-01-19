@@ -26,7 +26,7 @@ only known to god and a few earthlings.
 
 ## Compiling the libcpm3-z80
 
-You need a Linux with the **latest** version of *SDCC* development tools intalled.
+You need a Linux with the **latest** version of *SDCC* development tools installed.
 
 Then get the repository by executing 
 
@@ -123,6 +123,104 @@ program tail correctly.
 
 Click on the header name to see the scope of its implementation.
 
+<details><summary>sys/bdos.h/</summary>
+
+~~~cpp
+/* The usual exit codes. */
+#define BDOS_SUCCESS 0
+#define BDOS_FAILURE 0xff
+
+/* CP/M 3 BDOS function codes
+ * See here: https://www.seasip.info/Cpm/bdos.html
+ */
+
+/* Process commands */
+#define P_TERMCPM       0               /* Process terminate */
+#define P_CODE          108             /* Set process return code */
+/* Console commands */
+#define C_READ          1               /* Console read */
+#define C_WRITE         2               /* Console write */
+#define C_RAWIO         6               /* Console raw input */
+#define C_DELIMIT       110             /* Get or set delimiter $ */
+#define C_WRITEBLK      111             /* Send block of text to console */
+/* Drive commands */
+#define DRV_SET         14              /* Set drive */
+#define DRV_LOGINVEC    24              /* Enumerate drives */
+#define DRV_GET         25              /* Get current drive */
+#define DRV_DPB         31              /* Get drive info block */
+/* File commands */
+#define F_OPEN          15              /* Open file */
+#define F_CLOSE         16              /* Close file */
+#define F_READ          20              /* Read from file */
+#define F_WRITE         21              /* Write to file */
+#define F_MAKE          22              /* Create file */
+#define F_DMAOFF        26              /* Set DMA offset */
+#define F_USERNUM       32              /* Get/set user area */
+#define F_READRAND      33              /* Read random record */
+#define F_WRITERAND     34              /* Write random record */
+#define F_SIZE          35              /* Get file size in blocks */
+#define F_RANDREC       36              /* Store current pos. */
+#define F_TRUNCATE      99              /* Truncate a file */
+#define F_PARSE         152             /* Parse filename into FCB. */
+
+/* BDOS return code */
+typedef struct bdos_ret_s {
+    uint8_t reta;                       /* return code in reg A */
+    uint8_t retb;                       /* return code in reg B */
+    uint16_t rethl;                     /* return code in HL */
+} bdos_ret_t;
+
+
+/* Hadrware errors, returned in the H register. */
+#define HWERR_SOFTWARE  0               /* Software error (i.e. file not found)*/
+#define HWERR_DRV_SEL   1               /* Cant access drive */
+#define HWERR_DISK_RO   2               /* Disk is read only */
+#define HWERR_FILE_RO   3               /* File is read only */
+#define HWERR_INV_DRV   4               /* Invalid drive */
+#define HWERR_FOPEN     5               /* File is already open */
+#define HWERR_CHECKSUM  6               /* FCB checksum error */
+#define HWERR_PASSWORD  7               /* Password error */
+#define HWERR_FEXISTS   8               /* File already exists */
+#define HWERR_INV_FNME  9               /* Name contains ? */
+
+
+/* Call bdos, return register A. */
+extern uint8_t bdos(uint8_t fn, uint16_t param);
+
+/* Call bdos, return results. */
+extern bdos_ret_t *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p);
+~~~
+</details>  
+
+<details><summary>sys/stat.h/</summary>
+
+~~~cpp
+struct stat {
+    char        st_drive;               /* A - P */
+    uint8_t     st_user;                /* 0 - 15 */
+    off_t       st_size;                /* Total size, in bytes */
+    uint16_t    st_blksize;             /* Block size */
+    uint16_t    st_blocks;              /* Number of blocks */
+    uint8_t     st_lrb;                 /* Last record byte count */
+};
+
+/* Read file stat. */
+extern int stat(char *pathname, struct stat *statbuf);
+~~~
+</details>  
+
+<details><summary>sys/types.h/</summary>
+
+~~~cpp
+/* This should be signed size, but it is too short. */
+typedef long ssize_t;
+
+/* Used to represent file sizes. */
+typedef long off_t;
+~~~
+</details>
+
+
 <details><summary>ctype.h/</summary>
 
 ~~~cpp
@@ -145,6 +243,7 @@ extern int tolower(int c);
 extern int toupper(int c);
 ~~~
 </details>  
+
 
 <details><summary>errno.h/</summary>
 
@@ -169,26 +268,51 @@ extern int errno;
 <details><summary>fcntl.h/</summary>
 
 ~~~cpp
-#define O_RDONLY    0
-#define O_WRONLY    1
-#define O_RDWR      2
-#define O_TRUNC     4
+#define O_RDONLY    0x0000      /* Read only. */
+#define O_WRONLY    0x0001      /* Write only. */
+#define O_RDWR      0x0002      /* Read and write. */
+#define	O_CREAT     0x0200      /* Create if nonexistant */
+#define	O_TRUNC     0x0400      /* Truncate to zero length */
 
 #define SEEK_SET    0
 #define SEEK_CUR    1
 #define SEEK_END    2
+
+/* Open file, return file descriptor. */
+extern int open(const char *pathname, int flags);
+
+/* Create file, return file descriptor. */
+extern int creat(const char *pathname);
 ~~~
 </details>  
+
+<details><summary>float.h/</summary>
+
+~~~cpp
+#define FLT_RADIX       2
+#define FLT_MANT_DIG    24
+#define FLT_EPSILON     1.192092896E-07F
+#define FLT_DIG         6
+#define FLT_MIN_EXP     (-125)
+#define FLT_MIN         1.175494351E-38F
+#define FLT_MIN_10_EXP  (-37)
+#define FLT_MAX_EXP     (+128)
+#define FLT_MAX         3.402823466E+38F
+#define FLT_MAX_10_EXP  (+38)
+~~~
+</details>  
+
 
 <details><summary>limits.h/</summary>
 
 ~~~cpp
-#define CHAR_BIT    8                /* number of bits in byte */
+#define CHAR_BIT    8                   /* Bits in char. */
 #define SCHAR_MIN   -128
 #define SCHAR_MAX   +127
 #define UCHAR_MAX   255
 #define CHAR_MIN    -128
 #define CHAR_MAX    +127
+#define MB_LEN_MAX  8                   /* Max. bytes in multi byte char. */
 #define SHRT_MIN    -128
 #define SHRT_MAX    +127
 #define USHRT_MAX   255
@@ -198,6 +322,7 @@ extern int errno;
 #define LONG_MIN    -2147483648
 #define LONG_MAX    +2147483647
 #define ULONG_MAX   4294967295
+#define SSIZE_MAX   65535               /* Max bytes for file read */
 ~~~
 </details>  
 
@@ -227,9 +352,8 @@ extern int errno;
 <details><summary>stddef.h/</summary>
 
 ~~~cpp
-typedef unsigned int    size_t;
-typedef long            ssize_t;
-typedef long            off_t;
+typedef uint16_t    ptrdiff_t;          /* Result of sub. two pointers. */
+typedef uint16_t    size_t;             /* sizeof type */
 ~~~
 </details>  
 
@@ -253,7 +377,13 @@ typedef unsigned long   uint32_t;
 #define SEEK_CUR    1
 #define SEEK_END    2
 
-#define FILE        void
+/* FILE type. */
+typedef struct _iobuf {
+  char      flags[4];
+  int       fd;
+  bool      eof;
+} FILE; 
+
 extern FILE *stdin;
 extern FILE *stdout;
 extern FILE *stderr;
@@ -261,30 +391,32 @@ extern FILE *stderr;
 /* Open file. */
 extern FILE *fopen(const char *path, const char *mode);
 
-/* Move to fpos. */
-extern int fseek(FILE *stream, long offset, int whence);
-
-/* Read a record. */
-extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
-
-/* EOF reached? */
-extern int feof(FILE *stream);
-
 /* Close a file. */
-extern int fclose(FILE *stream);
-
-/* Get file position. */
-extern long ftell(FILE *stream);
+extern int fclose(FILE *fp);
 
 /* Write a record. */
-extern size_t fwrite(
-    const void *ptr, 
-    size_t size, 
-    size_t nmemb, 
-    FILE *stream);
+extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *fp);
+
+/* Read a record. */
+extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp);
+
+/* Move to fpos. */
+extern int fseek(FILE *fp, long offset, int whence);
+
+/* EOF reached? */
+extern int feof(FILE *fp);
+
+/* Get file position. */
+extern long ftell(FILE *fp);
+
+/* Get char. */
+extern int fgetc(FILE *fp);
 
 /* Prints a string. */
 extern int puts(const char *s);
+
+/* Reads a string */
+extern char *gets(char *str);
 
 /* Print formatted string to stdout. */
 extern int printf(char *fmt, ...);
@@ -295,7 +427,7 @@ extern int sprintf(char *buf, char *fmt, ...);
 /* Prints a char. */
 extern int putchar(int c);
 
-/* Reads a char (blocks. */
+/* Reads a char (blocks). */
 extern int getchar(void);
 ~~~
 </details>  
@@ -308,23 +440,26 @@ extern int getchar(void);
 #define NULL 0
 #endif /* NULL */
 
+/* How console functions interpret \n? As \n or as \r\n? */
+#define NL_LF       0
+#define NL_CRLF     1
+#define NL_LFCR     2
+extern char nltype;
+
 /* Non standard extension, the name of the platform on
    which library was build i.e. z80-none or z80-partner.
    This is changed when adding PLATFORM=name to make call. */
 extern char *libplatform;
 
-/* Non standard extension: running program name.
-   Used by argv[0]. */
+/* Non standard extension, running program name.
+   Used for argv[0]. */
 extern char *progname;
 
 /* Exit application. */
 extern void exit(int status);
 
-/* String to long using base. */
-extern long strtol(char *nptr, char **endptr, int base);
-
-/* Strin to unsigned long using base, */
-extern unsigned long int strtoul(const char *nptr, char **endptr, int base);
+/* Absolute value. */
+extern int abs (int i);
 
 /* Covert ascii to integer. */
 extern int atoi(const char *str);
@@ -332,14 +467,17 @@ extern int atoi(const char *str);
 /* Convert integer to ascii. */
 extern char *itoa(int num, char *str, int base);
 
-/* Absolute value. */
-extern int abs (int i);
-
 /* Return random number */
 extern int rand(void);
 
 /* Set random seed. */
 extern void srand(unsigned int seed);
+
+/* String to long using base. */
+extern long strtol(char *nptr, char **endptr, int base);
+
+/* String to unsigned long using base, */
+extern unsigned long strtoul(const char *nptr, char **endptr, int base);
 
 /* Memory allocation. */
 extern void *malloc(size_t size);
@@ -357,13 +495,14 @@ extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const vo
    after intialization of the Standard library */
 extern void libinit();
 
-/* Non standard extension: path parser.
+/* Non standard extension: path parser. 
    Supported path formats are:
-   [<drive>:]filename.typ[[g]<user area>] */
+   [<drive>:]filename.typ[[g]<user area>]
+   Returns 0 for success */
 #define MAX_DRIVE   1
 #define MAX_FNAME   8
 #define MAX_EXT     3
-extern void splitpath(
+extern int splitpath(
    const char *path,
    char *drive,
    int *user,
@@ -514,6 +653,21 @@ extern int settimeofday(const struct timeval *tv);
 <details><summary>unistd.h/</summary>
 
 ~~~cpp
+/* Posix read. */
+extern ssize_t read(int fd, void *buf, size_t count);
+
+/* Posix close. */
+extern int close(int fd);
+
+/* Posix flush. */
+extern int fsync(int fd);
+
+/* Posix write. */
+ssize_t write(int fd, const void *buf, size_t count); 
+
+/* Posix lseek function */
+off_t lseek(int fd, off_t offset, int whence);
+
 /* Non standard function to sleep (in milliseconds).
    NOTE: The libcpm3-z80 only provides an empty proxy 
    to this function. If you want to use it you need to
@@ -528,23 +682,22 @@ extern void msleep(int millisec);
 
 Following functions and variables in *libcpm3-z80* are not part of the *Standard C library*.
 
-| Header     | Function                                            |
-|------------|-----------------------------------------------------| 
-| sys/bdos.h | bdos(), bdosret()                                   |
-| time.h     | gettimeofday(), settimeofday()                      |
-| unistd.h   | mslee(), lseek(), close(), read(), write()          |
-| fcntl.h    | open(), creat(), fcntl()                            |
-| stdlib.h   | libplatform, libinit(), splitpath(), nl             |
-| string.h   | stoupper(), stolower(), strrev()                    |
+| Header      | Function                                            |
+|-------------|-----------------------------------------------------| 
+| sys/bdos.h  | bdos(), bdosret()                                   |
+| sys/stat.h  | stat()                                              |
+| time.h      | gettimeofday(), settimeofday()                      |
+| unistd.h    | msleep(), lseek(), close(), read(), write()         |
+| fcntl.h     | open(), creat(), fcntl()                            |
+| stdlib.h    | libplatform, libinit(), splitpath(), nl             |
+| string.h    | stoupper(), stolower(), strrev()                    |
 
 
 ## To Do
 
 `dirent.h` has no implementation.
 
-Several header files are not documented yet.
-
-CP/M 3 Plus has date and time functions and the library should 
+CP/M 3 Plus has date and time sys calls and the library should 
 use them as default implementation.
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
@@ -556,4 +709,4 @@ use them as default implementation.
 [license.url]:    https://github.com/tstih/libcpm3-z80/blob/main/LICENSE
 [license.badge]:  https://img.shields.io/badge/license-MIT-blue.svg
 
-[status.badge]:  https://img.shields.io/badge/status-beta-orange.svg
+[status.badge]:  https://img.shields.io/badge/status-stable-green.svg
