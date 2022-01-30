@@ -9,7 +9,7 @@
  * 01.08.2012   tstih
  *
  */
-#include <stdint.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -27,9 +27,10 @@ char *libplatform="z80-none";
 void libinit() {}
 
 /* mem top */
-uint16_t* _memtop() {
+size_t _memtop() {
     /* Default top is BDOS. */
-    return (uint16_t *)0x0006;
+    size_t *ptr=(size_t *)0x0006;
+    return *ptr;
 }
 
 /* Non standard function to sleep (in milliseconds) */

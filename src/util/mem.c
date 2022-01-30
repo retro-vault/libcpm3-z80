@@ -41,7 +41,7 @@ void _split(block_t *b, uint16_t size)
 void _memory_init()
 {
     /* Calculate free memory */
-    uint16_t size=(uint16_t)(*_memtop()) - (uint16_t)&_heap;
+    uint16_t size=(_memtop()) - (uint16_t)&_heap;
 
     /* First block is the heap. s*/
     block_t *first = (block_t *)&_heap;
