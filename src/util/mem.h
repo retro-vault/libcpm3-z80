@@ -39,8 +39,9 @@ typedef struct block_s {
 extern void _heap;
 
 /* Mem top. By convention this is start of BDOS, retreived from
-the 0x0005 address (BDOS call) */
-extern uint16_t* _mem_top;
+   the 0x0005 address (BDOS call). This function can be "overrriden"
+   by the PLATFORM= parameter. */
+extern uint16_t* _memtop();
 
 /* find first free block of appropriate size */
 extern uint8_t _match_free_block(list_header_t *p, uint16_t size);

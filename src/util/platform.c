@@ -9,6 +9,8 @@
  * 01.08.2012   tstih
  *
  */
+#include <stdint.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include <util/leanmean.h>
@@ -23,6 +25,12 @@ char *libplatform="z80-none";
 
 /* init hook */
 void libinit() {}
+
+/* mem top */
+uint16_t* _memtop() {
+    /* Default top is BDOS. */
+    return (uint16_t *)0x0006;
+}
 
 /* Non standard function to sleep (in milliseconds) */
 void msleep(int millisec) {

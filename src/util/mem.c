@@ -12,8 +12,6 @@
 #include <string.h>
 #include <util/mem.h>
 
-uint16_t* _mem_top;
-
 uint8_t _match_free_block(list_header_t *p, uint16_t size)
 {
     block_t *b = (block_t *)p;
@@ -42,11 +40,8 @@ void _split(block_t *b, uint16_t size)
 
 void _memory_init()
 {
-    /* Get BDOS address. */
-    _mem_top = (uint16_t *)0x0006;
-
     /* Calculate free memory */
-    uint16_t size=(uint16_t)(*_mem_top) - (uint16_t)&_heap;
+    uint16_t size=(uint16_t)(*_memtop()) - (uint16_t)&_heap;
 
     /* First block is the heap. s*/
     block_t *first = (block_t *)&_heap;
