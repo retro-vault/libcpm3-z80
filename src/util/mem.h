@@ -56,4 +56,13 @@ extern void _split(block_t *b, uint16_t size);
 /* initialize memory management */
 extern void _memory_init();
 
+/* initialize custom heap */
+extern void _heap_init(uint16_t start, uint16_t size);
+
+/* allocate block on the heap (used by malloc) */
+extern void *_alloc(uint16_t heap, size_t size);
+
+/* release block from the heap (used by free) */
+extern void _dealloc(uint16_t heap, void *p);
+
 #endif /* __MEM_H__ */

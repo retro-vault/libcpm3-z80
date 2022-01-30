@@ -265,47 +265,12 @@ long strtol(char *nptr, char **endptr, int base)
 
 void *malloc(size_t size)
 {
-    block_t *prev;
-    block_t *b;
-
-    b = (block_t *)_list_find(
-        (list_header_t *)&_heap,
-        (list_header_t **)&prev,
-        _match_free_block, size);
-
-    if (b)
-    {
-        if (b->size - size > BLK_SIZE + MIN_CHUNK_SIZE)
-            _split(b, size);
-        b->stat = ALLOCATED;
-        return b->data;
-    }
-    else
-        return NULL;
+    return _alloc((uint16_t)&_heap,size);
 }
 
 void free(void *p)
 {
-    block_t *prev;
-    block_t *b;
-
-    /* calculate block address from pointer */
-    b = (block_t *)((uint16_t)p - BLK_SIZE);
-
-    /* make sure it is a valid memory block by finding it */
-    if (_list_find((list_header_t *)&_heap, (list_header_t **)&prev, _list_match_eq, (uint16_t)b))
-    {
-        b->stat = NEW;
-        /* merge 3 blocks if possible */
-        if (prev && !(prev->stat & ALLOCATED))
-        { /* try previous */
-            _merge_with_next(prev);
-            b = prev;
-        }
-        /* try next */
-        if (b->hdr.next && !(((block_t *)(b->hdr.next))->stat & ALLOCATED))
-            _merge_with_next(b);
-    }
+    _dealloc((uint16_t)&_heap,p);
 }
 
 void *calloc(size_t num, size_t size)
