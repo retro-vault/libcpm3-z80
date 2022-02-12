@@ -20,6 +20,9 @@
 #define	ENOMEM      12      /* Out of memory */
 #define EINVAL      22      /* Negative offset or offset beyond end of file? Invalid address. */
 #define ENFILE      23      /* Too many open files (file table overflow). */
+#define EDOM        33      /* Numerical argument out of domain */
+#define ERANGE      34      /* Numerical result out of range */
+
 
 /* Global error code. */
 extern int errno;
