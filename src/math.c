@@ -56,10 +56,10 @@
 #define A0 -0.5527074855E+0
 #define B0 -0.6632718214E+1
 #define A(w) (A0)
-#define B(w) (w+B0)
+#define B(w) (w + B0)
 
-#define CL0  0.70710678118654752440
-#define CL1  0.693359375 /*355.0/512.0*/
+#define CL0 0.70710678118654752440
+#define CL1 0.693359375 /*355.0/512.0*/
 #define CL2 -2.121944400546905827679E-4
 
 /* utility union */
@@ -163,11 +163,11 @@ float floor(float x)
 float ceil(float x)
 {
     long r;
-    r=x;
-    if (r<0)
+    r = x;
+    if (r < 0)
         return r;
     else
-        return (r+((r<x)?1:0));
+        return (r + ((r < x) ? 1 : 0));
 }
 
 float sin(float x)
@@ -191,11 +191,11 @@ float ldexp(float x, int pw2)
 
     fl.f = x;
 
-    e=(fl.l >> 23) & 0x000000ff;
-    e+=pw2;
-    fl.l= ((e & 0xff) << 23) | (fl.l & 0x807fffff);
+    e = (fl.l >> 23) & 0x000000ff;
+    e += pw2;
+    fl.l = ((e & 0xff) << 23) | (fl.l & 0x807fffff);
 
-    return(fl.f);
+    return (fl.f);
 }
 
 float exp(float x)
@@ -258,80 +258,87 @@ float log(float x)
     float f, z, w, znum, zden, xn;
     int n;
 
-    if (x<=0.0f)
+    if (x <= 0.0f)
     {
-        errno=EDOM;
+        errno = EDOM;
         return 0.0f;
     }
-    f=frexp(x, &n);
-    znum=f-0.5;
-    if (f>CL0)
+    f = frexp(x, &n);
+    znum = f - 0.5;
+    if (f > CL0)
     {
-        znum-=0.5;
-        zden=(f*0.5)+0.5;
+        znum -= 0.5;
+        zden = (f * 0.5) + 0.5;
     }
     else
     {
         n--;
-        zden=znum*0.5+0.5;
+        zden = znum * 0.5 + 0.5;
     }
-    z=znum/zden;
-    w=z*z;
+    z = znum / zden;
+    w = z * z;
 
-    Rz=z+z*(w*A(w)/B(w));
-    xn=n;
-    return ((xn*CL2+Rz)+xn*CL1);
+    Rz = z + z * (w * A(w) / B(w));
+    xn = n;
+    return ((xn * CL2 + Rz) + xn * CL1);
 }
 
 float log10(float x)
 {
-    return log(x)*0.4342944819;
+    return log(x) * 0.4342944819;
 }
 
-float sqrt(float x) 
+float sqrt(float x)
 {
     float f, y;
     int n;
 
-    if (x==0.0f) return x;
-    else if (x==1.0f) return 1.0f;
-    else if (x<0.0f)
+    if (x == 0.0f)
+        return x;
+    else if (x == 1.0f)
+        return 1.0f;
+    else if (x < 0.0f)
     {
-        errno=EDOM;
+        errno = EDOM;
         return 0.0f;
     }
-    f=frexp(x, &n);
-    y=0.41731+0.59016*f; /*Educated guess*/
+    f = frexp(x, &n);
+    y = 0.41731 + 0.59016 * f; /*Educated guess*/
     /*For a 24 bit mantisa (float), two iterations are sufficient*/
-    y+=f/y;
-    y=ldexp(y, -2) + f/y; /*Faster version of 0.25 * y + f/y*/
+    y += f / y;
+    y = ldexp(y, -2) + f / y; /*Faster version of 0.25 * y + f/y*/
 
-    if (n&1)
+    if (n & 1)
     {
-        y*=0.7071067812;
+        y *= 0.7071067812;
         ++n;
     }
-    return ldexp(y, n/2);
+    return ldexp(y, n / 2);
 }
 
 float pow(float x, float y)
 {
-    if(y == 0.0) return 1.0;
-    if(y == 1.0) return x;
-    if(x <= 0.0) return 0.0;
+    if (y == 0.0)
+        return 1.0;
+    if (y == 1.0)
+        return x;
+    if (x <= 0.0)
+        return 0.0;
     return exp(log(x) * y);
 }
 
-float modf(float x, float * y)
+float modf(float x, float *y)
 {
-    *y=(long)x;
-    return (x-*y);
+    *y = (long)x;
+    return (x - *y);
 }
 
-float tan(float x) {
-    return sin(x)/cos(x);
+float tan(float x)
+{
+    return sin(x) / cos(x);
 }
 
-float cot(float x) {
-    return 1/tan(x);
+float cot(float x)
+{
+    return 1 / tan(x);
 }
