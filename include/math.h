@@ -3,7 +3,7 @@
  *
  * Standard Library header.
  *
- * Ported from HI-TECH Z80 CP/M C math library.
+ * From SDCC C math library.
  *
  * 12.02.2022   tstih
  *
