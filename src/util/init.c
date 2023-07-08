@@ -10,7 +10,7 @@
  *
  */
 #include <util/cmdline.h>
-#include <util/mem.h>
+#include <mem/mem.h>
 #include <file/fd.h>
 
 void _stdlib_init() {

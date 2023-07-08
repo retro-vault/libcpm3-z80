@@ -1,17 +1,17 @@
-		;; crt0cpm.s
-		;; cp/m app startup code
-		;;
-		;; tomaz stih, fri mar 26 2021
-		.module crt0cpm
+        ;; crt0cpm.s
+        ;; cp/m app startup code
+        ;;
+        ;; tomaz stih, fri mar 26 2021
+        .module crt0cpm
 
-       	.globl  _main
+        .globl  _main
         .globl  __heap
         .globl  __argv
         .globl  __argc
         .globl  __stdlib_init
 
 
-		.area 	_CODE
+        .area 	_CODE
 start:
         ;; define a stack   
         ld      sp,#stack
@@ -27,14 +27,14 @@ start:
         push    hl
 
         ;; call the main
-	    call    _main
+        call    _main
 
         ;; BDOS exit (reset) return control to CP/M.
         ld      c,#0
-	    jp      5
+        jp      5
 
-		;; Ordering of segments for the linker (after header)
-		.area 	_CODE
+        ;; Ordering of segments for the linker (after header)
+        .area 	_CODE
         .area   _GSINIT
         .area   _GSFINAL	
         .area   _HOME
@@ -74,7 +74,7 @@ __argv::
 
 
         .area	_STACK
-	    .ds	    1024
+        .ds     1024
 stack:
 
 

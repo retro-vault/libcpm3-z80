@@ -35,6 +35,9 @@ typedef struct fd_s {
     fcb_t fcb;                  /* fcb for this descriptor */
 } fd_t;
 
+/* File descriptor table */
+extern fd_t* _fds[];
+
 /* Initialize */
 extern void _init_fds();
 

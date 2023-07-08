@@ -1,5 +1,20 @@
 {
     "files.associations": {
-        "exception": "c"
+        "exception": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "ranges": "c",
+        "utility": "c",
+        "string.h": "c",
+        "errno.h": "c",
+        "math.h": "c",
+        "list.h": "c",
+        "stdarg.h": "c",
+        "stdbool.h": "c",
+        "_stdio.h": "c",
+        "leanmean.h": "c",
+        "bdos.h": "c",
+        "_stdlib.h": "c"
     }
 }
