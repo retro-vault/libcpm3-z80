@@ -1,3 +1,11 @@
+/*
+ * ftell.c
+ *
+ * ftell function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 long ftell(FILE *fp) {

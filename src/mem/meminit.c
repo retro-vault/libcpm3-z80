@@ -1,3 +1,11 @@
+/*
+ * meminit.c
+ *
+ * Memory allocation system initialization.
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <string.h>
 #include <mem/mem.h>
 

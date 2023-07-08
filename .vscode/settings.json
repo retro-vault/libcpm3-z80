@@ -15,6 +15,9 @@
         "_stdio.h": "c",
         "leanmean.h": "c",
         "bdos.h": "c",
-        "_stdlib.h": "c"
+        "_stdlib.h": "c",
+        "_math.h": "c",
+        "ctype.h": "c",
+        "_time.h": "c"
     }
 }

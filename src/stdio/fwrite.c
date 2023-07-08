@@ -1,3 +1,11 @@
+/*
+ * fwrite.c
+ *
+ * fwrite function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 size_t fwrite(void *ptr, size_t size, size_t nmemb, FILE *fp)

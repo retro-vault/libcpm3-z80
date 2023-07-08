@@ -20,7 +20,9 @@
  */
 extern void _outputchar(char **str, char c);
 extern int _prints(char **out, const char *string, int width, int flags);
+#ifndef LEAN_AND_MEAN
 extern int _outputi(char **out, long long i, int base, int sign, int width, int flags, int letbase);
+#endif /* !LEAN_AND_MEAN */
 extern int _vsprintf(char **out, char *format, va_list ap);
 
 #endif /* __PRINT_H__ */

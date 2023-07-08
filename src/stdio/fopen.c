@@ -1,3 +1,11 @@
+/*
+ * fopen.c
+ *
+ * fopen function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 FILE *fopen(const char *path, const char *mode)

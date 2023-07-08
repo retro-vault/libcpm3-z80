@@ -1,3 +1,11 @@
+/*
+ * fseek.c
+ *
+ * fseek function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 int fseek(FILE *fp, long offset, int whence)

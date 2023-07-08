@@ -1,3 +1,14 @@
+/*
+ * splitpath.c
+ *
+ * Parse CP/M path.
+ *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 08.07.2023   tstih
+ *
+ */
 #include <stdlib/_stdlib.h>
 
 int splitpath(

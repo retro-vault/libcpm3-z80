@@ -1,3 +1,14 @@
+/*
+ * fd_reserve.c
+ *
+ * allocate new file descriptor
+ * 
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 05.07.2021   tstih
+ *
+ */
 #include <file/fd.h>
 
 int _fd_reserve() {

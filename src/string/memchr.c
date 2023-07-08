@@ -1,3 +1,14 @@
+/*
+ * memchr.c
+ *
+ * memchr function (see: string.h).
+ *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 08.07.2023   tstih
+ *
+ */
 #include <string.h>
 
 void *memchr(const void *s, int c, size_t n) {

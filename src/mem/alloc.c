@@ -1,3 +1,11 @@
+/*
+ * alloc.c
+ *
+ * Allocate a memory block on the heap.
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <string.h>
 #include <mem/mem.h>
 

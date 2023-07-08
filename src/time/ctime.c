@@ -1,3 +1,14 @@
+/*
+ * ctime.c
+ *
+ * ctime function (see: time.h).
+ *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 08.07.2023   tstih
+ *
+ */
 #include <time/_time.h>
 
 /* Exclude all for LEAN_AND_MEAN */

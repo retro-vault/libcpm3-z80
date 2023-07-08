@@ -1,3 +1,11 @@
+/*
+ * merge_next.c
+ *
+ * Merge block with next block.
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <string.h>
 #include <mem/mem.h>
 

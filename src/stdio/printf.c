@@ -1,3 +1,11 @@
+/*
+ * printf.c
+ *
+ * printf function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 int printf(char *fmt, ...)

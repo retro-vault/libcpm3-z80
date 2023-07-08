@@ -1,3 +1,13 @@
+/*
+ * exp.c
+ *
+ * Implementation of exp (see:math.h)
+ *
+ * From SDCC C math library.
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <math/_math.h>
 
 float exp(float x)

@@ -1,3 +1,11 @@
+/*
+ * split.c
+ *
+ * Split memory block to two blocks.
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <string.h>
 #include <mem/mem.h>
 

@@ -1,3 +1,14 @@
+/*
+ * gmtime.c
+ *
+ * gmtime function (see: time.h).
+ *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 08.07.2023   tstih
+ *
+ */
 #include <time/_time.h>
 
 /* Exclude all for LEAN_AND_MEAN */
@@ -12,7 +23,7 @@ struct tm *gmtime(const time_t *timer) {
 
     long days, rem;
     int y;
-    int *ip;
+    const int *ip;
    
     days = ((long)time) / SEC_IN_DAY;
     rem = ((long)time) % SEC_IN_DAY;

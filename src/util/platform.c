@@ -1,7 +1,7 @@
 /*
- * proxy.c
+ * platform.c
  *
- * Empty proxy functions.
+ * Empty platform functions.
  * 
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih

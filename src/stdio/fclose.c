@@ -1,3 +1,11 @@
+/*
+ * fclose.c
+ *
+ * fclose function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 int fclose(FILE *fp)

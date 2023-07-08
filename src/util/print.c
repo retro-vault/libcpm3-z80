@@ -137,7 +137,7 @@ int _vsprintf(char **out, char *format, va_list ap)
 		unsigned long lu;
 		long long lli;
 		unsigned long long llu;
-#endif
+#endif /* !LEAN_AND_MEAN */
 	} u;
 
 	for (; *format != 0; format++) {
@@ -306,7 +306,7 @@ int _vsprintf(char **out, char *format, va_list ap)
 							break;
 					}
 					break;
-#endif /* LEAN_AND_MEAN */
+#endif /* !LEAN_AND_MEAN */
 
 				default:
 					break;

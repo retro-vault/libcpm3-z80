@@ -1,3 +1,11 @@
+/*
+ * sprintf.c
+ *
+ * sprintf function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 int sprintf(char *buf, char *fmt, ...)

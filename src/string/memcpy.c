@@ -1,3 +1,14 @@
+/*
+ * memcpy.c
+ *
+ * memcpy function (see: string.h).
+ *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 08.07.2023   tstih
+ *
+ */
 #include <string.h>
 
 void *memcpy(void *s1, const void *s2, size_t n) {

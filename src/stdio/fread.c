@@ -1,3 +1,11 @@
+/*
+ * fread.c
+ *
+ * fread function (see:stdio.h)
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <stdio/_stdio.h>
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp)

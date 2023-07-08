@@ -1,3 +1,13 @@
+/*
+ * sqrt.c
+ *
+ * Implementation of sqrt (see:math.h)
+ *
+ * From SDCC C math library.
+ *
+ * 05.07.2023   tstih
+ *
+ */
 #include <math/_math.h>
 
 float sqrt(float x)
