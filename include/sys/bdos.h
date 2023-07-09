@@ -71,9 +71,7 @@ typedef struct bdos_ret_s {
 #define HWERR_FEXISTS   8               /* File already exists */
 #define HWERR_INV_FNME  9               /* Name contains ? */
 
-#if(__SDCC_VERSION_MAJOR>=4 && __SDCC_VERSION_MINOR>=1 && __SDCC_VERSION_PATCH>=12)
-/* nothing */
-#else
+#if(__SDCC_VERSION_MAJOR==4 && __SDCC_VERSION_MINOR==0)
 #define __sdcccall(a)
 #endif
 
