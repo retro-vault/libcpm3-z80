@@ -13,8 +13,7 @@
 
         .equ    BDOS, 5
 
-        .area _CODE
-
+        .area   _CODE
 
         ;; -----------------------------------------
         ;; uint8_t bdos(uint8_t fn, uint16_t param);

@@ -27,7 +27,7 @@ extern void *_argc;
 /* argv from crt0cpm-z80.s */
 extern void *_argv;
 
-void _init_cmdline() {
+void _init_cmdline(void) {
         /* standard CP/M command buffer */
     char *argptr = (char *) TBUFF; 
     unsigned char abytes;

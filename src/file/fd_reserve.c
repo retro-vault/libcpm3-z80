@@ -11,7 +11,7 @@
  */
 #include <file/fd.h>
 
-int _fd_reserve() {
+int _fd_reserve(void) {
     uint8_t fd=3;
     while (fd<MAX_FILES && _fds[fd]!=NULL) fd++;
     if (fd==MAX_FILES)

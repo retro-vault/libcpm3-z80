@@ -13,6 +13,6 @@
 
 /* Initialize file descriptors:
    all descriptors are NULL, except stdin, stdout, sterr. */
-void _init_fds() {
+void _init_fds(void) {
     for (uint8_t i=0; i<MAX_FILES; i++) _fds[i]=NULL;
 }

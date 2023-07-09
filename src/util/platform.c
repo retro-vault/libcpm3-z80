@@ -24,10 +24,10 @@
 char *libplatform="z80-none";
 
 /* init hook */
-void libinit() {}
+void libinit(void) {}
 
 /* mem top */
-size_t _memtop() {
+size_t _memtop(void) {
     /* Default top is BDOS. */
     size_t *ptr=(size_t *)0x0006;
     return *ptr;

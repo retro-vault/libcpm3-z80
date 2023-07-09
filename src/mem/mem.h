@@ -42,7 +42,7 @@ extern void _heap;
 /* Mem top. By convention this is start of BDOS, retreived from
    the 0x0005 address (BDOS call). This function can be "overrriden"
    by the PLATFORM= parameter. */
-extern size_t _memtop();
+extern size_t _memtop(void);
 
 /* find first free block of appropriate size */
 extern uint8_t _match_free_block(list_header_t *p, uint16_t size);
@@ -54,7 +54,7 @@ extern void _merge_with_next(block_t *b);
 extern void _split(block_t *b, uint16_t size);
 
 /* initialize memory management */
-extern void _memory_init();
+extern void _memory_init(void);
 
 /* initialize custom heap */
 extern void _heap_init(uint16_t start, uint16_t size);

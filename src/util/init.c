@@ -13,7 +13,7 @@
 #include <mem/mem.h>
 #include <file/fd.h>
 
-void _stdlib_init() {
+void _stdlib_init(void) {
     /* Initialize comamnd line args. */
     _init_cmdline();
 

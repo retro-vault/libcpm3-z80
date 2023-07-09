@@ -39,10 +39,10 @@ typedef struct fd_s {
 extern fd_t* _fds[];
 
 /* Initialize */
-extern void _init_fds();
+extern void _init_fds(void);
 
 /* Get first free file descriptor. */
-extern int _fd_reserve();
+extern int _fd_reserve(void);
 
 /* Set it back to null. */
 extern void _fd_free(int fd);

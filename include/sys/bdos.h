@@ -73,9 +73,9 @@ typedef struct bdos_ret_s {
 
 
 /* Call bdos, return register A. */
-extern uint8_t bdos(uint8_t fn, uint16_t param);
+extern uint8_t bdos(uint8_t fn, uint16_t param) __sdcccall(0);
 
 /* Call bdos, return results. */
-extern bdos_ret_t *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p);
+extern bdos_ret_t  *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p) __sdcccall(0);
 
 #endif /* __BDOS_H__ */

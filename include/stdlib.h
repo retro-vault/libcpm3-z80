@@ -72,7 +72,7 @@ extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const vo
 
 /* Non standard extension, this is a hook, called just
    after intialization of the Standard library */
-extern void libinit();
+extern void libinit(void);
 
 /* Non standard extension: path parser. 
    Supported path formats are:

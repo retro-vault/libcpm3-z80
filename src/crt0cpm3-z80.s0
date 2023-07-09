@@ -10,9 +10,8 @@
         .globl  __argc
         .globl  __stdlib_init
 
-
-        .area 	_CODE
-start:
+        
+	.area	_CODE
         ;; define a stack   
         ld      sp,#stack
 
@@ -37,11 +36,13 @@ start:
         .area 	_CODE
         .area   _GSINIT
         .area   _GSFINAL	
-        .area   _HOME
         .area   _INITIALIZER
         .area   _INITFINAL
         .area   _INITIALIZED
+        .area   _HOME
+        
         .area   _DATA
+        .area	_BSEG
         .area   _BSS
         .area	_STACK
         .area   _HEAP
@@ -50,11 +51,27 @@ start:
         ;; init code for functions/var.
         .area   _GSINIT
 gsinit::      
-        ;; copy statics.
+	;; zero out data.
+        ld      bc, #l__DATA
+        ld      a, b
+        or      a, c
+        jr      z, copy_data
+        ld      hl, #s__DATA
+        ld      (hl), #0x00
+        dec     bc
+        ld      a, b
+        or      a, c
+        jr      z, copy_data
+        ld      e, l
+        ld      d, h
+        inc     de
+        ldir
+copy_data:
+        ;; copy static initializations.
         ld      bc, #l__INITIALIZER
         ld      a, b
         or      a, c
-        jr      Z, gsinit_done
+        jr      z, gsinit_done
         ld      de, #s__INITIALIZED
         ld      hl, #s__INITIALIZER
         ldir

@@ -14,6 +14,6 @@
 
 /* read cmd line args, and populate structures
    defined in crt0cpm-z80.s0 */
-extern void _init_cmdline();
+extern void _init_cmdline(void);
 
 #endif /* __CMDLINE_H__ */
