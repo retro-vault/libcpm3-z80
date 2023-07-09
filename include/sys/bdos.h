@@ -71,6 +71,11 @@ typedef struct bdos_ret_s {
 #define HWERR_FEXISTS   8               /* File already exists */
 #define HWERR_INV_FNME  9               /* Name contains ? */
 
+#if(__SDCC_VERSION_MAJOR>=4 && __SDCC_VERSION_MINOR>=1 && __SDCC_VERSION_PATCH>=12)
+/* nothing */
+#else
+#define __sdcccall(a)
+#endif
 
 /* Call bdos, return register A. */
 extern uint8_t bdos(uint8_t fn, uint16_t param) __sdcccall(0);
