@@ -48,8 +48,9 @@ SUBMODULES 			= 	lib/libsdcc-z80
 # Rules.
 .PHONY: all
 all:	$(BUILD_DIR) $(SUBMODULES) $(SUBDIRS)
-	cp $(BUILD_DIR)/*.lib $(BIN_DIR)
-	cp $(BUILD_DIR)/$(CRT0).rel $(BIN_DIR)/$(CRT0)$(CRT0EXT)
+	cp --dereference $(BUILD_DIR)/*.lib $(BIN_DIR)
+	cp --dereference $(BUILD_DIR)/$(CRT0).rel $(BIN_DIR)/$(CRT0)$(CRT0EXT)
+	cp -R --dereference $(ROOT)/include $(BIN_DIR)
 
 # "make install" is somewhat expected to be present.
 .PHONY: install
