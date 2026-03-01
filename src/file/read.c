@@ -30,7 +30,8 @@
 ssize_t read(int fd, void *buf, size_t count) {
 
     /* If DMA dirty then write. */
-    fsync(fd);
+    if (fsync(fd) == -1)
+        return -1;
 
     /* We'll need bytes */
     uint8_t *bbuf=(uint8_t*)buf;

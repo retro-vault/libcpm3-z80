@@ -11,19 +11,19 @@
  */
 #include <stdio/_stdio.h>
 
-size_t fwrite(void *ptr, size_t size, size_t nmemb, FILE *fp)
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *fp)
 {
     /* Reset errno. */
     errno = 0;
 
     int i = 0;
     ssize_t wr = 0;
-    unsigned char * data = (unsigned char *) ptr;
+    const unsigned char * data = (const unsigned char *) ptr;
 
     /* Make sure fp is valid file. */
     if (!_check_fp(fp)) {
         errno = EBADF;
-        return -1;
+        return 0;
     }
 
     for (i = 0; i < nmemb; i++) {

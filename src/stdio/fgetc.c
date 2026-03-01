@@ -23,14 +23,19 @@ int fgetc(FILE *fp) {
     }
 
     /* If eof, don't proceed. */
-    if (fp->eof) return 0;
+    if (fp->eof)
+        return EOF;
+
+    /* Console input for stdin-style descriptor. */
+    if (fp->fd == 0)
+        return (int)(unsigned char)bdos(C_READ, 0);
     
     /* Read char. */
     char ch;
     int rd = read(fp->fd, &ch, 1);
     if (rd == 0) {
         fp->eof = true;
-        return 0;
+        return EOF;
     }
     else if (rd == -1) 
         return -1; /* errno is propagated. */
@@ -38,8 +43,8 @@ int fgetc(FILE *fp) {
         /* If text mode file, check eof... */
         if (memchr(&fp->flags, 'b', 3) == NULL && ch==EOF) {
             fp->eof = true;
-            return 0;
+            return EOF;
         } 
     }
-    return ch;
+    return (int)(unsigned char)ch;
 }

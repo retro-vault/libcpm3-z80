@@ -12,5 +12,6 @@
 #include <file/fd.h>
 
 void _fd_free(int fd) {
-    _fds[fd]=NULL;
+    if (fd >= 0 && fd < MAX_FILES)
+        _fds[fd]=NULL;
 }

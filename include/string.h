@@ -22,7 +22,7 @@
 extern void *memset(void *s, int c, size_t n);
 
 /* Copy memory block, */
-extern void *memcpy(const void *dest, const void *src, size_t n);
+extern void *memcpy(void *dest, const void *src, size_t n);
 
 /* Searches for the first occurrence of the character c 
 (an unsigned char) in the first n bytes. */

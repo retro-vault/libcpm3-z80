@@ -22,8 +22,15 @@ int fclose(FILE *fp)
         return -1;
     }
 
+    /* Do not close standard streams. */
+    if (fp->fd >= 0 && fp->fd <= 2) {
+        errno = EINVAL;
+        return -1;
+    }
+
     /* If fp is valid, then close. */
-    close(fp->fd);
+    if (close(fp->fd) == -1)
+        return -1;
 
     /* And release fp. */
     free(fp);

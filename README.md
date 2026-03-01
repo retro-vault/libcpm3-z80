@@ -89,7 +89,7 @@ See `test/Makefile` for a complete working example.
 
 ## Running the tests
 
-`make docker` also builds six test programs into `bin/`:
+`make docker` also builds eight test programs into `bin/`:
 
 | Binary | Tests |
 |--------|-------|
@@ -99,6 +99,8 @@ See `test/Makefile` for a complete working example.
 | `tstdio.com`  | `stdio.h` file I/O |
 | `ttime.com`   | `time.h` time functions |
 | `tmath.com`   | `math.h` floating-point math |
+| `tmem.com`    | allocator internals and utility lists |
+| `tfile.com`   | low-level file API (`open/read/write/lseek/stat`) |
 
 Copy the `.com` files to a CP/M disk and run them on the target machine or
 an emulator such as [z80pack](https://www.autometer.de/unix4fun/z80pack/) or

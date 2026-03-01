@@ -177,6 +177,12 @@ TEST(calloc_zeroed) {
     free(p);
 }
 
+TEST(calloc_overflow_returns_null) {
+    /* num*size overflow must fail safely. */
+    void *p = calloc((size_t)-1, 2);
+    EXPECT_TRUE(p == NULL);
+}
+
 TEST(malloc_multiple_frees) {
     /* Allocate several blocks, free them -- no crash expected. */
     void *a = malloc(10);
@@ -198,6 +204,20 @@ TEST(malloc_reuse_after_free) {
     void *b = malloc(32);
     ASSERT_TRUE(b != NULL);
     free(b);
+}
+
+TEST(malloc_enomem_sets_errno) {
+    void *p;
+    errno = 0;
+    p = malloc((size_t)-1);
+    EXPECT_TRUE(p == NULL);
+    EXPECT_EQ_INT(ENOMEM, errno);
+}
+
+TEST(free_null_is_noop) {
+    int old_errno = errno;
+    free(NULL);
+    EXPECT_EQ_INT(old_errno, errno);
 }
 
 /* ---- splitpath --------------------------------------------------------- */
@@ -229,6 +249,40 @@ TEST(splitpath_no_drive) {
     EXPECT_EQ_STR("COM", ext);
 }
 
+TEST(splitpath_with_user_area) {
+    char drive[MAX_DRIVE + 1];
+    int  user;
+    char fname[MAX_FNAME + 1];
+    char ext[MAX_EXT + 1];
+    int  rc;
+
+    rc = splitpath("B:NAME.BIN[15]", drive, &user, fname, ext);
+    EXPECT_EQ_INT(0, rc);
+    EXPECT_EQ_STR("B", drive);
+    EXPECT_EQ_INT(15, user);
+    EXPECT_EQ_STR("NAME", fname);
+    EXPECT_EQ_STR("BIN", ext);
+}
+
+TEST(splitpath_invalid_too_long_name) {
+    char drive[MAX_DRIVE + 1];
+    int  user;
+    char fname[MAX_FNAME + 1];
+    char ext[MAX_EXT + 1];
+    int  rc;
+
+    rc = splitpath("ABCDEFGHI.TXT", drive, &user, fname, ext);
+    EXPECT_EQ_INT(-1, rc);
+}
+
+TEST(nltype_roundtrip) {
+    volatile char *p = &nltype;
+    char old = *p;
+    *p = NL_CRLF;
+    EXPECT_EQ_INT(NL_CRLF, *p);
+    *p = old;
+}
+
 int main(void) {
     puts("TSTDLIB: stdlib tests");
     RUN_TEST(abs_values);
@@ -248,10 +302,16 @@ int main(void) {
     RUN_TEST(malloc_basic);
     RUN_TEST(malloc_zero_returns_null_or_valid);
     RUN_TEST(calloc_zeroed);
+    RUN_TEST(calloc_overflow_returns_null);
     RUN_TEST(malloc_multiple_frees);
     RUN_TEST(malloc_reuse_after_free);
+    RUN_TEST(malloc_enomem_sets_errno);
+    RUN_TEST(free_null_is_noop);
     RUN_TEST(splitpath_basic);
     RUN_TEST(splitpath_no_drive);
+    RUN_TEST(splitpath_with_user_area);
+    RUN_TEST(splitpath_invalid_too_long_name);
+    RUN_TEST(nltype_roundtrip);
     if (g_failures == 0) {
         printf("PASS all %d tests\n", g_tests_run);
         return 0;

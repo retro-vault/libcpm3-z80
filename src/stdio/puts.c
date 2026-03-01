@@ -15,5 +15,6 @@ int puts(const char *s)
 {
    int i = 0;
    while(s[i]) { putchar(s[i]); i++; }
-   return 1;
+   putchar('\n');
+   return i + 1;
 }

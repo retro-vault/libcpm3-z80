@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <errno.h>
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -209,6 +210,34 @@ TEST(clock_non_negative) {
     EXPECT_TRUE(c >= 0);
 }
 
+TEST(settimeofday_null_fails) {
+    errno = 0;
+    EXPECT_EQ_INT(-1, settimeofday(NULL));
+    EXPECT_EQ_INT(EINVAL, errno);
+}
+
+TEST(settimeofday_before_cpm_epoch_fails) {
+    struct timeval tv;
+    tv.tv_sec = 0;   /* 1970-01-01, earlier than CP/M epoch 1978-01-01 */
+    tv.tv_hsec = 0;
+    errno = 0;
+    EXPECT_EQ_INT(-1, settimeofday(&tv));
+    EXPECT_EQ_INT(EINVAL, errno);
+}
+
+TEST(gettimeofday_smoke) {
+    struct timeval tv;
+    EXPECT_EQ_INT(0, gettimeofday(&tv));
+    EXPECT_TRUE(tv.tv_sec >= 0);
+}
+
+TEST(time_smoke_and_outptr) {
+    time_t now;
+    time_t ret = time(&now);
+    EXPECT_EQ_LONG((long)now, (long)ret);
+    EXPECT_TRUE(ret >= 0);
+}
+
 int main(void) {
     puts("TTIME: time tests");
     RUN_TEST(difftime_positive);
@@ -226,6 +255,10 @@ int main(void) {
     RUN_TEST(asctime_y2k);
     RUN_TEST(ctime_epoch_zero);
     RUN_TEST(clock_non_negative);
+    RUN_TEST(settimeofday_null_fails);
+    RUN_TEST(settimeofday_before_cpm_epoch_fails);
+    RUN_TEST(gettimeofday_smoke);
+    RUN_TEST(time_smoke_and_outptr);
     if (g_failures == 0) {
         printf("PASS all %d tests\n", g_tests_run);
         return 0;

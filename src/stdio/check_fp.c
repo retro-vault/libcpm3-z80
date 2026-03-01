@@ -12,5 +12,9 @@
 #include <stdio/_stdio.h>
 
 bool _check_fp(FILE *fp) {
-    return fp!=NULL && _fd_get(fp->fd)!=NULL;
+    if (fp == NULL)
+        return false;
+    if (fp->fd >= 0 && fp->fd <= 2)
+        return true;
+    return _fd_get(fp->fd)!=NULL;
 }

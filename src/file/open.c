@@ -68,10 +68,14 @@ int open(const char *pathname, int flags, ...)
             /* Try to crate... */
             bdosret(F_MAKE,(uint16_t)&(fdblk->fcb),&result);
             if (result.reta==BDOS_FAILURE) {
+                _fd_set(fd, NULL);
+                free(fdblk);
                 errno=EIO;
                 return -1;
             }
         } else {
+            _fd_set(fd, NULL);
+            free(fdblk);
             errno=EIO;
             return -1;
         }

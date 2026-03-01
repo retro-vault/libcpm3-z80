@@ -57,7 +57,7 @@ LIBSDCC_URL ?= https://github.com/retro-vault/libsdcc-z80/releases/download/v$(L
 SDCCLIB     ?= $(ROOT)/lib/libsdcc-z80.lib
 
 # One binary per test module (8.3 names for comfort on CP/M).
-TESTS   = tctype tstring tstdlib tstdio ttime tmath
+TESTS   = tctype tstring tstdlib tstdio ttime tmath tmem tfile
 BINS    = $(addprefix $(OUT_DIR)/, $(addsuffix .com, $(TESTS)))
 
 .PHONY: all

@@ -28,7 +28,7 @@ FILE *fopen(const char *path, const char *mode)
     }
 
     if (strncmp(mode, "w", 1) == 0) {
-        oflags = O_WRONLY | O_TRUNC;
+        oflags = O_WRONLY | O_CREAT | O_TRUNC;
     }
 
     if (strncmp(mode, "r+", 2) == 0) {
@@ -36,7 +36,7 @@ FILE *fopen(const char *path, const char *mode)
     }
 
     if (strncmp(mode, "w+", 2) == 0) {
-        oflags = O_RDWR | O_TRUNC;
+        oflags = O_RDWR | O_CREAT | O_TRUNC;
     }
 
     /* Open file. */
@@ -53,7 +53,7 @@ FILE *fopen(const char *path, const char *mode)
     f->fd=fd;
     f->eof=false;
     memset(f->flags, 0, 4);
-    strncpy((const char *) f->flags, (const char *) mode, 3);
+    strncpy(f->flags, mode, 3);
 
     /* And return. */
     return f;

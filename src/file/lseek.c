@@ -25,7 +25,8 @@
 off_t lseek(int fd, off_t offset, int whence) {
 
     /* If dirty, write. */
-    fsync(fd);
+    if (fsync(fd) == -1)
+        return -1;
 
     /* Get fd block, and verify it. */
     fd_t *fdblk=_fd_get(fd);

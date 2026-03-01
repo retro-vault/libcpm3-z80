@@ -20,6 +20,7 @@
  */
 #include <stdio.h>
 #include <math.h>
+#include <errno.h>
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -104,6 +105,11 @@ TEST(tan_known_values) {
     EXPECT_EQ_FLOAT(1.0f,     tan(PI/4), TOL); /* tan(45 deg) = 1 */
 }
 
+TEST(cot_known_values) {
+    EXPECT_EQ_FLOAT(1.0f, cot(PI/4), TOL); /* cot(45 deg) = 1 */
+    EXPECT_EQ_FLOAT(0.0f, cot(PI_2), 0.001f);
+}
+
 /* ---- exp --------------------------------------------------------------- */
 
 TEST(exp_known_values) {
@@ -123,6 +129,12 @@ TEST(log_exp_inverse) {
     /* exp(log(x)) == x for x > 0 */
     EXPECT_EQ_FLOAT(2.0f, exp(log(2.0f)), TOL);
     EXPECT_EQ_FLOAT(5.0f, exp(log(5.0f)), TOL);
+}
+
+TEST(sin_range_error) {
+    errno = 0;
+    EXPECT_EQ_FLOAT(0.0f, sin(20000.0f), TOL);
+    EXPECT_EQ_INT(ERANGE, errno);
 }
 
 /* ---- log10 ------------------------------------------------------------- */
@@ -192,9 +204,11 @@ int main(void) {
     RUN_TEST(cos_known_values);
     RUN_TEST(sin_cos_identity);
     RUN_TEST(tan_known_values);
+    RUN_TEST(cot_known_values);
     RUN_TEST(exp_known_values);
     RUN_TEST(log_known_values);
     RUN_TEST(log_exp_inverse);
+    RUN_TEST(sin_range_error);
     RUN_TEST(log10_known_values);
     RUN_TEST(pow_known_values);
     RUN_TEST(pow_sqrt_identity);

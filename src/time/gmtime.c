@@ -42,11 +42,9 @@ struct tm *gmtime(const time_t *timer) {
     /* compute year & day of year */
     y = EPOCH_YR;
     if (days >= 0) {
-        for (;;) {
-            if (days < _diy(y))
-                break;
-            y++;
+        while (days >= _diy(y)) {
             days -= _diy(y);
+            y++;
         }
     } else {
         do {
@@ -58,12 +56,11 @@ struct tm *gmtime(const time_t *timer) {
     _tmi.tm_year = y - YEAR0;
     _tmi.tm_yday = days;
     ip = _mdays[_leap(y)];
-    for (_tmi.tm_mon = 0; days >= ip[_tmi.tm_mon]; ++(_tmi.tm_mon))
+    for (_tmi.tm_mon = 0; _tmi.tm_mon < 11 && days >= ip[_tmi.tm_mon]; ++(_tmi.tm_mon))
         days = days - ip[_tmi.tm_mon];
         
-    _tmi.tm_mday = days + 1 + _leap(y);
+    _tmi.tm_mday = days + 1;
 
     /* return internal static structure */
     return &_tmi;
 }
-
