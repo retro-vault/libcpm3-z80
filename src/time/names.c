@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* day names */
 const char *_days[7] = {
@@ -25,4 +23,3 @@ const char *_months[12] = {
     "July", "August", "September", "October", "November", "December"
 };
 
-#endif /* !LEAN_AND_MEAN */

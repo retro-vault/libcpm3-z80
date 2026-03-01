@@ -9,8 +9,8 @@
  * 19.06.2021   tstih
  *
  */
-#ifndef __LIMITS_H__
-#define __LIMITS_H__
+#ifndef LIBCPM3_LIMITS_H
+#define LIBCPM3_LIMITS_H
 
 #define CHAR_BIT    8                   /* Bits in char. */
 #define SCHAR_MIN   -128
@@ -30,4 +30,4 @@
 #define ULONG_MAX   4294967295
 #define SSIZE_MAX   65535               /* Max bytes for file read */
 
-#endif /* __LIMITS_H__ */
+#endif /* LIBCPM3_LIMITS_H */

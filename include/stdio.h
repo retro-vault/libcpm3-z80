@@ -1,24 +1,16 @@
 /*
  * stdio.h
  *
- * standard C header file
- * 
- * TODO:
- *  int fprintf(FILE *stream, const char *format, ...);
- *  int snprintf(char *str, size_t size, const char *format, ...);
- *  char *getenv(const char *name);
- *  int fflush(FILE *stream);
- *  void perror(const char *s);
- *  int ferror(FILE *stream);
- * 
+ * Standard C I/O header.
+ *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *
  * 01.05.2021   tstih
  *
  */
-#ifndef __STDIO_H__
-#define __STDIO_H__
+#ifndef LIBCPM3_STDIO_H
+#define LIBCPM3_STDIO_H
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -82,4 +74,4 @@ extern int putchar(int c);
 /* Reads a char (blocks). */
 extern int getchar(void);
 
-#endif /* __STDIO_H__ */
+#endif /* LIBCPM3_STDIO_H */

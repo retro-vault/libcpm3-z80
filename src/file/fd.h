@@ -9,8 +9,8 @@
  * 10.08.2021   tstih
  *
  */
-#ifndef __FD_H__
-#define __FD_H__
+#ifndef LIBCPM3_FILE_FD_H
+#define LIBCPM3_FILE_FD_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -53,4 +53,4 @@ extern void _fd_set(int fd, fd_t *fdblk);
 /* Return file descriptor block. */
 extern fd_t* _fd_get(int fd);
 
-#endif /* __FD_H__ */
+#endif /* LIBCPM3_FILE_FD_H */

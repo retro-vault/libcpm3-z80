@@ -3,6 +3,9 @@
  *
  * fwrite function (see:stdio.h)
  *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
  * 05.07.2023   tstih
  *
  */
@@ -23,9 +26,11 @@ size_t fwrite(void *ptr, size_t size, size_t nmemb, FILE *fp)
         return -1;
     }
 
-    for (i = 0; i < nmemb; i++) 
-        if ((wr = write(fp->fd, data, size))==-1) 
+    for (i = 0; i < nmemb; i++) {
+        if ((wr = write(fp->fd, data, size)) == -1)
             return 0;
+        data += size;
+    }
 
     /* Return. */
     fp->eof=false;

@@ -9,8 +9,8 @@
  * 19.06.2021   tstih
  *
  */
-#ifndef __STDINT_H__
-#define __STDINT_H__
+#ifndef LIBCPM3_STDINT_H
+#define LIBCPM3_STDINT_H
 
 typedef signed char     int8_t;
 typedef unsigned char   uint8_t;
@@ -19,4 +19,4 @@ typedef unsigned int    uint16_t;
 typedef long            int32_t;
 typedef unsigned long   uint32_t;
 
-#endif /* __STDINT_H__ */
+#endif /* LIBCPM3_STDINT_H */

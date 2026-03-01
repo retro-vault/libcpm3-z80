@@ -10,8 +10,8 @@
  * 07.08.2021   tstih
  *
  */
-#ifndef __UNISTD_H__
-#define __UNISTD_H__
+#ifndef LIBCPM3_UNISTD_H
+#define LIBCPM3_UNISTD_H
 
 #include <sys/types.h>
 #include <stddef.h>
@@ -38,4 +38,4 @@ off_t lseek(int fd, off_t offset, int whence);
    inject your own implementation.  */
 extern void msleep(int millisec);
 
-#endif /* __UNISTD_H__ */
+#endif /* LIBCPM3_UNISTD_H */

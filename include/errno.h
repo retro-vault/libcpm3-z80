@@ -9,8 +9,8 @@
  * 27.04.2021   tstih
  *
  */
-#ifndef __ERRNO_H__
-#define __ERRNO_H__
+#ifndef LIBCPM3_ERRNO_H
+#define LIBCPM3_ERRNO_H
 
 #define ENOENT      2       /* No such file or directory. */
 #define	EIO         5       /* I/O error. */
@@ -27,4 +27,4 @@
 /* Global error code. */
 extern int errno;
 
-#endif /* __ERRNO_H__ */
+#endif /* LIBCPM3_ERRNO_H */

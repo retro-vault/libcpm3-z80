@@ -9,30 +9,23 @@
  * 08.07.2023   tstih
  *
  */
-#ifndef ___STDIO_H__
-#define ___STDIO_H__
+#ifndef LIBCPM3_INT_STDIO_H
+#define LIBCPM3_INT_STDIO_H
 
 #include <stdbool.h>
 #include <errno.h>
 #include <string.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/bdos.h>
 
 #include <util/print.h>
+#include <util/nltype.h>
 
 #include <file/fd.h>
-
-/* How console functions interpret \n? As \n or as \r\n? */
-#define NL_LF       0
-#define NL_CRLF     1
-#define NL_LFCR     2
-extern char nltype;
 
 /* EOF and positions */
 #define EOF         0x1A	
@@ -53,4 +46,4 @@ extern bool _check_fp(FILE *fp);
 /* write single char */
 extern int putchar(int c);
 
-#endif /* ___STDIO_H___ */
+#endif /* LIBCPM3_INT_STDIO_H */

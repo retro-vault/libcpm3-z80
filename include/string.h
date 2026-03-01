@@ -9,8 +9,8 @@
  * 01.05.2021   tstih
  *
  */
-#ifndef __STRING_H__
-#define __STRING_H___
+#ifndef LIBCPM3_STRING_H
+#define LIBCPM3_STRING_H_
 
 #include <stddef.h>
 
@@ -74,4 +74,4 @@ extern void stoupper(char *s);
 /* Non standard extension: stolower */
 extern void stolower(char *s);
 
-#endif /* __STRING_H__ */
+#endif /* LIBCPM3_STRING_H */

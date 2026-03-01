@@ -13,5 +13,8 @@
 
 void *malloc(size_t size)
 {
-    return _alloc((uint16_t)&_heap,size);
+    void *p = _alloc((uint16_t)&_heap, size);
+    if (p == NULL)
+        errno = ENOMEM;
+    return p;
 }

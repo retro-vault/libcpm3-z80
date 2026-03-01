@@ -13,6 +13,8 @@
 
 void *calloc(size_t num, size_t size)
 {
+    if (size != 0 && num > ((size_t)-1) / size)
+        return NULL;
     size_t bytes = num * size;
     void *result = malloc(bytes);
     if (result!=NULL)

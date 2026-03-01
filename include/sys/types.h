@@ -9,8 +9,8 @@
  * 10.08.2021   tstih
  *
  */
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef LIBCPM3_SYS_TYPES_H
+#define LIBCPM3_SYS_TYPES_H
 
 /* This should be signed size, but it is too short. */
 typedef long ssize_t;
@@ -18,4 +18,4 @@ typedef long ssize_t;
 /* Used to represent file sizes. */
 typedef long off_t;
 
-#endif /* __TYPES_H__ */
+#endif /* LIBCPM3_SYS_TYPES_H */

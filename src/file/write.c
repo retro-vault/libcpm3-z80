@@ -20,16 +20,16 @@
 #include <file/fcb.h>
 #include <file/fd.h>
 
-#define DEBUG
+#undef DEBUG
 
 #ifdef DEBUG
 #include <stdio.h>
-#endif 
+#endif
 
-ssize_t write(int fd, void *buf, size_t count) {
+ssize_t write(int fd, const void *buf, size_t count) {
 
     /* We'll need bytes */
-    uint8_t *bbuf=(uint8_t*)buf;
+    const uint8_t *bbuf=(const uint8_t*)buf;
 
     /* Get fd block, and verify it. */
     fd_t *fdblk=_fd_get(fd);

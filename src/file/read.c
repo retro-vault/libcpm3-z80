@@ -1,11 +1,8 @@
 /*
  * read.c
  *
- * Posix C file read function
- * 
- * NOTE:
- *  No need to check for SSIZE_MAX because count is 16bit.
- * 
+ * Posix C file read function.
+ *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *

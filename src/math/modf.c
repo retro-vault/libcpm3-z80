@@ -8,6 +8,8 @@
  * 05.07.2023   tstih
  *
  */
+#include <math/_math.h>
+
 float modf(float x, float *y)
 {
     *y = (long)x;

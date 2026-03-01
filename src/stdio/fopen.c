@@ -3,6 +3,9 @@
  *
  * fopen function (see:stdio.h)
  *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
  * 05.07.2023   tstih
  *
  */
@@ -42,6 +45,11 @@ FILE *fopen(const char *path, const char *mode)
 
     /* Create FILE * structure. */
     f=malloc(sizeof(FILE));
+    if (f==NULL) {
+        close(fd);
+        errno=ENOMEM;
+        return NULL;
+    }
     f->fd=fd;
     f->eof=false;
     memset(f->flags, 0, 4);

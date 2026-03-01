@@ -5,11 +5,10 @@
 ## Table of content
 
 - [Introduction](#introduction)
-- [Compiling the libcpm3-z80](#compiling-the-libcpm3-z80)
+- [Building the library](#building-the-library)
 - [Compiling your CP/M program](#compiling-your-cpm-program)
-- [Advanced libcpm3-z80 features](#advanced-libcpm3-z80-features)
-  * [Platform dependant functions](#platform-dependant-functions)
-      + [Injecting your platform dependant functions](#injecting-your-platform-dependant-functions)
+- [Running the tests](#running-the-tests)
+- [Platform-dependent functions](#platform-dependent-functions)
 - [What is implemented?](#what-is-implemented-)
     * [Non-standard extensions](#non-standard-extensions)
 - [To Do](#to-do)
@@ -24,100 +23,108 @@ only known to god and a few earthlings.
 **libcpm3-z80** is an attempt to provide a library, written in purest *C*, with a clear separation of platform independent and platform dependent code. To port it to your architecture you need to provide a handful of well documented platform specific functions that the standard requires and are not available in *CP/M*'s *BDOS*.
 
 
-## Compiling the libcpm3-z80
+## Building the library
 
-You need a Linux with the **latest** version of *SDCC* development tools installed.
+You need Docker. SDCC is not required locally — the build runs inside the
+`wischner/sdcc-z80` Docker image.
 
-Then get the repository by executing 
+Clone the repository:
 
-`git clone https://github.com/tstih/libcpm3-z80.git --recurse-submodules`
+```sh
+git clone https://github.com/tstih/libcpm3-z80.git
+```
 
-This will download *libcpm3-z80* and submodule [libsdcc-z80](https://github.com/tstih/libsdcc-z80). 
+Download the SDCC runtime helpers (integer and float stubs, required for
+linking executables):
 
-After that you can compile a basic version of *libcpm3-z80* by issuing a `make` command in root folder.
+```sh
+make deps
+```
 
-Make will produce three files in the `bin` folder.
- * `crt0cpm3-z80.rel` This is the C runtime start-up file.
- * `libcpm3-z80.lib` This is the CP/M 3 standard C library.
- * `libsdcc-z80.lib` This is the SDCC bare metal library.
+Build the library and all test programs:
 
-You need to link all three with your CP/M program.
+```sh
+make docker
+```
+
+The following files are produced in `bin/`:
+
+| File | Description |
+|------|-------------|
+| `crt0cpm3-z80.rel` | C runtime start-up (link first) |
+| `libcpm3-z80.lib`  | CP/M 3 standard C library |
+| `include/`         | Public header files |
+
+`libsdcc-z80.lib` (SDCC integer/float stubs) is downloaded to `lib/` by
+`make deps` and must also be linked with your program.
+
+To remove all build artifacts:
+
+```sh
+make docker-clean
+```
 
 ## Compiling your CP/M program
 
-Check the `Makefile` in the `hello` sample folder.
+You need SDCC installed locally, or you can adapt the Docker invocation from
+the `test/Makefile` as a template. The link order is fixed: CRT0 first,
+your object files, then the library, then the SDCC stubs last.
 
-## Advanced libcpm3-z80 features
+```sh
+# Compile
+sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+     -I bin/include -c -o myprog.rel myprog.c
 
-The library was designed for *CP/M 3*, and uses *BDOS* system calls to implement most features. But some are not covered by the *BDOS*. An example is reading and writing system time. The library still implements almost complete `time.h`. By providing your own platform dependant functions you can unlock full features of the *libcpm3-z80*.
+# Link
+sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+     -o myprog.ihx \
+     bin/crt0cpm3-z80.rel myprog.rel \
+     bin/libcpm3-z80.lib lib/libsdcc-z80.lib
 
-To compile the platform dependant library add your platform name to the arguments. 
+# Convert IHX to CP/M .COM (binary starts at 0x0100)
+sdobjcopy -I ihex -O binary myprog.ihx myprog.com
+```
 
-~~~
-make PLATFORM=partner
-~~~
+See `test/Makefile` for a complete working example.
 
- > The value `partner` is an example, use the name of your
- > platform instead. 
- 
-The system will then ignore the existing basic *(proxy!)* platform dependant code and expect that the missing functions are found at link time in another library or object file.
+## Running the tests
 
- > If platform dependant functions are not linked with your program 
- > the linker will not be able to resolve them and will throw errors.
+`make docker` also builds six test programs into `bin/`:
 
-### Platform dependant functions
+| Binary | Tests |
+|--------|-------|
+| `tctype.com`  | `ctype.h` character classification |
+| `tstring.com` | `string.h` string functions |
+| `tstdlib.com` | `stdlib.h` general utilities |
+| `tstdio.com`  | `stdio.h` file I/O |
+| `ttime.com`   | `time.h` time functions |
+| `tmath.com`   | `math.h` floating-point math |
 
-The platform dependant functions are defined with empty bodies
-by the *libcpm3-z80*. If you compile a basic *libcpm3-z80* version
-you should not only avoid platform dependant functions, but also
-following standard C because they depend on platform dependant
-functions.
+Copy the `.com` files to a CP/M disk and run them on the target machine or
+an emulator such as [z80pack](https://www.autometer.de/unix4fun/z80pack/) or
+YAZE. Each program prints `PASS` or `FAIL` per test and a summary line.
 
+## Platform-dependent functions
 
-| Header     | Platform dependant function    |
-|------------|--------------------------------| 
-| time.h     | clock()                        |
-| time.h     | time()                         |
-| stdarg.h   | argv[0]                        |
+Two functions have no CP/M 3 BDOS equivalent and ship as no-ops:
 
+| Function | Declared in | Default implementation |
+|----------|-------------|------------------------|
+| `msleep()`  | `unistd.h` | no-op — CP/M 3 has no timer |
+| `libinit()` | `stdlib.h` | no-op — user startup hook  |
 
-#### Injecting your platform dependant functions
+To override any of these, define the function in your own source file and link
+it **before** the library. The linker resolves the first definition it finds,
+so your version takes precedence over the one in the archive.
 
-If you compile with the `make PLATFORM=<name>` command then
-the empty functions are not compiled with the library. 
+`libinit()` is called at the end of C runtime initialization (after the heap,
+file descriptors, and command-line arguments are set up). Use it for any
+platform-specific startup code.
 
-You can provide implementations for these functions in another
-library or object file and link with your program. Here is a list
-of functions you need to provide.
-
-~~~cpp
-/* Non standard function to get system date and time.
-   Declared in: time.h */
-extern int gettimeofday(struct timeval *tv);
-
-/* Non standard function to set system date and time 
-   Declared in: time.h*/
-extern int settimeofday(const struct timeval *tv);
-
-/* Sleep in milliseconds
-   Declared in: unistd.h */
-extern void msleep(int millisec);
-
-/* Called just after the libcpm3-z80 library initializes!
-   Implement this to initialize your own libraries at the same time.
-   Declared in: stdlib.h */
-extern void libinit();
-~~~
-
-There is also one platform dependant variable: `progname`, defined
-in `stdlib.h`. By default it is empty, but if you implement the
-`libinit()` and set it to name of your running program, then the
-`argv[0]` will be populated correctly. Otherwise the `argv[0]` 
-will be an empty string. Other arguments are picked up from the 
-program tail correctly.
-
- > We just didn't know how to implement the `argv[0]` safely.
- > If you do please send us a message via github **Issues**.
+There is also one platform-dependent variable: `progname` (`stdlib.h`).
+Set it inside `libinit()` to populate `argv[0]`; otherwise `argv[0]` is an
+empty string. All other command-line arguments are parsed from the CP/M
+program tail automatically.
 
 ## What is implemented?
 
@@ -639,7 +646,7 @@ struct tm {
 /* non standard for settimeofday and gettimeofday functions */
 struct timeval { 
     time_t tv_sec;                      /* seconds since Jan. 1, 1970 */ 
-    int tv_msec;                        /* and milliseconds */ 
+    int tv_hsec;                        /* and 1/100 seconds */
 }; 
 
 /* Converts given calendar time tm to a textual representation of 
@@ -723,9 +730,6 @@ Following functions and variables in *libcpm3-z80* are not part of the *Standard
 ## To Do
 
 `dirent.h` has no implementation.
-
-CP/M 3 Plus has date and time sys calls and the library should 
-use them as default implementation.
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
 [language.badge]: https://img.shields.io/badge/language-C-blue.svg

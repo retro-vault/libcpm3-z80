@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 static struct tm _tmi;
 
@@ -69,4 +67,3 @@ struct tm *gmtime(const time_t *timer) {
     return &_tmi;
 }
 
-#endif /* !LEAN_AND_MEAN */

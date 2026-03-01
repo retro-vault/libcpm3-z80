@@ -11,7 +11,6 @@
  */
 #include <stdlib/_stdlib.h>
 
-#ifndef LEAN_AND_MEAN
 
 const static char _cvt_in[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,           /* '0' - '9' */
@@ -134,4 +133,3 @@ unsigned long strtoul(char *string, char **end_ptr, int base)
     return result;
 }
 
-#endif /* LEAN_AND_MEAN */

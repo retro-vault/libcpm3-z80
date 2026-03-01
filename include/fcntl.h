@@ -9,8 +9,8 @@
  * 08.08.2021   tstih
  *
  */
-#ifndef __FCNTL_H__
-#define __FCNTL_H__
+#ifndef LIBCPM3_FCNTL_H
+#define LIBCPM3_FCNTL_H
 
 #define O_RDONLY    0x0000      /* Read only. */
 #define O_WRONLY    0x0001      /* Write only. */
@@ -22,10 +22,13 @@
 #define SEEK_CUR    1
 #define SEEK_END    2
 
-/* Open file, return file descriptor. */
-extern int open(const char *pathname, int flags);
+/* Open file, return file descriptor.
+   When O_CREAT is specified a third argument (mode_t mode) may be
+   passed; it is accepted for POSIX compatibility but ignored since
+   CP/M has no file permission model. */
+extern int open(const char *pathname, int flags, ...);
 
 /* Create file, return file descriptor. */
 extern int creat(const char *pathname);
 
-#endif /* __FCNTL_H__ */
+#endif /* LIBCPM3_FCNTL_H */

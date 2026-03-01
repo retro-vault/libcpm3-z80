@@ -1,34 +1,32 @@
 # Virtual paths are all subfolders!
-DIRS	=	$(wildcard */)
+DIRS    = $(wildcard */)
 vpath %.c $(DIRS)
 vpath %.s $(DIRS)
 vpath %.h $(DIRS)
 
 # Source files.
-C_SRCS	=	$(wildcard *.c) $(wildcard */*.c)
-S_SRCS	=	$(wildcard *.s) $(wildcard */*.s)
-OBJS	=	$(addprefix $(BUILD_DIR)/, \
-				$(notdir \
-					$(patsubst %.c,%.rel,$(C_SRCS)) \
-					$(patsubst %.s,%.rel,$(S_SRCS)) \
-				) \
-			)
-TARGET = libcpm3-z80
+C_SRCS  = $(wildcard *.c) $(wildcard */*.c)
+S_SRCS  = $(filter-out $(CRT0).s, $(wildcard *.s) $(wildcard */*.s))
+HDRS    = $(wildcard *.h) $(wildcard */*.h)
+OBJS    = $(addprefix $(BUILD_DIR)/, \
+              $(notdir \
+                  $(patsubst %.c,%.rel,$(C_SRCS)) \
+                  $(patsubst %.s,%.rel,$(S_SRCS)) \
+              ) \
+          )
 
 # Rules.
 .PHONY: all
-all:	$(BUILD_DIR)/$(TARGET).lib $(BUILD_DIR)/$(CRT0).rel
+all: $(BUILD_DIR)/$(TARGET).lib $(BUILD_DIR)/$(CRT0).rel
 
-$(BUILD_DIR)/$(TARGET).lib: $(OBJS)
-	$(AR) $(ARFLAGS) $@ $^
+$(BUILD_DIR)/$(TARGET).lib: $(OBJS) $(HDRS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
-$(BUILD_DIR)/$(CRT0).rel: $(CRT0).s0
+$(BUILD_DIR)/$(CRT0).rel: $(CRT0).s
 	$(AS) $(ASFLAGS) $(BUILD_DIR)/$(@F) $<
 
-$(BUILD_DIR)/%.rel:	%.s
+$(BUILD_DIR)/%.rel: %.s
 	$(AS) $(ASFLAGS) $(BUILD_DIR)/$(@F) $<
 
 $(BUILD_DIR)/%.rel: %.c
-	$(CC) -c -o $(BUILD_DIR)/$(@F) $< $(CFLAGS)
-
-$(BUILD_DIR)/%.rel: %.h
+	$(CC) $(CFLAGS) -c -o $(BUILD_DIR)/$*.rel $<

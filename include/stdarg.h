@@ -9,8 +9,8 @@
  * 03.05.2021   tstih
  *
  */
-#ifndef __STDARG_H__
-#define __STDARG_H__
+#ifndef LIBCPM3_STDARG_H
+#define LIBCPM3_STDARG_H
 
 /* Standard C var arg macros. */
 #define va_list                 unsigned char *
@@ -18,4 +18,4 @@
 #define va_arg(marker, type)    *((type *)((marker += sizeof(type)) - sizeof(type)))
 #define va_end(marker)          marker = (va_list) 0;
 
-#endif /* __STDARG_H__ */
+#endif /* LIBCPM3_STDARG_H */

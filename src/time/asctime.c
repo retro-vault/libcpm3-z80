@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* buffers for functions returning pointers */
 static char _at[26]; 
@@ -38,4 +36,3 @@ char* asctime(const struct tm* pt) {
     return &(_at[0]); /* return ptr to internal buffer (unsafe, I know) */
 }
 
-#endif /* !LEAN_AND_MEAN */

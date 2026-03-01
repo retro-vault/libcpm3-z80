@@ -9,8 +9,8 @@
  * 11.08.2021   tstih
  *
  */
-#ifndef __STAT_H__
-#define __STAT_H__
+#ifndef LIBCPM3_SYS_STAT_H
+#define LIBCPM3_SYS_STAT_H
 
 #include <stdint.h>
 #include <sys/types.h>
@@ -27,4 +27,4 @@ struct stat {
 /* Read file stat. */
 extern int stat(char *pathname, struct stat *statbuf);
 
-#endif /* __STAT_H__ */
+#endif /* LIBCPM3_SYS_STAT_H */

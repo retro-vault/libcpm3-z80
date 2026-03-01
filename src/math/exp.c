@@ -34,12 +34,12 @@ float exp(float x)
     {
         if (sign)
         {
-            errno = ERANGE;
-            return HUGE_VAL;
+            return 0.0;
         }
         else
         {
-            return 0.0;
+            errno = ERANGE;
+            return HUGE_VAL;
         }
     }
 

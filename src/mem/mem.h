@@ -9,8 +9,8 @@
  * 25.05.2012   tstih
  *
  */
-#ifndef __MEM_H__
-#define __MEM_H__
+#ifndef LIBCPM3_MEM_H
+#define LIBCPM3_MEM_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -44,9 +44,6 @@ extern void _heap;
    by the PLATFORM= parameter. */
 extern size_t _memtop(void);
 
-/* find first free block of appropriate size */
-extern uint8_t _match_free_block(list_header_t *p, uint16_t size);
-
 /* merge block with the next block */
 extern void _merge_with_next(block_t *b);
 
@@ -65,4 +62,4 @@ extern void *_alloc(uint16_t heap, size_t size);
 /* release block from the heap (used by free) */
 extern void _dealloc(uint16_t heap, void *p);
 
-#endif /* __MEM_H__ */
+#endif /* LIBCPM3_MEM_H */
