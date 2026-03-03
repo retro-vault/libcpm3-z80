@@ -9,8 +9,8 @@
  * 02.05.2021   tstih
  *
  */
-#ifndef __CTYPE_H__
-#define __CTYPE_H__
+#ifndef LIBCPM3_CTYPE_H
+#define LIBCPM3_CTYPE_H
 
 #include <stdbool.h>
 
@@ -32,4 +32,4 @@ extern int toupper(int c);
 /* True if char is a digit. */
 extern bool isdigit(int c);
 
-#endif /* __CTYPE_H__ */
+#endif /* LIBCPM3_CTYPE_H */

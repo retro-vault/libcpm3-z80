@@ -13,5 +13,7 @@
 
 void free(void *p)
 {
+    if (p == NULL)
+        return;
     _dealloc((uint16_t)&_heap,p);
 }

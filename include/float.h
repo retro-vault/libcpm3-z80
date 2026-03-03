@@ -9,8 +9,8 @@
  * 01.08.2021   tstih
  *
  */
-#ifndef __FLOAT_H__
-#define __FLOAT_H__
+#ifndef LIBCPM3_FLOAT_H
+#define LIBCPM3_FLOAT_H
 
 #define FLT_RADIX       2
 #define FLT_MANT_DIG    24
@@ -23,4 +23,4 @@
 #define FLT_MAX         3.402823466E+38F
 #define FLT_MAX_10_EXP  (+38)
 
-#endif	/* __FLOAT_H__ */
+#endif	/* LIBCPM3_FLOAT_H */

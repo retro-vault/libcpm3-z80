@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* leap year=1, otherwise 0 */
 uint8_t _leap(int y) {
@@ -23,4 +21,3 @@ uint8_t _leap(int y) {
 	else return 0;
 }
 
-#endif /* !LEAN_AND_MEAN */

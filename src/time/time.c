@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* Get current time. */
 time_t time(time_t *arg) {
@@ -29,4 +27,3 @@ time_t time(time_t *arg) {
     return tv.tv_sec;
 }
 
-#endif /* !LEAN_AND_MEAN */

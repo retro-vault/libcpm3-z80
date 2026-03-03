@@ -9,8 +9,8 @@
  * 27.04.2021   tstih
  *
  */
-#ifndef __BDOS_H__
-#define __BDOS_H__
+#ifndef LIBCPM3_SYS_BDOS_H
+#define LIBCPM3_SYS_BDOS_H
 
 #include <stdint.h>
 
@@ -36,6 +36,9 @@
 #define DRV_LOGINVEC    24              /* Enumerate drives */
 #define DRV_GET         25              /* Get current drive */
 #define DRV_DPB         31              /* Get drive info block */
+/* Time commands (CP/M 3 only) */
+#define T_SET           104             /* Set date and time */
+#define T_GET           105             /* Get date and time */
 /* File commands */
 #define F_OPEN          15              /* Open file */
 #define F_CLOSE         16              /* Close file */
@@ -81,4 +84,4 @@ extern uint8_t bdos(uint8_t fn, uint16_t param) __sdcccall(0);
 /* Call bdos, return results. */
 extern bdos_ret_t  *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p) __sdcccall(0);
 
-#endif /* __BDOS_H__ */
+#endif /* LIBCPM3_SYS_BDOS_H */

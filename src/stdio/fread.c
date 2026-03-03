@@ -3,6 +3,9 @@
  *
  * fread function (see:stdio.h)
  *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
  * 05.07.2023   tstih
  *
  */
@@ -21,7 +24,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp)
     /* Make sure fd is valid. */
     if (!_check_fp(fp)) {
         errno = EBADF;
-        return -1;
+        return 0;
     }
 
     /* If eof, don't proceed. */

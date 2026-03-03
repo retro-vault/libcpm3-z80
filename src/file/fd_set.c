@@ -12,5 +12,6 @@
 #include <file/fd.h>
 
 void _fd_set(int fd, fd_t *fdblk) {
-    _fds[fd]=fdblk;
+    if (fd >= 0 && fd < MAX_FILES)
+        _fds[fd]=fdblk;
 }

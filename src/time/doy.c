@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* Service function to calculate day of year */
 int _doy(struct tm * ptim) {
@@ -24,4 +22,3 @@ int _doy(struct tm * ptim) {
     return days;
 }
 
-#endif /* !LEAN_AND_MEAN */

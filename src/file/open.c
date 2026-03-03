@@ -10,7 +10,7 @@
  *
  */
 #include <errno.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <fcntl.h>
 
@@ -18,7 +18,7 @@
 #include <file/fcb.h>
 #include <file/fd.h>
 
-int open(const char *pathname, int flags)
+int open(const char *pathname, int flags, ...)
 {
     /* First parse the filename. */
     char fname[MAX_FNAME + 1];
@@ -43,6 +43,7 @@ int open(const char *pathname, int flags)
     /* Allocate new file descriptor block. */
     fd_t *fdblk=calloc(1, sizeof(fd_t));
     if (fdblk==NULL) {
+        _fd_free(fd);
         errno=ENOMEM;
         return -1;
     }
@@ -63,14 +64,18 @@ int open(const char *pathname, int flags)
     bdosret(F_OPEN,(uint16_t)&(fdblk->fcb),&result);
     if (result.reta==BDOS_FAILURE) {
         /* Is O_CREAT on? */
-        if (fdblk->oflags|O_CREAT) {
+        if (fdblk->oflags & O_CREAT) {
             /* Try to crate... */
             bdosret(F_MAKE,(uint16_t)&(fdblk->fcb),&result);
             if (result.reta==BDOS_FAILURE) {
+                _fd_set(fd, NULL);
+                free(fdblk);
                 errno=EIO;
                 return -1;
             }
         } else {
+            _fd_set(fd, NULL);
+            free(fdblk);
             errno=EIO;
             return -1;
         }

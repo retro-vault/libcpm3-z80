@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include <sys/bdos.h>
@@ -22,10 +23,10 @@
 #include <file/fd.h>
 
 off_t lseek(int fd, off_t offset, int whence) {
-    whence;
 
     /* If dirty, write. */
-    fsync(fd);
+    if (fsync(fd) == -1)
+        return -1;
 
     /* Get fd block, and verify it. */
     fd_t *fdblk=_fd_get(fd);
@@ -34,12 +35,30 @@ off_t lseek(int fd, off_t offset, int whence) {
         return -1;
     }
 
-    /* Calculate random offset */
-    long rec=offset/DMA_SIZE;
-    long dmaoffs=offset%DMA_SIZE;
-    fdblk->fcb.rrec=rec;
+    /* Resolve absolute offset from whence. */
+    off_t abs_offset;
+    if (whence == SEEK_SET) {
+        abs_offset = offset;
+    } else if (whence == SEEK_CUR) {
+        abs_offset = fdblk->fpos + offset;
+    } else {
+        /* SEEK_END: not supported on CP/M (file size not directly
+           available from FCB without a separate F_SIZE call). */
+        errno = EINVAL;
+        return -1;
+    }
 
-    /* And move */
+    if (abs_offset < 0) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    /* Calculate random record and intra-record offset. */
+    long rec     = abs_offset / DMA_SIZE;
+    long dmaoffs = abs_offset % DMA_SIZE;
+    fdblk->fcb.rrec = (uint16_t)rec;
+
+    /* Seek to the record. */
     bdos_ret_t result;
     bdosret(F_READRAND,(uint16_t)&(fdblk->fcb),&result);
     if (result.reta==BDOS_FAILURE) {
@@ -47,12 +66,10 @@ off_t lseek(int fd, off_t offset, int whence) {
         return -1;
     }
 
-    /* Set file pointers. */
-    fdblk->fpos=offset;
-    fdblk->dmapos=dmaoffs;
+    /* Update file pointers. */
+    fdblk->fpos    = abs_offset;
+    fdblk->dmapos  = (uint8_t)dmaoffs;
 
-    /* Assume success */
     errno = 0;
-    return offset;
-
+    return abs_offset;
 }

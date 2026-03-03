@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* Set by firsta call to clock(). Subsequent calls are delta to
    this value. */
@@ -32,4 +30,3 @@ clock_t clock(void) {
             + tv.tv_hsec * (CLOCKS_PER_SEC / 100);
 }
 
-#endif /* !LEAN_AND_MEAN */

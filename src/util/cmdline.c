@@ -2,10 +2,7 @@
  * cmdline.c
  *
  * Initializing CP/M command line arguments.
- * 
- * NOTES:
- *  Based on https://github.com/dmo9000/cpmlibc
- * 
+ *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *

@@ -11,7 +11,6 @@
  */
 #include <errno.h>
 #include <stdlib.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <sys/bdos.h>
@@ -28,8 +27,8 @@ int close(int fd) {
     }
 
     /* Flush dirty DMA block. */
-    if (fdblk->dmadirty) 
-        fsync(fd); 
+    if (fdblk->dmadirty && fsync(fd) == -1)
+        return -1;
 
     /* Call file close on BDOS 
        TODO: Manage hardware error. */

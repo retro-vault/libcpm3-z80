@@ -36,6 +36,10 @@ int stat(char *pathname, struct stat *statbuf) {
     /* Create the temporary FCB,
        and populate it. */
     fcb_t *fcb=calloc(sizeof(fcb_t),1);
+    if (fcb==NULL) {
+        errno = ENOMEM;
+        return -1;
+    }
     _to_fcb_name(fcb->filename, fname, MAX_FNAME);
     _to_fcb_name(fcb->filetype, ext, MAX_EXT);
     fcb->drive=drive - 'A' + 1;
@@ -75,6 +79,7 @@ int stat(char *pathname, struct stat *statbuf) {
 
     bdosret(F_CLOSE,(uint16_t)fcb,&result);
     if (result.reta==BDOS_FAILURE) {
+        free(fcb);
         errno=EIO;
         return -1;
     }
@@ -82,10 +87,14 @@ int stat(char *pathname, struct stat *statbuf) {
     /* Finally, accurately calculate size. 
        Cast one to long to let the compiler know
        to use longs. */
-    statbuf->st_size=
-        (long)statbuf->st_blksize
-        * ( statbuf->st_blocks - 1 )
-        + statbuf->st_lrb;
+    if (statbuf->st_blocks == 0) {
+        statbuf->st_size = 0;
+    } else {
+        statbuf->st_size =
+            (long)statbuf->st_blksize
+            * ( statbuf->st_blocks - 1 )
+            + statbuf->st_lrb;
+    }
 
     /* We did it. */
     errno=0;

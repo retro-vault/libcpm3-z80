@@ -9,8 +9,8 @@
  * 01.05.2021   tstih
  *
  */
-#ifndef __STDLIB_H__
-#define __STDLIB_H__
+#ifndef LIBCPM3_STDLIB_H
+#define LIBCPM3_STDLIB_H
 
 #include <stddef.h>
 
@@ -89,4 +89,4 @@ extern int splitpath(
    char *ext
 );
 
-#endif /* __STDLIB_H__ */
+#endif /* LIBCPM3_STDLIB_H */

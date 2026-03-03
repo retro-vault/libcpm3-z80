@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* Service function to calculates day of week */
 uint8_t _dow(struct tm * ptim) {
@@ -21,4 +19,3 @@ uint8_t _dow(struct tm * ptim) {
     return weekday;
 }
 
-#endif /* !LEAN_AND_MEAN */

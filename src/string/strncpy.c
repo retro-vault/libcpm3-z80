@@ -17,12 +17,13 @@ char* strncpy(char* dst, const char* src, size_t num)
         return NULL;
     }
     char* ptr = dst;
-    while (*src && num--)
-    {
-        *dst = *src;
-        dst++;
-        src++;
+    while (num && *src) {
+        *dst++ = *src++;
+        --num;
     }
-    *dst = '\0';
+    while (num) {
+        *dst++ = '\0';
+        --num;
+    }
     return ptr;
 }

@@ -1,7 +1,8 @@
 # bin, build and sdk folders
 bin/
 build/
-sdk/
 
 # vscode
-.vscode/
+.*/
+!.gitignore
+!.github/ 

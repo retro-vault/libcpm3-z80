@@ -11,7 +11,6 @@
  */
 #include <stdlib/_stdlib.h>
 
-#ifndef LEAN_AND_MEAN
 long strtol(char *nptr, char **endptr, int base)
 {
     long result;
@@ -38,4 +37,3 @@ long strtol(char *nptr, char **endptr, int base)
     return result;
 }
 
-#endif /* LEAN_AND_MEAN */

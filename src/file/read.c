@@ -1,11 +1,8 @@
 /*
  * read.c
  *
- * Posix C file read function
- * 
- * NOTE:
- *  No need to check for SSIZE_MAX because count is 16bit.
- * 
+ * Posix C file read function.
+ *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *
@@ -33,7 +30,8 @@
 ssize_t read(int fd, void *buf, size_t count) {
 
     /* If DMA dirty then write. */
-    fsync(fd);
+    if (fsync(fd) == -1)
+        return -1;
 
     /* We'll need bytes */
     uint8_t *bbuf=(uint8_t*)buf;

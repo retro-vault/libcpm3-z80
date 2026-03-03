@@ -3,66 +3,97 @@ ifneq ($(shell uname), Linux)
 $(error OS must be Linux!)
 endif
 
-# Default platform is no platform.
-export PLATFORM 	=
-
 # Global settings: folders.
-export ROOT			=	$(realpath .)
+export ROOT         = $(realpath .)
 
 # PREFIX is a standardized env variable for the target install directory.
-export PREFIX		=	$(ROOT)/bin
+export PREFIX       = $(ROOT)/bin
 
-export BUILD_DIR	=	$(ROOT)/build
-export BIN_DIR		=	$(PREFIX)
-export INC_DIR		=	$(ROOT)/include
+export BUILD_DIR    = $(ROOT)/build
+export BIN_DIR      = $(PREFIX)
+export INC_DIR      = $(ROOT)/include
 
-# Build reduced version of libraries?
-export SLIM			=
-
-# Instruction set. Could be -mz180 as well, for example.
-export ISET			= -mz80
+# Library and CRT0 names.
+export TARGET       = libcpm3-z80
+export CRT0         = crt0cpm3-z80
+export CRT0EXT      = .rel
 
 # Global settings: tools.
-export CC			=	sdcc
-export CFLAGS		=	--std-c11 $(ISET) -I. -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib --debug -D PLATFORM=$(PLATFORM) -D SLIM=$(SLIM)
-export AS			=	sdasz80
-export ASFLAGS		=	-xlos -g
-export AR			=	sdar
-export ARFLAGS		=	-rc
-export CPP			=	sdcpp
-export LD			=	sdldz80
+export CC           = sdcc
+export CFLAGS       = --std-c11 -I. -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib --debug
+export AS           = sdasz80
+export ASFLAGS      = -xlos -g
+export AR           = sdar
+export ARFLAGS      = -rc
+export CPP          = sdcpp
+export LD           = sdldz80
 
-# Check if all required tools are on the system.
-REQUIRED = ${CC} ${AR} ${AS} ${CPP} ${LD}
+# SDCC runtime helpers (integer/float assembly stubs).
+# Only needed when linking final executables; not required to build the library.
+LIBSDCC_VER         = 0.0.1
+LIBSDCC_URL         = https://github.com/retro-vault/libsdcc-z80/releases/download/v$(LIBSDCC_VER)/libsdcc-z80-$(LIBSDCC_VER).tar.gz
+export LIBSDCC      = $(ROOT)/lib/libsdcc-z80.lib
+
+# Docker build support.
+DOCKER_IMAGE        = wischner/sdcc-z80
+DOCKER_RUN          = docker run --rm \
+                      -v "$(ROOT)":/src \
+                      -w /src \
+                      -e INSIDE_DOCKER=1 \
+                      --user $(shell id -u):$(shell id -g) \
+                      $(DOCKER_IMAGE)
+
+# Root-privileged docker run used only by docker-clean to handle build
+# artifacts that were created by a previous root Docker container.
+DOCKER_RUN_ROOT     = docker run --rm \
+                      -v "$(ROOT)":/src \
+                      -w /src \
+                      $(DOCKER_IMAGE)
+
+# Default goal is 'docker' so bare 'make' works without SDCC installed locally.
+# Use 'make all' only when building natively (requires SDCC on PATH).
+.DEFAULT_GOAL := docker
+
+# Check that SDCC tools are present -- only when explicitly building natively.
+# Bare 'make' runs 'docker', not 'all', so this check never fires by default.
+ifndef INSIDE_DOCKER
+ifneq (,$(filter all install,$(MAKECMDGOALS)))
+REQUIRED = $(CC) $(AR) $(AS) $(CPP) $(LD)
 K := $(foreach exec,$(REQUIRED),\
     $(if $(shell which $(exec)),,$(error "$(exec) not found. Please install or add to path.")))
-
-# crt0.s
-export CRT0			=	crt0cpm3-z80
-export CRT0EXT			=	.rel
+endif
+endif
 
 # Subfolders for make.
-SUBDIRS 			=	src
-SUBMODULES 			= 	lib/libsdcc-z80
+SUBDIRS             = src
 
 # Rules.
 .PHONY: all
-all:	$(BUILD_DIR) $(SUBMODULES) $(SUBDIRS)
-	cp --dereference $(BUILD_DIR)/*.lib $(BIN_DIR)
+all: $(BUILD_DIR) $(SUBDIRS)
+	cp --dereference $(BUILD_DIR)/$(TARGET).lib $(BIN_DIR)
 	cp --dereference $(BUILD_DIR)/$(CRT0).rel $(BIN_DIR)/$(CRT0)$(CRT0EXT)
 	cp -R --dereference $(ROOT)/include $(BIN_DIR)
+	$(MAKE) -C test SDCCLIB="$(LIBSDCC)"
 
-# "make install" is somewhat expected to be present.
 .PHONY: install
 install: all
+	install -d $(DESTDIR)$(PREFIX)/lib $(DESTDIR)$(PREFIX)/include
+	cp $(BIN_DIR)/$(TARGET).lib $(DESTDIR)$(PREFIX)/lib/
+	cp $(BIN_DIR)/$(CRT0)$(CRT0EXT) $(DESTDIR)$(PREFIX)/lib/
+	cp -R $(INC_DIR)/. $(DESTDIR)$(PREFIX)/include/
+
+.PHONY: docker
+docker:
+	$(DOCKER_RUN) make all
+
+.PHONY: docker-clean
+docker-clean:
+	$(DOCKER_RUN_ROOT) sh -c "rm -rf /src/build /src/bin"
 
 .PHONY: $(BUILD_DIR)
 $(BUILD_DIR):
-	# Create build dir.
 	mkdir -p $(BUILD_DIR)
-	# Remove bin dir (we are going to write again).
-	rm -f -r $(BIN_DIR)
-	# And re-create!
+	rm -rf $(BIN_DIR)
 	mkdir -p $(BIN_DIR)
 
 .PHONY: $(SUBDIRS)
@@ -73,25 +104,34 @@ $(SUBDIRS):
 		AR="$(AR)" \
 		CPP="$(CPP)" \
 		LD="$(LD)" \
-		REQUIRED="$(AS) $(CC) $(AR) $(CPP) $(LD)" \
 		CFLAGS="$(CFLAGS)"
 
-.PHONY: $(SUBMODULES)
-$(SUBMODULES):
-	# Pass current settings to the submodules.
-	$(MAKE) -C $@ \
-		BUILD_DIR=$(BUILD_DIR) \
-		BIN_DIR=$(BIN_DIR) \
-		AS="$(AS)" \
-		CC="$(CC)" \
-		AR="$(AR)" \
-		CPP="$(CPP)" \
-		LD="$(LD)" \
-		REQUIRED="$(AS) $(CC) $(AR) $(CPP) $(LD)" \
-		CFLAGS="$(CFLAGS)"
+# Download the SDCC runtime helpers library.
+# Run once before building any final executable (e.g. test programs).
+.PHONY: deps
+deps: $(LIBSDCC)
 
+$(LIBSDCC):
+	mkdir -p $(ROOT)/lib
+	curl -sL $(LIBSDCC_URL) | \
+	  tar -xzf - --strip-components=2 -C $(ROOT)/lib \
+	  libsdcc-z80-$(LIBSDCC_VER)/lib/libsdcc-z80.lib
 
 .PHONY: clean
 clean:
-	rm -f -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
+.PHONY: help
+help:
+	@echo "Targets:"
+	@echo "  deps         Download libsdcc-z80 runtime helpers to lib/"
+	@echo "  all          Build library + tests natively (requires SDCC)"
+	@echo "  docker       Build library inside Docker ($(DOCKER_IMAGE))"
+	@echo "  install      Install to DESTDIR\$(PREFIX) (default: bin/)"
+	@echo "  clean        Remove build artifacts"
+	@echo "  docker-clean Remove build artifacts via Docker"
+	@echo ""
+	@echo "Variables:"
+	@echo "  DESTDIR=<path>   Installation prefix (for make install)"
+	@echo ""
+	@echo "Note: run 'make deps' before building test programs."

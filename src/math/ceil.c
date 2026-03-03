@@ -8,6 +8,8 @@
  * 05.07.2023   tstih
  *
  */
+#include <math/_math.h>
+
 float ceil(float x)
 {
     long r;

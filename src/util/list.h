@@ -9,8 +9,8 @@
  * 05.06.2012   tstih
  *
  */
-#ifndef __LIST_H__
-#define __LIST_H__
+#ifndef LIBCPM3_UTIL_LIST_H
+#define LIBCPM3_UTIL_LIST_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,4 +42,4 @@ extern list_header_t *_list_remove(list_header_t **first, list_header_t *el);
 /* remove first element from linked list */
 extern list_header_t *_list_remove_first(list_header_t **first);
 
-#endif /* __LIST_H__ */
+#endif /* LIBCPM3_UTIL_LIST_H */

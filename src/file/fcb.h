@@ -9,10 +9,15 @@
  * 10.08.2021   tstih
  *
  */
-#ifndef __FCB_H__
-#define __FCB_H__
+#ifndef LIBCPM3_FILE_FCB_H
+#define LIBCPM3_FILE_FCB_H
 
 #include <stdint.h>
+
+/* CP/M filename length limits */
+#define MAX_DRIVE   1
+#define MAX_FNAME   8
+#define MAX_EXT     3
 
 typedef struct fcb_s {
 	uint8_t drive;              /* 0 -> Searches in default disk drive */
@@ -29,4 +34,4 @@ typedef struct fcb_s {
 
 extern void _to_fcb_name(char *dst, char *src, uint8_t maxlen);
 
-#endif /* __FCB_H__ */
+#endif /* LIBCPM3_FILE_FCB_H */

@@ -3,13 +3,14 @@
  *
  * Standard Library header.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
  *
  * 12.02.2022   tstih
  *
  */
-#ifndef __MATH_H__
-#define __MATH_H__
+#ifndef LIBCPM3_MATH_H
+#define LIBCPM3_MATH_H
 
 /* constants */
 #define HUGE_VAL    3.402823466e+38
@@ -31,4 +32,4 @@ extern float sin(float f);
 extern float sqrt(float x);
 extern float tan(float x);
 
-#endif /* __MATH_H__ */
+#endif /* LIBCPM3_MATH_H */

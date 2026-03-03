@@ -11,8 +11,6 @@
  */
 #include <time/_time.h>
 
-/* Exclude all for LEAN_AND_MEAN */
-#ifndef LEAN_AND_MEAN
 
 /* Create time_t given tm structure */
 time_t mktime(struct tm *ptim) {
@@ -30,4 +28,3 @@ time_t mktime(struct tm *ptim) {
         + ((ptim->tm_year+299)/400)*SEC_IN_DAY;
 }
 
-#endif /* !LEAN_AND_MEAN */

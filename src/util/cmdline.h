@@ -9,11 +9,11 @@
  * 04.08.2012   tstih
  *
  */
-#ifndef __CMDLINE_H__
-#define __CMDLINE_H__
+#ifndef LIBCPM3_UTIL_CMDLINE_H
+#define LIBCPM3_UTIL_CMDLINE_H
 
 /* read cmd line args, and populate structures
    defined in crt0cpm-z80.s0 */
 extern void _init_cmdline(void);
 
-#endif /* __CMDLINE_H__ */
+#endif /* LIBCPM3_UTIL_CMDLINE_H */

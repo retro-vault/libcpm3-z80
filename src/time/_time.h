@@ -9,14 +9,13 @@
  * 08.07.2023   tstih
  *
  */
-#ifndef ___TIME_H__
-#define ___TIME_H__
+#ifndef LIBCPM3_INT_TIME_H
+#define LIBCPM3_INT_TIME_H
 
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 
-#include <util/leanmean.h>
 
 #define YEAR0           1900
 #define EPOCH_YR        1970
@@ -90,4 +89,4 @@ extern uint8_t _leap(int y);
 /* day of year */
 extern int _doy(struct tm * ptim);
 
-#endif /* ___TIME_H___ */
+#endif /* LIBCPM3_INT_TIME_H */

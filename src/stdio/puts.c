@@ -3,6 +3,9 @@
  *
  * puts function (see:stdio.h)
  *
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
  * 05.07.2023   tstih
  *
  */
@@ -12,5 +15,6 @@ int puts(const char *s)
 {
    int i = 0;
    while(s[i]) { putchar(s[i]); i++; }
-   return 1;
+   putchar('\n');
+   return i + 1;
 }

@@ -3,13 +3,14 @@
  *
  * Internal header for math functions.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
  *
  * 05.07.2023   tstih
  *
  */
-#ifndef ___MATH_H__
-#define ___MATH_H__
+#ifndef LIBCPM3_INT_MATH_H
+#define LIBCPM3_INT_MATH_H
 
 #include <stdbool.h>
 #include <errno.h>
@@ -92,4 +93,4 @@ extern float sqrt(float x);
 extern float tan(float x);
 extern float _sincosf(float x, bool iscos);
 
-#endif /* ___MATH_H__ */
+#endif /* LIBCPM3_INT_MATH_H */

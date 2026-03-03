@@ -9,8 +9,8 @@
  * 01.05.2021   tstih
  *
  */
-#ifndef __STRING_H__
-#define __STRING_H___
+#ifndef LIBCPM3_STRING_H
+#define LIBCPM3_STRING_H_
 
 #include <stddef.h>
 
@@ -22,7 +22,7 @@
 extern void *memset(void *s, int c, size_t n);
 
 /* Copy memory block, */
-extern void *memcpy(const void *dest, const void *src, size_t n);
+extern void *memcpy(void *dest, const void *src, size_t n);
 
 /* Searches for the first occurrence of the character c 
 (an unsigned char) in the first n bytes. */
@@ -74,4 +74,4 @@ extern void stoupper(char *s);
 /* Non standard extension: stolower */
 extern void stolower(char *s);
 
-#endif /* __STRING_H__ */
+#endif /* LIBCPM3_STRING_H */

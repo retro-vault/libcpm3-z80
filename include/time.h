@@ -1,28 +1,16 @@
 /*
  * time.h
  *
- * Standard C header file for time functions.
- * Implemented functions are: asctime(), clock(), ctime(),
- * difftime(), gmtime(), mktime(), time().
- * 
- * NOTES:
- *  - daylight setting is not known so tm_isdst member of struct tm
- *    is set to -1
- *  - strftime() is not immplemented
- *  - non-standard: function settimmeofday() can be used to set Partners' 
- *    date and time (resolution = 1 second).
- *  - non-standard: difftime is long because SDCC does not impelement double
- *  - local time and gmtime are the same (WHAT?! i live in London...)
- *  - fixed resolution
- * 
+ * Standard C time functions.
+ *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *
  * 22.05.2021   tstih
  *
  */
-#ifndef __TIME_H__
-#define __TIME_H__
+#ifndef LIBCPM3_TIME_H
+#define LIBCPM3_TIME_H
 
 /* We need a resolution of 1/100 sec. */
 #define CLOCKS_PER_SEC  100L
@@ -90,4 +78,4 @@ extern int gettimeofday(struct timeval *tv);
 /* Non standard function to set system date and time */
 extern int settimeofday(const struct timeval *tv);
 
-#endif /* __TIME_H__ */
+#endif /* LIBCPM3_TIME_H */

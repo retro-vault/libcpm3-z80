@@ -11,16 +11,19 @@
  */
 #include <string.h>
 
-char *strrchr(char *s, int c)
+char *strrchr(const char *s, int c)
 {
-    char *ptr = (const char *) s;
-    char *retptr = NULL;
+    const char *ptr = s;
+    const char *retptr = NULL;
+    char ch = (char)c;
 
     while (ptr[0] != '\0') {
-        if (ptr[0] == c) {
-            retptr = (char *) ptr;
+        if (ptr[0] == ch) {
+            retptr = ptr;
         }
         ptr ++;
     }
-    return retptr;
+    if (ch == '\0')
+        return (char *)ptr;
+    return (char *)retptr;
 }
