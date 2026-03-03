@@ -75,6 +75,12 @@ all: $(BUILD_DIR) $(SUBDIRS)
 	cp -R --dereference $(ROOT)/include $(BIN_DIR)
 	$(MAKE) -C test SDCCLIB="$(LIBSDCC)"
 
+.PHONY: lib
+lib: $(BUILD_DIR) $(SUBDIRS)
+	cp --dereference $(BUILD_DIR)/$(TARGET).lib $(BIN_DIR)
+	cp --dereference $(BUILD_DIR)/$(CRT0).rel $(BIN_DIR)/$(CRT0)$(CRT0EXT)
+	cp -R --dereference $(ROOT)/include $(BIN_DIR)
+
 .PHONY: install
 install: all
 	install -d $(DESTDIR)$(PREFIX)/lib $(DESTDIR)$(PREFIX)/include
@@ -85,6 +91,10 @@ install: all
 .PHONY: docker
 docker:
 	$(DOCKER_RUN) make all
+
+.PHONY: docker-lib
+docker-lib:
+	$(DOCKER_RUN) make lib
 
 .PHONY: docker-clean
 docker-clean:
@@ -126,7 +136,9 @@ help:
 	@echo "Targets:"
 	@echo "  deps         Download libsdcc-z80 runtime helpers to lib/"
 	@echo "  all          Build library + tests natively (requires SDCC)"
+	@echo "  lib          Build library only (no tests) natively"
 	@echo "  docker       Build library inside Docker ($(DOCKER_IMAGE))"
+	@echo "  docker-lib   Build library only (no tests) inside Docker"
 	@echo "  install      Install to DESTDIR\$(PREFIX) (default: bin/)"
 	@echo "  clean        Remove build artifacts"
 	@echo "  docker-clean Remove build artifacts via Docker"
