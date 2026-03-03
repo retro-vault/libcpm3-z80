@@ -27,7 +27,7 @@ jobs:
             -w /src \
             --user "$(id -u):$(id -g)" \
             wischner/sdcc-z80 \
-            make src
+            sh -lc 'mkdir -p build && make src'
 
       - name: Package
         id: package
