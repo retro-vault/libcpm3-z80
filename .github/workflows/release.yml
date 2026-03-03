@@ -19,15 +19,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install SDCC
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y sdcc
-
       - name: Build library artifacts (no tests)
         run: |
           make clean
-          make src
+          docker run --rm \
+            -v "$PWD":/src \
+            -w /src \
+            --user "$(id -u):$(id -g)" \
+            wischner/sdcc-z80 \
+            make src
 
       - name: Package
         id: package
