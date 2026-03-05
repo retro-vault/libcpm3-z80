@@ -193,7 +193,7 @@ TEST(feof_detection) {
 }
 
 int main(void) {
-    puts("TSTDIO: stdio tests");
+    printf("TSTDIO: stdio tests\r\n");
     RUN_TEST(sprintf_int);
     RUN_TEST(sprintf_string);
     RUN_TEST(sprintf_char);
@@ -207,10 +207,10 @@ int main(void) {
     RUN_TEST(fseek_ftell);
     RUN_TEST(feof_detection);
     if (g_failures == 0) {
-        printf("PASS all %d tests\n", g_tests_run);
+        printf("PASS all %d tests\r\n", g_tests_run);
         return 0;
     }
-    printf("FAIL %d failures in %d/%d tests\n",
+    printf("FAIL %d failures in %d/%d tests\r\n",
         g_failures, g_tests_failed, g_tests_run);
     return 1;
 }

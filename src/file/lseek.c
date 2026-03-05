@@ -59,6 +59,7 @@ off_t lseek(int fd, off_t offset, int whence) {
     fdblk->fcb.rrec = (uint16_t)rec;
 
     /* Seek to the record. */
+    bdos(F_DMAOFF,(uint16_t)&(fdblk->dma));
     bdos_ret_t result;
     bdosret(F_READRAND,(uint16_t)&(fdblk->fcb),&result);
     if (result.reta==BDOS_FAILURE) {

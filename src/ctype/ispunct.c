@@ -10,11 +10,12 @@
  *
  */
 #include <stdbool.h>
-#include <string.h>
 
 bool ispunct(int c)
 {
-    /* ...also CP/M 2 forbidden characters in files */
-    static const char *punct = "<>.,;:=?*[]%|()/\\";
-    return strchr(punct, c) == NULL ? FALSE : TRUE; // you can make this shorter
+    /* All printable ASCII non-space, non-alphanumeric characters. */
+    return (c >= 0x21 && c <= 0x2F) ||   /* !"#$%&'()*+,-./ */
+           (c >= 0x3A && c <= 0x40) ||   /* :;<=>?@          */
+           (c >= 0x5B && c <= 0x60) ||   /* [\]^_`           */
+           (c >= 0x7B && c <= 0x7E);     /* {|}~             */
 }

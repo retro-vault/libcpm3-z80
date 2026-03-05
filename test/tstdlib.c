@@ -279,7 +279,7 @@ TEST(nltype_roundtrip) {
     volatile char *p = &nltype;
     char old = *p;
     *p = NL_CRLF;
-    EXPECT_EQ_INT(NL_CRLF, *p);
+    { volatile int _expected = NL_CRLF; EXPECT_EQ_INT(_expected, *p); }
     *p = old;
 }
 

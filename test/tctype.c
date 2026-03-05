@@ -84,7 +84,7 @@ TEST(toupper_converts) {
 }
 
 int main(void) {
-    puts("TCTYPE: ctype tests");
+    printf("TCTYPE: ctype tests\r\n");
     RUN_TEST(isalpha_letters);
     RUN_TEST(isdigit_digits);
     RUN_TEST(isspace_whitespace);
@@ -92,10 +92,10 @@ int main(void) {
     RUN_TEST(tolower_converts);
     RUN_TEST(toupper_converts);
     if (g_failures == 0) {
-        printf("PASS all %d tests\n", g_tests_run);
+        printf("PASS all %d tests\r\n", g_tests_run);
         return 0;
     }
-    printf("FAIL %d failures in %d/%d tests\n",
+    printf("FAIL %d failures in %d/%d tests\r\n",
         g_failures, g_tests_failed, g_tests_run);
     return 1;
 }

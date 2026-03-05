@@ -26,9 +26,9 @@ int stat(char *pathname, struct stat *statbuf) {
     /* First parse the filename. */
     char fname[MAX_FNAME + 1];
     char ext[MAX_EXT + 1];
-    char drive;
+    char drive[2];
     int user;
-    if (splitpath(pathname,&drive, &user, fname, ext)<0) {
+    if (splitpath(pathname, drive, &user, fname, ext)<0) {
         errno=ENOENT;
         return -1;
     }
@@ -42,7 +42,7 @@ int stat(char *pathname, struct stat *statbuf) {
     }
     _to_fcb_name(fcb->filename, fname, MAX_FNAME);
     _to_fcb_name(fcb->filetype, ext, MAX_EXT);
-    fcb->drive=drive - 'A' + 1;
+    fcb->drive=drive[0] - 'A' + 1;
 
     /* Gef file length */
     bdos_ret_t result;
@@ -56,7 +56,7 @@ int stat(char *pathname, struct stat *statbuf) {
     }
 
     /* Partially populate the stat buffer. */
-    statbuf->st_drive=drive;
+    statbuf->st_drive=drive[0];
     statbuf->st_user=user;
     statbuf->st_blocks=fcb->rrec;
     statbuf->st_blksize=DMA_SIZE;

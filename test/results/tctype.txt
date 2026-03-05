@@ -1,0 +1,27 @@
+  CP/M Emulator v6.9 by Marcelo Dantas
+      Built Mar  5 2026 - 06:54:43
+----------------------------------------
+CPU is Model 1
+290034012 T-states in 49 ms
+Estimated Z80 clock speed: 5919 MHz
+BIOS at 0xfe00 - BDOS at 0xfd00
+BIOS/BDOS using interrupt handoff method
+CCP CCP-INTERNAL v3.3 at 0xfd00
+FILEBASE is ./
+
+
+TCTYPE: ctype tests
+PASS isalpha_letters
+PASS isdigit_digits
+FAIL isspace_whitespace: tctype.c:48 EXPECT_TRUE(isspace('\n'))
+FAIL isspace_whitespace: tctype.c:49 EXPECT_TRUE(isspace('\r'))
+FAIL isspace_whitespace (2 failures)
+FAIL ispunct_punctuation: tctype.c:57 EXPECT_TRUE(ispunct('!'))
+FAIL ispunct_punctuation: tctype.c:61 EXPECT_TRUE(ispunct('@'))
+FAIL ispunct_punctuation (2 failures)
+PASS tolower_converts
+PASS toupper_converts
+FAIL 4 failures in 2/6 tests
+
+
+

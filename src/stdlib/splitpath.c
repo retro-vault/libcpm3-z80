@@ -20,6 +20,7 @@ int splitpath(
 {
     /* set all defaults */
     *drive = 'A' + bdos(DRV_GET, 0); /* current drive */
+    *(drive + 1) = '\0';
     *user = bdos(F_USERNUM, 0xff);   /* current user */
     strcpy(fname, "        ");       /* 8 spaces */
     strcpy(ext, "   ");              /* 3 ext */
@@ -34,6 +35,7 @@ int splitpath(
     if (c >= 'A' && c <= 'P' && path[i + 1] == ':')
     { /* drive */
         *drive = c;
+        *(drive + 1) = '\0';
         i += 2;
         c = toupper(path[i]) & 0x7f; /* next char */
     }

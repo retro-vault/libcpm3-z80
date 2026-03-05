@@ -13,5 +13,5 @@
 
 bool isspace(int c)
 {
-    return c == ' ' || c == '\t'; // || whatever other char you consider space
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v';
 }

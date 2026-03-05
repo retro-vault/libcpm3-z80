@@ -23,9 +23,9 @@ int open(const char *pathname, int flags, ...)
     /* First parse the filename. */
     char fname[MAX_FNAME + 1];
     char ext[MAX_EXT + 1];
-    char drive;
+    char drive[2];
     int user;
-    if (splitpath(pathname,&drive, &user, fname, ext)<0) {
+    if (splitpath(pathname, drive, &user, fname, ext)<0) {
         errno=ENOENT;
         return -1;
     }
@@ -38,7 +38,7 @@ int open(const char *pathname, int flags, ...)
     }
 
     /* fcb will need drive number, not drive letter. */
-    drive = drive - 'A' + 1;
+    drive[0] = drive[0] - 'A' + 1;
 
     /* Allocate new file descriptor block. */
     fd_t *fdblk=calloc(1, sizeof(fd_t));
@@ -53,7 +53,7 @@ int open(const char *pathname, int flags, ...)
     fdblk->oflags=flags;
     _to_fcb_name(fdblk->fcb.filename, fname, MAX_FNAME);
     _to_fcb_name(fdblk->fcb.filetype, ext, MAX_EXT);
-    fdblk->fcb.drive=drive;
+    fdblk->fcb.drive=drive[0];
     fdblk->dmapos=DMA_INVALID_POS; /* Not read yet. */
     fdblk->fcb.seqreq=0xff; /* Get file length. */
     fdblk->dmadirty=false; /* Nothing to write. */

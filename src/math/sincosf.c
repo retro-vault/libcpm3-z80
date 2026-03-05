@@ -10,10 +10,21 @@
  */
 #include <math/_math.h>
 
+static float _ftrunc(float x)
+{
+    union _float_long fl;
+    int exp;
+    fl.f = x;
+    exp = (int)(((fl.l >> 23) & 0xff) - 127);
+    if (exp < 0) return 0.0f;
+    if (exp >= 23) return x;
+    fl.l &= ~((1L << (23 - exp)) - 1L);
+    return fl.f;
+}
+
 float _sincosf(float x, bool iscos)
 {
-    float y, f, r, g, XN;
-    int N;
+    float y, f, r, g, XN, N_f;
     bool sign;
 
     if (iscos)
@@ -42,19 +53,19 @@ float _sincosf(float x, bool iscos)
     }
 
     /*Round y/PI to the nearest integer*/
-    N = ((y * iPI) + 0.5); /*y is positive*/
+    N_f = _ftrunc(y * iPI + 0.5f); /*y is positive*/
 
     /*If N is odd change sign*/
-    if (N & 1)
+    if (N_f - _ftrunc(N_f * 0.5f) * 2.0f >= 0.5f)
         sign = !sign;
 
-    XN = N;
+    XN = N_f;
     /*Cosine required? (is done here to keep accuracy)*/
     if (iscos)
-        XN -= 0.5;
+        XN -= 0.5f;
 
     y = fabs(x);
-    r = (int)y;
+    r = _ftrunc(y);
     g = y - r;
     f = ((r - XN * C1) + g) - XN * C2;
 

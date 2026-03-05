@@ -28,6 +28,14 @@ int fclose(FILE *fp)
         return -1;
     }
 
+    /* Text-mode write: pad record with CP/M EOF marker (0x1A). */
+    if (memchr(fp->flags, 'b', 4) == NULL &&
+        (memchr(fp->flags, 'w', 4) != NULL ||
+         memchr(fp->flags, 'a', 4) != NULL)) {
+        char eof_marker = EOF;
+        write(fp->fd, &eof_marker, 1);
+    }
+
     /* If fp is valid, then close. */
     if (close(fp->fd) == -1)
         return -1;

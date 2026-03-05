@@ -143,7 +143,7 @@ TEST(invalid_fd_errors) {
 }
 
 int main(void) {
-    puts("TFILE: file API tests");
+    printf("TFILE: file API tests\r\n");
     RUN_TEST(fcb_name_uppercase_and_padding);
     RUN_TEST(creat_write_read_roundtrip);
     RUN_TEST(open_with_create_flag);
@@ -154,10 +154,10 @@ int main(void) {
     RUN_TEST(stat_missing_file_fails);
     RUN_TEST(invalid_fd_errors);
     if (g_failures == 0) {
-        printf("PASS all %d tests\n", g_tests_run);
+        printf("PASS all %d tests\r\n", g_tests_run);
         return 0;
     }
-    printf("FAIL %d failures in %d/%d tests\n",
+    printf("FAIL %d failures in %d/%d tests\r\n",
         g_failures, g_tests_failed, g_tests_run);
     return 1;
 }

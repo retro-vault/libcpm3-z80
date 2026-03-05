@@ -18,17 +18,17 @@ extern const char *g_current_test;
         ++g_tests_run; \
         test_##name(); \
         if (g_failures == _fail_before) { \
-            printf("PASS %s\n", #name); \
+            printf("PASS %s\r\n", #name); \
         } else { \
             ++g_tests_failed; \
-            printf("FAIL %s (%d failures)\n", #name, g_failures - _fail_before); \
+            printf("FAIL %s (%d failures)\r\n", #name, g_failures - _fail_before); \
         } \
     } while (0)
 
 #define EXPECT_TRUE(cond) \
     do { \
         if (!(cond)) { \
-            printf("FAIL %s: %s:%d EXPECT_TRUE(%s)\n", g_current_test, __FILE__, __LINE__, #cond); \
+            printf("FAIL %s: %s:%d EXPECT_TRUE(%s)\r\n", g_current_test, __FILE__, __LINE__, #cond); \
             ++g_failures; \
         } \
     } while (0)
@@ -36,7 +36,7 @@ extern const char *g_current_test;
 #define ASSERT_TRUE(cond) \
     do { \
         if (!(cond)) { \
-            printf("FAIL %s: %s:%d ASSERT_TRUE(%s)\n", g_current_test, __FILE__, __LINE__, #cond); \
+            printf("FAIL %s: %s:%d ASSERT_TRUE(%s)\r\n", g_current_test, __FILE__, __LINE__, #cond); \
             ++g_failures; \
             return; \
         } \
@@ -47,7 +47,7 @@ extern const char *g_current_test;
         int _e = (int)(exp); \
         int _g = (int)(got); \
         if (_e != _g) { \
-            printf("FAIL %s: %s:%d EXPECT_EQ_INT(%s,%s) expected=%d got=%d\n", \
+            printf("FAIL %s: %s:%d EXPECT_EQ_INT(%s,%s) expected=%d got=%d\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got, _e, _g); \
             ++g_failures; \
         } \
@@ -58,7 +58,7 @@ extern const char *g_current_test;
         int _e = (int)(exp); \
         int _g = (int)(got); \
         if (_e != _g) { \
-            printf("FAIL %s: %s:%d ASSERT_EQ_INT(%s,%s) expected=%d got=%d\n", \
+            printf("FAIL %s: %s:%d ASSERT_EQ_INT(%s,%s) expected=%d got=%d\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got, _e, _g); \
             ++g_failures; \
             return; \
@@ -70,7 +70,7 @@ extern const char *g_current_test;
         long _e = (long)(exp); \
         long _g = (long)(got); \
         if (_e != _g) { \
-            printf("FAIL %s: %s:%d EXPECT_EQ_LONG(%s,%s) expected=%ld got=%ld\n", \
+            printf("FAIL %s: %s:%d EXPECT_EQ_LONG(%s,%s) expected=%ld got=%ld\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got, _e, _g); \
             ++g_failures; \
         } \
@@ -81,7 +81,7 @@ extern const char *g_current_test;
         long _e = (long)(exp); \
         long _g = (long)(got); \
         if (_e != _g) { \
-            printf("FAIL %s: %s:%d ASSERT_EQ_LONG(%s,%s) expected=%ld got=%ld\n", \
+            printf("FAIL %s: %s:%d ASSERT_EQ_LONG(%s,%s) expected=%ld got=%ld\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got, _e, _g); \
             ++g_failures; \
             return; \
@@ -93,7 +93,7 @@ extern const char *g_current_test;
         const char *_e = (exp); \
         const char *_g = (got); \
         if (strcmp(_e, _g) != 0) { \
-            printf("FAIL %s: %s:%d EXPECT_EQ_STR(%s,%s) expected=\"%s\" got=\"%s\"\n", \
+            printf("FAIL %s: %s:%d EXPECT_EQ_STR(%s,%s) expected=\"%s\" got=\"%s\"\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got, _e, _g); \
             ++g_failures; \
         } \
@@ -104,7 +104,7 @@ extern const char *g_current_test;
         const char *_e = (exp); \
         const char *_g = (got); \
         if (strcmp(_e, _g) != 0) { \
-            printf("FAIL %s: %s:%d ASSERT_EQ_STR(%s,%s) expected=\"%s\" got=\"%s\"\n", \
+            printf("FAIL %s: %s:%d ASSERT_EQ_STR(%s,%s) expected=\"%s\" got=\"%s\"\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got, _e, _g); \
             ++g_failures; \
             return; \
@@ -120,7 +120,7 @@ extern const char *g_current_test;
         float _d = _g - _e; \
         if (_d < 0.0f) _d = -_d; \
         if (_d > (float)(tol)) { \
-            printf("FAIL %s: %s:%d EXPECT_EQ_FLOAT(%s, %s)\n", \
+            printf("FAIL %s: %s:%d EXPECT_EQ_FLOAT(%s, %s)\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got); \
             ++g_failures; \
         } \
@@ -133,7 +133,7 @@ extern const char *g_current_test;
         float _d = _g - _e; \
         if (_d < 0.0f) _d = -_d; \
         if (_d > (float)(tol)) { \
-            printf("FAIL %s: %s:%d ASSERT_EQ_FLOAT(%s, %s)\n", \
+            printf("FAIL %s: %s:%d ASSERT_EQ_FLOAT(%s, %s)\r\n", \
                 g_current_test, __FILE__, __LINE__, #exp, #got); \
             ++g_failures; \
             return; \

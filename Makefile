@@ -30,7 +30,7 @@ export LD           = sdldz80
 
 # SDCC runtime helpers (integer/float assembly stubs).
 # Only needed when linking final executables; not required to build the library.
-LIBSDCC_VER         = 0.0.1
+LIBSDCC_VER         = 1.0.1
 LIBSDCC_URL         = https://github.com/retro-vault/libsdcc-z80/releases/download/v$(LIBSDCC_VER)/libsdcc-z80-$(LIBSDCC_VER).tar.gz
 export LIBSDCC      = $(ROOT)/lib/libsdcc-z80.lib
 
@@ -49,6 +49,12 @@ DOCKER_RUN_ROOT     = docker run --rm \
                       -v "$(ROOT)":/src \
                       -w /src \
                       $(DOCKER_IMAGE)
+
+# CP/M emulator (RunCPM) Docker image for running test .COM binaries.
+DOCKER_TEST_IMAGE   = libcpm3-z80-test
+DOCKER_TEST_RUN     = docker run --rm \
+                      -v "$(ROOT)":/src \
+                      $(DOCKER_TEST_IMAGE)
 
 # Default goal is 'docker' so bare 'make' works without SDCC installed locally.
 # Use 'make all' only when building natively (requires SDCC on PATH).
@@ -100,6 +106,22 @@ docker-lib:
 docker-clean:
 	$(DOCKER_RUN_ROOT) sh -c "rm -rf /src/build /src/bin"
 
+# Build the CP/M test-runner Docker image (once; rebuild with docker-test-rebuild).
+.PHONY: docker-test-build
+docker-test-build:
+	docker build -t $(DOCKER_TEST_IMAGE) -f test/Dockerfile.cpm test/
+
+# Force-rebuild the CP/M test-runner image (no cache).
+.PHONY: docker-test-rebuild
+docker-test-rebuild:
+	docker build --no-cache -t $(DOCKER_TEST_IMAGE) -f test/Dockerfile.cpm test/
+
+# Run CP/M tests inside the emulator and write results to bin/<name>.txt.
+# Build the library first with 'make docker', then run this target.
+.PHONY: docker-test
+docker-test: docker-test-build
+	$(DOCKER_TEST_RUN) /src/test/run_tests.sh tctype tstring tstdlib tstdio ttime tmath tmem tfile tsdcc
+
 .PHONY: $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -141,9 +163,12 @@ help:
 	@echo "  docker-lib   Build library only (no tests) inside Docker"
 	@echo "  install      Install to DESTDIR\$(PREFIX) (default: bin/)"
 	@echo "  clean        Remove build artifacts"
-	@echo "  docker-clean Remove build artifacts via Docker"
+	@echo "  docker-clean       Remove build artifacts via Docker"
+	@echo "  docker-test-build  Build CP/M emulator Docker image (RunCPM)"
+	@echo "  docker-test        Run tests in CP/M emulator; results in bin/<name>.txt"
 	@echo ""
 	@echo "Variables:"
 	@echo "  DESTDIR=<path>   Installation prefix (for make install)"
 	@echo ""
 	@echo "Note: run 'make deps' before building test programs."
+	@echo "Note: run 'make docker' before 'make docker-test'."
