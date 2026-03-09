@@ -19,6 +19,7 @@ for TEST in "$@"; do
     COM=$(echo "$TEST" | tr '[:lower:]' '[:upper:]')
     COMFILE="${BINDIR}/${TEST}.com"
     OUTFILE="${RESDIR}/${TEST}.txt"
+    INFILE="/src/test/${TEST}.in"
 
     if [ ! -f "$COMFILE" ]; then
         printf "SKIP %s: %s not found\n" "$TEST" "$COMFILE"
@@ -40,7 +41,12 @@ for TEST in "$@"; do
     #   b) the test header appears a second time (crash/warm-boot loop).
     {
         cd "$WORK"
-        printf '%s\r\n' "$COM" | timeout 15 RunCPM 2>/dev/null
+        {
+            printf '%s\r\n' "$COM"
+            if [ -f "$INFILE" ]; then
+                awk '{ printf "%s\r\n", $0 }' "$INFILE"
+            fi
+        } | timeout 15 RunCPM 2>/dev/null
     } | tr -d '\r' \
       | awk -v hdr="$COM:" '
             /^[A-Z][0-9]*>/          { next }

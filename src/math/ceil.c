@@ -1,11 +1,12 @@
 /*
  * ceil.c
  *
- * Implementation of ceil (see:math.h)
+ * Round x upward toward positive infinity.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

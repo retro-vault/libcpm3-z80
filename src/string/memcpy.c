@@ -1,17 +1,17 @@
 /*
  * memcpy.c
  *
- * memcpy function (see: string.h).
+ * Copy n bytes from src to dest; overlap is not handled.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <string.h>
 
-void *memcpy(void *s1, const void *s2, size_t n) {
+static void *_memcpy_impl(void *s1, const void *s2, size_t n) {
     unsigned char *s1_ = s1;
     const unsigned char *s2_ = s2;
     for (size_t i = 0; i < n; ++i) {
@@ -19,4 +19,12 @@ void *memcpy(void *s1, const void *s2, size_t n) {
     }
 
     return s1;
+}
+
+void *__memcpy(void *dest, const void *src, size_t n) {
+    return _memcpy_impl(dest, src, n);
+}
+
+void *memcpy(void *dest, const void *src, size_t n) {
+    return _memcpy_impl(dest, src, n);
 }

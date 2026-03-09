@@ -1,12 +1,12 @@
 /*
  * ftell.c
  *
- * ftell function (see:stdio.h)
+ * Return the current file offset for a stream.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>
@@ -16,7 +16,7 @@ long ftell(FILE *fp) {
         errno = EBADF;
         return -1;
     } else {
-        fd_t* pfd = _fd_get(fp->fd);
+        _fd_t* pfd = _fd_get(fp->fd);
         return pfd->fpos;
     }
 }

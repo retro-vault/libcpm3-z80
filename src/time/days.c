@@ -1,12 +1,13 @@
 /*
  * days.c
  *
- * Counting days in months.
+ * Define month cumulative-day and per-month-day lookup tables
+ * used by calendar arithmetic functions.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <time/_time.h>

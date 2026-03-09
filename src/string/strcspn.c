@@ -1,12 +1,13 @@
 /*
  * strcspn.c
  *
- * strcspn function (see: string.h).
+ * Return the length of the initial segment of s1 that contains
+ * no characters from the reject set s2.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <string.h>

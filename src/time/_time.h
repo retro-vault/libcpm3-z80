@@ -59,13 +59,13 @@ struct timeval {
 }; 
 
 /* days before month (sum), feb=28 */
-extern const int _bmdays[];
+extern const int _bmdays[12];
 /* days in month (for non-leap and leap years) */
 extern const int _mdays[2][12];
 /* month names */
-extern const char *_months[];
+extern const char *_months[12];
 /* day names */
-extern const char *_days[];
+extern const char *_days[7];
 
 /* days in month */
 #define _dim(x,dfeb) ((x == 1) ? dfeb : mdays[x])

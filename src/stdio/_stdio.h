@@ -22,10 +22,10 @@
 #include <sys/types.h>
 #include <sys/bdos.h>
 
-#include <util/print.h>
-#include <util/nltype.h>
+#include <_impl/print/_print.h>
+#include <_impl/print/_nltype.h>
 
-#include <file/fd.h>
+#include <file/_fd.h>
 
 /* EOF and positions */
 #define EOF         0x1A	
@@ -38,10 +38,30 @@ typedef struct _iobuf {
   char      flags[4];
   int       fd;
   bool      eof;
+  bool      err;
+  int       ungot;
 } FILE; 
+
+extern FILE *stdin;
+extern FILE *stdout;
+extern FILE *stderr;
 
 /* is file pointer valid? */
 extern bool _check_fp(FILE *fp);
+
+/* stdio helpers used internally */
+extern FILE *fopen(const char *path, const char *mode);
+extern int fclose(FILE *fp);
+extern void clearerr(FILE *fp);
+extern int ferror(FILE *fp);
+extern int fgetc(FILE *fp);
+extern int getc(FILE *fp);
+extern int fputc(int c, FILE *fp);
+extern int getchar(void);
+extern int sprintf(char *buf, char *fmt, ...);
+extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *fp);
+extern int fseek(FILE *fp, long offset, int whence);
+extern int vfprintf(FILE *fp, const char *fmt, va_list ap);
 
 /* write single char */
 extern int putchar(int c);

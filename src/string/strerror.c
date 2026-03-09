@@ -1,12 +1,12 @@
 /*
  * strerror.c
  *
- * strerror function (see: string.h).
+ * Return a human-readable message string for an errno value.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>

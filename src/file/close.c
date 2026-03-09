@@ -1,12 +1,12 @@
 /*
  * close.c
  *
- * Posix C file close function
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Close an open CP/M file descriptor and release its resources.
  *
- * 10.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
@@ -14,13 +14,13 @@
 #include <unistd.h>
 
 #include <sys/bdos.h>
-#include <file/fcb.h>
-#include <file/fd.h>
+#include <file/_fcb.h>
+#include <file/_fd.h>
 
 int close(int fd) {
 
     /* Get the descriptor. */
-    fd_t* fdblk=_fd_get(fd);
+    _fd_t* fdblk=_fd_get(fd);
     if (fdblk==NULL) {
         errno = EBADF;
         return -1;

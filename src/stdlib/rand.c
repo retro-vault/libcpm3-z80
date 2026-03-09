@@ -1,12 +1,12 @@
 /*
  * rand.c
  *
- * rand function (see: stdlib.h).
+ * Return a pseudo-random integer using a linear congruential generator.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdlib/_stdlib.h>

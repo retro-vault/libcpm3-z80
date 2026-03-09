@@ -1,13 +1,13 @@
-# Virtual paths are all subfolders!
-DIRS    = $(wildcard */)
+# Virtual paths: all subfolders up to three levels deep.
+DIRS    = $(wildcard */) $(wildcard */*/) $(wildcard */*/*/)
 vpath %.c $(DIRS)
 vpath %.s $(DIRS)
 vpath %.h $(DIRS)
 
-# Source files.
-C_SRCS  = $(wildcard *.c) $(wildcard */*.c)
-S_SRCS  = $(filter-out $(CRT0).s, $(wildcard *.s) $(wildcard */*.s))
-HDRS    = $(wildcard *.h) $(wildcard */*.h)
+# Source files (recurse up to three levels deep for util/hooks/print, etc.).
+C_SRCS  = $(wildcard *.c) $(wildcard */*.c) $(wildcard */*/*.c) $(wildcard */*/*/*.c)
+S_SRCS  = $(filter-out %$(CRT0).s, $(wildcard *.s) $(wildcard */*.s) $(wildcard */*/*.s) $(wildcard */*/*/*.s))
+HDRS    = $(wildcard *.h) $(wildcard */*.h) $(wildcard */*/*.h) $(wildcard */*/*/*.h)
 OBJS    = $(addprefix $(BUILD_DIR)/, \
               $(notdir \
                   $(patsubst %.c,%.rel,$(C_SRCS)) \

@@ -65,6 +65,35 @@ TEST(ispunct_punctuation) {
     EXPECT_TRUE(!ispunct(' '));
 }
 
+TEST(classification_helpers) {
+    EXPECT_TRUE(isalnum('A'));
+    EXPECT_TRUE(isalnum('7'));
+    EXPECT_TRUE(!isalnum('!'));
+
+    EXPECT_TRUE(iscntrl('\n'));
+    EXPECT_TRUE(iscntrl('\r'));
+    EXPECT_TRUE(!iscntrl('A'));
+
+    EXPECT_TRUE(isgraph('!'));
+    EXPECT_TRUE(isgraph('A'));
+    EXPECT_TRUE(!isgraph(' '));
+
+    EXPECT_TRUE(islower('a'));
+    EXPECT_TRUE(!islower('A'));
+    EXPECT_TRUE(isupper('Z'));
+    EXPECT_TRUE(!isupper('z'));
+
+    EXPECT_TRUE(isprint(' '));
+    EXPECT_TRUE(isprint('~'));
+    EXPECT_TRUE(!isprint('\n'));
+
+    EXPECT_TRUE(isxdigit('0'));
+    EXPECT_TRUE(isxdigit('9'));
+    EXPECT_TRUE(isxdigit('a'));
+    EXPECT_TRUE(isxdigit('F'));
+    EXPECT_TRUE(!isxdigit('g'));
+}
+
 TEST(tolower_converts) {
     EXPECT_EQ_INT('a', tolower('A'));
     EXPECT_EQ_INT('z', tolower('Z'));
@@ -89,6 +118,7 @@ int main(void) {
     RUN_TEST(isdigit_digits);
     RUN_TEST(isspace_whitespace);
     RUN_TEST(ispunct_punctuation);
+    RUN_TEST(classification_helpers);
     RUN_TEST(tolower_converts);
     RUN_TEST(toupper_converts);
     if (g_failures == 0) {

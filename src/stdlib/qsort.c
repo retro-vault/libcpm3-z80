@@ -1,12 +1,12 @@
 /*
  * qsort.c
  *
- * qsort function (see: stdlib.h).
+ * Sort an array in place using a Shell-sort and a comparator callback.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdlib/_stdlib.h>
@@ -22,7 +22,8 @@ void _swap(void *v1, void *v2, size_t size)
     }
 }
 
-void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void *))
+void qsort(void *base, size_t nitems, size_t size,
+    int (*compar)(const void *, const void *))
 {
     unsigned gap, byte_gap, i;
     char *p;

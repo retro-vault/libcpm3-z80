@@ -1,0 +1,65 @@
+/*
+ * mem.h
+ *
+ * Memory management utility functions.
+ * 
+ * MIT License (see: LICENSE)
+ * copyright (c) 2021 tomaz stih
+ *
+ * 25.05.2012   tstih
+ *
+ */
+#ifndef LIBCPM3_MEM_H
+#define LIBCPM3_MEM_H
+
+#include <stdint.h>
+#include <stddef.h>
+#include <string.h>
+
+#include <_impl/list/_list.h>
+
+#ifndef NONE
+#define NONE 0
+#endif
+
+#define BLK_SIZE        (sizeof(struct _block_s) - sizeof(uint8_t[1]))
+#define MIN_CHUNK_SIZE  4
+
+/* block status, use as bit operations */
+#define NEW             0x00
+#define ALLOCATED       0x01
+
+typedef struct _block_s {
+    _list_header_t  hdr;
+    uint8_t         stat;
+    uint16_t        size;
+    uint8_t         data[1];
+} _block_t;
+
+/* Must be defined in crt0 */
+extern void _heap;
+
+/* Mem top. By convention this is start of BDOS, retreived from
+   the 0x0005 address (BDOS call). This function can be "overrriden"
+   by the PLATFORM= parameter. */
+extern size_t _memtop(void);
+
+/* merge block with the next block */
+extern void _merge_with_next(_block_t *b);
+
+/* split memory block into two blocks */
+extern void _split(_block_t *b, uint16_t size);
+
+/* initialize memory management */
+extern void _memory_init(void);
+
+/* initialize custom heap */
+extern void _heap_init(uint16_t start, uint16_t size);
+
+/* allocate block on the heap (used by malloc) */
+extern void *_alloc(uint16_t heap, size_t size);
+
+/* release block from the heap (used by free) */
+extern void _dealloc(uint16_t heap, void *p);
+
+#endif /* LIBCPM3_MEM_H */

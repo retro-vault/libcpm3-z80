@@ -1,11 +1,12 @@
 /*
  * tan.c
  *
- * Implementation of tan (see:math.h)
+ * Compute the tangent of x, where x is in radians.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

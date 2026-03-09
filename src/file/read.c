@@ -1,12 +1,12 @@
 /*
  * read.c
  *
- * Posix C file read function.
+ * Read bytes from an open file descriptor into a caller buffer.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 10.08.2021   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
@@ -18,8 +18,8 @@
 
 #include <sys/bdos.h>
 #include <sys/types.h>
-#include <file/fcb.h>
-#include <file/fd.h>
+#include <file/_fcb.h>
+#include <file/_fd.h>
 
 #undef DEBUG
 
@@ -37,7 +37,7 @@ ssize_t read(int fd, void *buf, size_t count) {
     uint8_t *bbuf=(uint8_t*)buf;
 
     /* Get fd block, and verify it. */
-    fd_t *fdblk=_fd_get(fd);
+    _fd_t *fdblk=_fd_get(fd);
     if (fdblk==NULL) {
         errno = EBADF;
         return -1;

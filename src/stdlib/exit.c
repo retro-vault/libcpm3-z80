@@ -1,19 +1,25 @@
 /*
  * exit.c
  *
- * exit function (see: stdlib.h).
+ * Terminate the program, running atexit handlers before calling _exit().
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
-#include <stdlib/_stdlib.h>
+#include <stdlib.h>
 
-void exit(int status)
-{
-    status;
-    /* Unfortunately, the status is lost in CP/M. */
-    bdos(P_TERMCPM, 0);
+extern void _exit(int status);
+#define ATEXIT_MAX 8
+extern void (*__atexit_funcs[ATEXIT_MAX])(void);
+extern unsigned char __atexit_count;
+
+void exit(int status) {
+    while (__atexit_count > 0) {
+        --__atexit_count;
+        __atexit_funcs[__atexit_count]();
+    }
+    _exit(status);
 }

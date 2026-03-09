@@ -1,12 +1,12 @@
 /*
  * open.c
  *
- * Posix C file open function
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Open a CP/M file and bind it to a libcpm3 file descriptor.
  *
- * 10.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
@@ -15,8 +15,8 @@
 #include <fcntl.h>
 
 #include <sys/bdos.h>
-#include <file/fcb.h>
-#include <file/fd.h>
+#include <file/_fcb.h>
+#include <file/_fd.h>
 
 int open(const char *pathname, int flags, ...)
 {
@@ -25,7 +25,7 @@ int open(const char *pathname, int flags, ...)
     char ext[MAX_EXT + 1];
     char drive[2];
     int user;
-    if (splitpath(pathname, drive, &user, fname, ext)<0) {
+    if (_splitpath(pathname, drive, &user, fname, ext)<0) {
         errno=ENOENT;
         return -1;
     }
@@ -41,7 +41,7 @@ int open(const char *pathname, int flags, ...)
     drive[0] = drive[0] - 'A' + 1;
 
     /* Allocate new file descriptor block. */
-    fd_t *fdblk=calloc(1, sizeof(fd_t));
+    _fd_t *fdblk=calloc(1, sizeof(_fd_t));
     if (fdblk==NULL) {
         _fd_free(fd);
         errno=ENOMEM;

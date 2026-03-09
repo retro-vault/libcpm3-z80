@@ -1,12 +1,12 @@
 /*
  * printf.c
  *
- * printf function (see:stdio.h)
+ * Write formatted output to standard output.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>

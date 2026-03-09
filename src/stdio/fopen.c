@@ -1,12 +1,12 @@
 /*
  * fopen.c
  *
- * fopen function (see:stdio.h)
+ * Open a stream on a CP/M file using the requested mode string.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>
@@ -52,6 +52,8 @@ FILE *fopen(const char *path, const char *mode)
     }
     f->fd=fd;
     f->eof=false;
+    f->err=false;
+    f->ungot=-1;
     memset(f->flags, 0, 4);
     strncpy(f->flags, mode, 3);
 

@@ -1,11 +1,12 @@
 /*
  * frexp.c
  *
- * Implementation of frexp (see:math.h)
+ * Split x into a normalized fraction and a base-2 exponent.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

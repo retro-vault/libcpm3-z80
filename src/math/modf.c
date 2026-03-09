@@ -1,11 +1,12 @@
 /*
  * modf.c
  *
- * Implementation of modf (see:math.h)
+ * Split x into its fractional and integral parts.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

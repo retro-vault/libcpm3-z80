@@ -1,12 +1,12 @@
 /*
  * toupper.c
  *
- * tolower function of ctype.h.
+ * Convert lowercase letter to uppercase; leave others unchanged.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 int toupper(int c)

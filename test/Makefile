@@ -44,8 +44,11 @@ DOCKER_RUN      = docker run --rm \
                   $(DOCKER_IMAGE)
 
 CC      = sdcc
-CFLAGS  = --std-c11 \
-          -I$(INC_DIR) --no-std-crt0 --nostdinc --nostdlib
+CFLAGS  = -mz80 --std-c11 \
+          -I$(INC_DIR) --nostdinc --nostdlib
+LDFLAGS = -mz80 --std-c11 \
+          --no-std-crt0 --nostdinc --nostdlib \
+          --code-loc 0x100 --data-loc 0
 
 CRT0    = $(BIN_DIR)/crt0cpm3-z80.rel
 LIB     = $(BIN_DIR)/libcpm3-z80.lib
@@ -57,7 +60,7 @@ LIBSDCC_URL ?= https://github.com/retro-vault/libsdcc-z80/releases/download/v$(L
 SDCCLIB     ?= $(ROOT)/lib/libsdcc-z80.lib
 
 # One binary per test module (8.3 names for comfort on CP/M).
-TESTS   = tctype tstring tstdlib tstdio ttime tmath tmem tfile tsdcc
+TESTS   = tctype tstring tstdlib tstdio ttime tmath tmem tfile tsdcc tsetjmp
 BINS    = $(addprefix $(OUT_DIR)/, $(addsuffix .com, $(TESTS)))
 
 .PHONY: all
@@ -92,7 +95,7 @@ $(SDCCLIB):
 # float stubs that libcpm3-z80 math functions call into.
 $(OUT_DIR)/%.com: %.c $(CRT0) $(LIB) $(SDCCLIB) | $(OUT_DIR)
 	$(CC) $(CFLAGS) -c -o $(BUILD_DIR)/$*.rel $<
-	$(CC) $(CFLAGS) -o $(BUILD_DIR)/$*.ihx $(CRT0) $(BUILD_DIR)/$*.rel $(LIB) $(SDCCLIB)
+	$(CC) $(LDFLAGS) -o $(BUILD_DIR)/$*.ihx $(CRT0) $(BUILD_DIR)/$*.rel $(LIB) $(SDCCLIB)
 	sdobjcopy -I ihex -O binary $(BUILD_DIR)/$*.ihx $@
 
 .PHONY: docker

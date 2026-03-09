@@ -40,6 +40,9 @@
 #define T_SET           104             /* Set date and time */
 #define T_GET           105             /* Get date and time */
 /* File commands */
+#define F_SEARCHFIRST   17              /* Search for first matching file */
+#define F_SEARCHNEXT    18              /* Search for next matching file */
+#define F_DELETE        19              /* Delete file */
 #define F_OPEN          15              /* Open file */
 #define F_CLOSE         16              /* Close file */
 #define F_READ          20              /* Read from file */
@@ -58,7 +61,7 @@
 typedef struct bdos_ret_s {
     uint8_t reta;                       /* return code in reg A */
     uint8_t retb;                       /* return code in reg B */
-    uint16_t rethl;                     /* return code in HL */
+    uint16_t rethl;                     /* BDOS return code in HL */
 } bdos_ret_t;
 
 
@@ -79,9 +82,9 @@ typedef struct bdos_ret_s {
 #endif
 
 /* Call bdos, return register A. */
-extern uint8_t bdos(uint8_t fn, uint16_t param) __sdcccall(0);
+extern uint8_t bdos(uint8_t fn, uint16_t param) __sdcccall(1);
 
-/* Call bdos, return results. */
-extern bdos_ret_t  *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p) __sdcccall(0);
+/* Call bdos, return p in DE and store BDOS A/B/HL results into *p. */
+extern bdos_ret_t  *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p) __sdcccall(1);
 
 #endif /* LIBCPM3_SYS_BDOS_H */

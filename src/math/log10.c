@@ -1,11 +1,12 @@
 /*
  * log10.c
  *
- * Implementation of log10 (see:math.h)
+ * Compute the base-10 logarithm of x.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

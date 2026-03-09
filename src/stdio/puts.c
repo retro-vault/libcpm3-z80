@@ -1,12 +1,12 @@
 /*
  * puts.c
  *
- * puts function (see:stdio.h)
+ * Write a string to standard output and append a newline.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>

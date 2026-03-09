@@ -13,6 +13,10 @@
  *
  */
 #include <stdio.h>
+#include <assert.h>
+#include <inttypes.h>
+#include <iso646.h>
+#include <stdnoreturn.h>
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -26,6 +30,7 @@ const char *g_current_test = "";
 static float vf(float x) { volatile float t = x; return t; }
 static long  vl(long  x) { volatile long  t = x; return t; }
 static int   vi(int   x) { volatile int   t = x; return t; }
+noreturn static void declared_only(void);
 
 /* ---- float casts -------------------------------------------------------- */
 
@@ -251,6 +256,20 @@ TEST(float_long_chain) {
     EXPECT_EQ_LONG(12L, lx);
 }
 
+TEST(header_compat) {
+    intmax_t a = (intmax_t)vl(1234L);
+    uintmax_t b = (uintmax_t)(unsigned long)vl(5678L);
+    volatile int one = 1;
+    volatile int zero = 0;
+
+    assert(a == (intmax_t)vl(1234L));
+    EXPECT_TRUE((one and one) != 0);
+    EXPECT_TRUE((zero or one) != 0);
+    EXPECT_TRUE((not zero) != 0);
+    EXPECT_EQ_LONG(vl(1234L), (long)a);
+    EXPECT_EQ_LONG(vl(5678L), (long)b);
+}
+
 /* ---- main --------------------------------------------------------------- */
 
 void main(void) {
@@ -284,6 +303,7 @@ void main(void) {
 
     /* mixed */
     RUN_TEST(float_long_chain);
+    RUN_TEST(header_compat);
 
     if (g_tests_failed == 0)
         printf("PASS all %d tests\r\n", g_tests_run);

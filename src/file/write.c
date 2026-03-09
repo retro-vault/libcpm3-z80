@@ -1,12 +1,12 @@
 /*
  * write.c
  *
- * Posix C file write function!
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Write bytes from a caller buffer to an open file descriptor.
  *
- * 10.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
@@ -17,8 +17,8 @@
 
 #include <sys/bdos.h>
 #include <sys/types.h>
-#include <file/fcb.h>
-#include <file/fd.h>
+#include <file/_fcb.h>
+#include <file/_fd.h>
 
 #undef DEBUG
 
@@ -32,7 +32,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
     const uint8_t *bbuf=(const uint8_t*)buf;
 
     /* Get fd block, and verify it. */
-    fd_t *fdblk=_fd_get(fd);
+    _fd_t *fdblk=_fd_get(fd);
     if (fdblk==NULL) {
         errno = EBADF;
         return -1;

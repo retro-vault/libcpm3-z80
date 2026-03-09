@@ -1,12 +1,12 @@
 /*
  * strtoul.c
  *
- * strtoul function (see: stdlib.h).
+ * Convert a character string to an unsigned long using the given base.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdlib/_stdlib.h>

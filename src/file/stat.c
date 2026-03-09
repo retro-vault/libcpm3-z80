@@ -1,12 +1,12 @@
 /*
  * stat.c
  *
- * Posix C file read info
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Query CP/M file metadata and fill a struct stat record.
  *
- * 10.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
@@ -17,8 +17,8 @@
 #include <sys/bdos.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <file/fcb.h>
-#include <file/fd.h>
+#include <file/_fcb.h>
+#include <file/_fd.h>
 
 /* Returns info about file. */
 int stat(char *pathname, struct stat *statbuf) {
@@ -28,14 +28,14 @@ int stat(char *pathname, struct stat *statbuf) {
     char ext[MAX_EXT + 1];
     char drive[2];
     int user;
-    if (splitpath(pathname, drive, &user, fname, ext)<0) {
+    if (_splitpath(pathname, drive, &user, fname, ext)<0) {
         errno=ENOENT;
         return -1;
     }
 
     /* Create the temporary FCB,
        and populate it. */
-    fcb_t *fcb=calloc(sizeof(fcb_t),1);
+    _fcb_t *fcb=calloc(sizeof(_fcb_t),1);
     if (fcb==NULL) {
         errno = ENOMEM;
         return -1;

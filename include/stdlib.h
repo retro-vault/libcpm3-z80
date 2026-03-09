@@ -14,6 +14,16 @@
 
 #include <stddef.h>
 
+typedef struct {
+    int quot;
+    int rem;
+} div_t;
+
+typedef struct {
+    long quot;
+    long rem;
+} ldiv_t;
+
 /* Standard requires it here. */
 #ifndef NULL
 #define NULL 0
@@ -37,11 +47,23 @@ extern char *progname;
 /* Exit application. */
 extern void exit(int status);
 
+/* Abort application. */
+extern void abort(void);
+
+/* Register exit handler. */
+extern int atexit(void (*func)(void));
+
 /* Absolute value. */
 extern int abs (int i);
 
 /* Covert ascii to integer. */
 extern int atoi(const char *str);
+
+/* Convert ascii to long. */
+extern long atol(const char *str);
+
+/* Convert ascii to float. */
+extern float atof(const char *str);
 
 /* Convert integer to ascii. */
 extern char *itoa(int num, char *str, int base);
@@ -68,11 +90,25 @@ extern void *calloc (size_t num, size_t size);
 extern void free(void *ptr);
 
 /* Quick sort */
-extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void*));
+extern void qsort(void *base, size_t nitems, size_t size,
+    int (*compar)(const void *, const void *));
+
+/* Binary search */
+extern void *bsearch(const void *key, const void *base, size_t nitems, size_t size,
+    int (*compar)(const void *, const void *));
+
+/* Long absolute value. */
+extern long labs(long i);
+
+/* Integer division. */
+extern div_t div(int numer, int denom);
+
+/* Long division. */
+extern ldiv_t ldiv(long numer, long denom);
 
 /* Non standard extension, this is a hook, called just
    after intialization of the Standard library */
-extern void libinit(void);
+extern void _libinit(void);
 
 /* Non standard extension: path parser. 
    Supported path formats are:
@@ -81,7 +117,7 @@ extern void libinit(void);
 #define MAX_DRIVE   1
 #define MAX_FNAME   8
 #define MAX_EXT     3
-extern int splitpath(
+extern int _splitpath(
    const char *path,
    char *drive,
    int *user,

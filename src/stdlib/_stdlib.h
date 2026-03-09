@@ -17,9 +17,9 @@
 #include <errno.h>
 #include <string.h>
 
-#include <mem/mem.h>
-#include <util/nltype.h>
-#include <file/fcb.h>
+#include <_impl/mem/_mem.h>
+#include <_impl/print/_nltype.h>
+#include <file/_fcb.h>
 
 #include <sys/bdos.h>
 

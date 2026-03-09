@@ -1,11 +1,13 @@
 /*
- * _sincosf.c
+ * sincosf.c
  *
- * Implementation of _sincosf (see:math.h)
+ * Compute sine or cosine using a shared single-precision core.
+ * Internal helper called by sin() and cos().
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

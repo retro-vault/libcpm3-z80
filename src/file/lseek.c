@@ -1,12 +1,13 @@
 /*
  * lseek.c
  *
- * Posix C file lseek function. 
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Reposition the current offset within an open file descriptor.
+ * Supports SEEK_SET and SEEK_CUR; SEEK_END returns EINVAL.
  *
- * 10.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
@@ -19,8 +20,8 @@
 
 #include <sys/bdos.h>
 #include <sys/types.h>
-#include <file/fcb.h>
-#include <file/fd.h>
+#include <file/_fcb.h>
+#include <file/_fd.h>
 
 off_t lseek(int fd, off_t offset, int whence) {
 
@@ -29,7 +30,7 @@ off_t lseek(int fd, off_t offset, int whence) {
         return -1;
 
     /* Get fd block, and verify it. */
-    fd_t *fdblk=_fd_get(fd);
+    _fd_t *fdblk=_fd_get(fd);
     if (fdblk==NULL) {
         errno = EBADF;
         return -1;
@@ -54,8 +55,8 @@ off_t lseek(int fd, off_t offset, int whence) {
     }
 
     /* Calculate random record and intra-record offset. */
-    long rec     = abs_offset / DMA_SIZE;
-    long dmaoffs = abs_offset % DMA_SIZE;
+    long rec = abs_offset >> 7;
+    long dmaoffs = abs_offset & (DMA_SIZE - 1);
     fdblk->fcb.rrec = (uint16_t)rec;
 
     /* Seek to the record. */

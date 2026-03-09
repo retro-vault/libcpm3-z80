@@ -1,12 +1,12 @@
 /*
  * stoupper.c
  *
- * stoupper function (see: string.h).
+ * Convert all characters of a string to uppercase in place.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <ctype.h>

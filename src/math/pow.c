@@ -1,11 +1,12 @@
 /*
  * pow.c
  *
- * Implementation of pow (see:math.h)
+ * Raise x to the power y.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

@@ -1,23 +1,23 @@
 /*
  * fsync.c
  *
- * Posix C file flush.
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Flush buffered file data to the CP/M filesystem.
  *
- * 12.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <errno.h>
 #include <sys/bdos.h>
-#include <file/fd.h>
+#include <file/_fd.h>
 
 
 int fsync(int fd) {
 
     /* Get fd block, and verify it. */
-    fd_t *fdblk=_fd_get(fd);
+    _fd_t *fdblk=_fd_get(fd);
     if (fdblk==NULL) {
         errno = EBADF;
         return -1;

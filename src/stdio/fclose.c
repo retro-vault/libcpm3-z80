@@ -1,12 +1,12 @@
 /*
  * fclose.c
  *
- * fclose function (see:stdio.h)
+ * Flush and close a stream associated with a file descriptor.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>
@@ -19,12 +19,15 @@ int fclose(FILE *fp)
     /* Make sure fp is valid file. */
     if (!_check_fp(fp)) {
         errno = EBADF;
+        if (fp)
+            fp->err = true;
         return -1;
     }
 
     /* Do not close standard streams. */
     if (fp->fd >= 0 && fp->fd <= 2) {
         errno = EINVAL;
+        fp->err = true;
         return -1;
     }
 

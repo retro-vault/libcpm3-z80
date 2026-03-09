@@ -15,7 +15,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "../src/file/fcb.h"
+#include <dirent.h>
+#include "../src/file/_fcb.h"
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -142,6 +143,53 @@ TEST(invalid_fd_errors) {
     EXPECT_EQ_INT(EBADF, errno);
 }
 
+TEST(remove_and_unlink) {
+    int fd;
+    struct stat st;
+
+    fd = creat("TDEL1.TMP");
+    ASSERT_TRUE(fd >= 3);
+    EXPECT_EQ_INT(0, close(fd));
+    EXPECT_EQ_INT(0, remove("TDEL1.TMP"));
+    EXPECT_EQ_INT(-1, stat("TDEL1.TMP", &st));
+
+    fd = creat("TDEL2.TMP");
+    ASSERT_TRUE(fd >= 3);
+    EXPECT_EQ_INT(0, close(fd));
+    EXPECT_EQ_INT(0, unlink("TDEL2.TMP"));
+    EXPECT_EQ_INT(-1, stat("TDEL2.TMP", &st));
+}
+
+TEST(dirent_lists_matching_files) {
+    int fd;
+    DIR *dir;
+    struct dirent *ent;
+    int found_a = 0;
+    int found_b = 0;
+
+    fd = creat("DIRENTA.TMP");
+    ASSERT_TRUE(fd >= 3);
+    EXPECT_EQ_INT(0, close(fd));
+
+    fd = creat("DIRENTB.TMP");
+    ASSERT_TRUE(fd >= 3);
+    EXPECT_EQ_INT(0, close(fd));
+
+    dir = opendir("DIRENT*.TMP");
+    ASSERT_TRUE(dir != NULL);
+
+    while ((ent = readdir(dir)) != NULL) {
+        if (strcmp(ent->d_name, "DIRENTA.TMP") == 0)
+            found_a = 1;
+        if (strcmp(ent->d_name, "DIRENTB.TMP") == 0)
+            found_b = 1;
+    }
+
+    EXPECT_EQ_INT(0, closedir(dir));
+    EXPECT_TRUE(found_a);
+    EXPECT_TRUE(found_b);
+}
+
 int main(void) {
     printf("TFILE: file API tests\r\n");
     RUN_TEST(fcb_name_uppercase_and_padding);
@@ -153,6 +201,8 @@ int main(void) {
     RUN_TEST(stat_existing_file);
     RUN_TEST(stat_missing_file_fails);
     RUN_TEST(invalid_fd_errors);
+    RUN_TEST(remove_and_unlink);
+    RUN_TEST(dirent_lists_matching_files);
     if (g_failures == 0) {
         printf("PASS all %d tests\r\n", g_tests_run);
         return 0;

@@ -1,12 +1,12 @@
 /*
  * creat.c
  *
- * Posix C file create new file.
- * 
- * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * Create or truncate a file for write-only access.
  *
- * 12.08.2021   tstih
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
+ *
+ * 09.03.2026   tstih
  *
  */
 #include <fcntl.h>

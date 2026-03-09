@@ -2,15 +2,20 @@
 
 # Standard C library for CP/M 3 Z80
 
-## Table of content
+## Table of contents
 
 - [Introduction](#introduction)
-- [Building the library](#building-the-library)
+- [Building the Library](#building-the-library)
 - [Compiling your CP/M program](#compiling-your-cpm-program)
-- [Running the tests](#running-the-tests)
-- [Platform-dependent functions](#platform-dependent-functions)
+- [Running the Tests](#running-the-tests)
+- [Platform-dependent Functions](#platform-dependent-functions)
 - [What is implemented?](#what-is-implemented-)
-    * [Non-standard extensions](#non-standard-extensions)
+- [Standard C headers with working implementations](#standard-c-headers-with-working-implementations)
+- [Standard C interfaces still missing from the provided partial headers](#standard-c-interfaces-still-missing-from-the-provided-partial-headers)
+- [Standard C headers not currently provided](#standard-c-headers-not-currently-provided)
+- [POSIX / Unix-style extensions](#posix--unix-style-extensions)
+- [POSIX pieces still missing](#posix-pieces-still-missing)
+- [Non-standard libcpm3-z80 extensions](#non-standard-libcpm3-z80-extensions)
 - [To Do](#to-do)
 
 ## Introduction
@@ -25,43 +30,80 @@ only known to god and a few earthlings.
 
 ## Building the library
 
-You need Docker. SDCC is not required locally — the build runs inside the
-`wischner/sdcc-z80` Docker image.
-
-Clone the repository:
+Clone the repository first:
 
 ```sh
 git clone https://github.com/tstih/libcpm3-z80.git
+cd libcpm3-z80
 ```
 
-Download the SDCC runtime helpers (integer and float stubs, required for
-linking executables):
+### Quick start (Docker, recommended)
+
+Bare `make` builds the library inside the `wischner/sdcc-z80` Docker image —
+no local SDCC installation required:
 
 ```sh
-make deps
+make
 ```
 
-Build the library and all test programs:
+### Build targets
 
-```sh
-make docker
-```
+| Target | Description |
+|--------|-------------|
+| `make` | Build library inside Docker (default) |
+| `make test` | Build library + tests inside Docker, run tests in CP/M emulator |
+| `make native` | Build library natively (requires SDCC on PATH; no tests) |
+| `make deps` | Download `libsdcc-z80` runtime helpers to `lib/` (run once before `make test`) |
+| `make install` | Install library and headers to `DESTDIR$(PREFIX)` |
+| `make clean` | Remove build artifacts from `build/` and `bin/` |
+| `make docker-clean` | Remove artifacts via Docker (handles root-owned files from old builds) |
+| `make docker-test-rebuild` | Force-rebuild the CP/M emulator Docker image |
 
-The following files are produced in `bin/`:
+> **Note:** `make native` builds the library only. There is no native test
+> target — tests require the CP/M emulator Docker image.
+
+### Output files
+
+All outputs are placed in `bin/`:
 
 | File | Description |
 |------|-------------|
-| `crt0cpm3-z80.rel` | C runtime start-up (link first) |
-| `libcpm3-z80.lib`  | CP/M 3 standard C library |
+| `crt0cpm3-z80.rel` | C runtime start-up object (must be linked first) |
+| `libcpm3-z80.lib`  | CP/M 3 standard C library archive |
 | `include/`         | Public header files |
 
-`libsdcc-z80.lib` (SDCC integer/float stubs) is downloaded to `lib/` by
+`libsdcc-z80.lib` (SDCC integer/float stubs) is placed in `lib/` by
 `make deps` and must also be linked with your program.
 
-To remove all build artifacts:
+### Overriding output directories
+
+The top-level Makefile supports overriding:
+
+- `BUILD_DIR`: intermediate `.rel`, `.ihx`, and archive build products
+- `BIN_DIR`: final outputs copied for consumption (`.lib`, `.rel`, headers)
+
+This is useful when `libcpm3-z80` is a sub-project and you want its artifacts
+placed into your own project's output tree:
 
 ```sh
-make docker-clean
+make native \
+  BUILD_DIR="$PWD/out/libcpm3/build" \
+  BIN_DIR="$PWD/out/libcpm3/bin"
+```
+
+Or when using `make -C` from a parent project:
+
+```sh
+make -C third_party/libcpm3-z80 native \
+  BUILD_DIR="$PWD/build/libcpm3" \
+  BIN_DIR="$PWD/toolchain/cpm3"
+```
+
+### Cleaning up
+
+```sh
+make clean          # remove build/ and bin/
+make docker-clean   # same, but via Docker (for root-owned artifacts)
 ```
 
 ## Compiling your CP/M program
@@ -70,13 +112,21 @@ You need SDCC installed locally, or you can adapt the Docker invocation from
 the `test/Makefile` as a template. The link order is fixed: CRT0 first,
 your object files, then the library, then the SDCC stubs last.
 
+If you use upstream `sdcc` directly, add `-mz80` on both the compile and
+link commands. Also set the code and data locations explicitly when linking:
+CP/M `.COM` programs must start at `0x100`, and plain upstream SDCC otherwise
+tries to place the data segment at `0x8000`. The custom Docker toolchain used
+in this project already defaults to Z80, so the examples there do not need
+`-mz80` explicitly.
+
 ```sh
 # Compile
-sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+sdcc -mz80 --std-c11 --no-std-crt0 --nostdinc --nostdlib \
      -I bin/include -c -o myprog.rel myprog.c
 
 # Link
-sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+sdcc -mz80 --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+     --code-loc 0x100 --data-loc 0 \
      -o myprog.ihx \
      bin/crt0cpm3-z80.rel myprog.rel \
      bin/libcpm3-z80.lib lib/libsdcc-z80.lib
@@ -85,26 +135,48 @@ sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
 sdobjcopy -I ihex -O binary myprog.ihx myprog.com
 ```
 
+With the project's Docker SDCC wrapper, the target selection is already baked
+in, but `--code-loc 0x100 --data-loc 0` still applies if you invoke upstream
+`sdcc` yourself.
+
 See `test/Makefile` for a complete working example.
 
 ## Running the tests
 
-`make docker` also builds eight test programs into `bin/`:
+Download the SDCC runtime helpers first (needed to link test binaries):
+
+```sh
+make deps
+```
+
+Then build and run all tests in the CP/M emulator with a single command:
+
+```sh
+make test
+```
+
+This builds the library and all test `.com` binaries inside Docker, then runs
+them automatically inside a RunCPM CP/M 3 emulator container. Results are
+written to `bin/<name>.txt`.
+
+The test suite comprises:
 
 | Binary | Tests |
 |--------|-------|
-| `tctype.com`  | `ctype.h` character classification |
-| `tstring.com` | `string.h` string functions |
-| `tstdlib.com` | `stdlib.h` general utilities |
-| `tstdio.com`  | `stdio.h` file I/O |
-| `ttime.com`   | `time.h` time functions |
-| `tmath.com`   | `math.h` floating-point math |
-| `tmem.com`    | allocator internals and utility lists |
-| `tfile.com`   | low-level file API (`open/read/write/lseek/stat`) |
+| `tctype.com`   | `ctype.h` character classification |
+| `tstring.com`  | `string.h` string functions |
+| `tstdlib.com`  | `stdlib.h` general utilities |
+| `tstdio.com`   | `stdio.h` file I/O |
+| `ttime.com`    | `time.h` time functions |
+| `tmath.com`    | `math.h` floating-point math |
+| `tmem.com`     | allocator internals and utility lists |
+| `tfile.com`    | low-level file API (`open/read/write/lseek/stat`) |
+| `tsdcc.com`    | SDCC runtime integration |
+| `tsetjmp.com`  | `setjmp`/`longjmp` |
 
-Copy the `.com` files to a CP/M disk and run them on the target machine or
-an emulator such as [z80pack](https://www.autometer.de/unix4fun/z80pack/) or
-YAZE. Each program prints `PASS` or `FAIL` per test and a summary line.
+Each program prints `PASS` or `FAIL` per test case and a summary line at the
+end. You can also copy any `.com` file to a real CP/M disk and run it on
+hardware or an emulator such as [z80pack](https://www.autometer.de/unix4fun/z80pack/).
 
 ## Platform-dependent functions
 
@@ -130,608 +202,107 @@ program tail automatically.
 
 ## What is implemented?
 
-Click on the header name to see the scope of its implementation.
-
-<details><summary>sys/bdos.h/</summary>
-
-~~~cpp
-/* The usual exit codes. */
-#define BDOS_SUCCESS 0
-#define BDOS_FAILURE 0xff
-
-/* CP/M 3 BDOS function codes
- * See here: https://www.seasip.info/Cpm/bdos.html
- */
-
-/* Process commands */
-#define P_TERMCPM       0               /* Process terminate */
-#define P_CODE          108             /* Set process return code */
-/* Console commands */
-#define C_READ          1               /* Console read */
-#define C_WRITE         2               /* Console write */
-#define C_RAWIO         6               /* Console raw input */
-#define C_DELIMIT       110             /* Get or set delimiter $ */
-#define C_WRITEBLK      111             /* Send block of text to console */
-/* Drive commands */
-#define DRV_SET         14              /* Set drive */
-#define DRV_LOGINVEC    24              /* Enumerate drives */
-#define DRV_GET         25              /* Get current drive */
-#define DRV_DPB         31              /* Get drive info block */
-/* File commands */
-#define F_OPEN          15              /* Open file */
-#define F_CLOSE         16              /* Close file */
-#define F_READ          20              /* Read from file */
-#define F_WRITE         21              /* Write to file */
-#define F_MAKE          22              /* Create file */
-#define F_DMAOFF        26              /* Set DMA offset */
-#define F_USERNUM       32              /* Get/set user area */
-#define F_READRAND      33              /* Read random record */
-#define F_WRITERAND     34              /* Write random record */
-#define F_SIZE          35              /* Get file size in blocks */
-#define F_RANDREC       36              /* Store current pos. */
-#define F_TRUNCATE      99              /* Truncate a file */
-#define F_PARSE         152             /* Parse filename into FCB. */
-
-/* BDOS return code */
-typedef struct bdos_ret_s {
-    uint8_t reta;                       /* return code in reg A */
-    uint8_t retb;                       /* return code in reg B */
-    uint16_t rethl;                     /* return code in HL */
-} bdos_ret_t;
-
-
-/* Hadrware errors, returned in the H register. */
-#define HWERR_SOFTWARE  0               /* Software error (i.e. file not found)*/
-#define HWERR_DRV_SEL   1               /* Cant access drive */
-#define HWERR_DISK_RO   2               /* Disk is read only */
-#define HWERR_FILE_RO   3               /* File is read only */
-#define HWERR_INV_DRV   4               /* Invalid drive */
-#define HWERR_FOPEN     5               /* File is already open */
-#define HWERR_CHECKSUM  6               /* FCB checksum error */
-#define HWERR_PASSWORD  7               /* Password error */
-#define HWERR_FEXISTS   8               /* File already exists */
-#define HWERR_INV_FNME  9               /* Name contains ? */
-
-
-/* Call bdos, return register A. */
-extern uint8_t bdos(uint8_t fn, uint16_t param);
-
-/* Call bdos, return results. */
-extern bdos_ret_t *bdosret(uint8_t fn, uint16_t param, bdos_ret_t *p);
-~~~
-</details>  
-
-<details><summary>sys/stat.h/</summary>
-
-~~~cpp
-struct stat {
-    char        st_drive;               /* A - P */
-    uint8_t     st_user;                /* 0 - 15 */
-    off_t       st_size;                /* Total size, in bytes */
-    uint16_t    st_blksize;             /* Block size */
-    uint16_t    st_blocks;              /* Number of blocks */
-    uint8_t     st_lrb;                 /* Last record byte count */
-};
-
-/* Read file stat. */
-extern int stat(char *pathname, struct stat *statbuf);
-~~~
-</details>  
-
-<details><summary>sys/types.h/</summary>
-
-~~~cpp
-/* This should be signed size, but it is too short. */
-typedef long ssize_t;
-
-/* Used to represent file sizes. */
-typedef long off_t;
-~~~
-</details>
-
-
-<details><summary>ctype.h/</summary>
-
-~~~cpp
-/* True if char is a letter. */
-extern bool isalpha(int c);
-
-/* True if char is white space. */
-extern bool isspace(int c);
-
-/* True if char is punctuation. */
-extern bool ispunct(int c);
-
-/* True if char is a digit */
-extern bool isdigit(int c);
-
-/* Returns char, converted to lowercase. */
-extern int tolower(int c);
-
-/* Return char converted to uppercase */
-extern int toupper(int c);
-~~~
-</details>  
-
-
-<details><summary>errno.h/</summary>
-
-~~~cpp
-#define ENOENT      2       /* no such file or directory */
-#define	EIO         5       /* I/O error */
-#define	E2BIG       7       /* argument list too long */
-#define EBADF       9       /* bad file descriptor */
-#define	EAGAIN      11      /* try again */
-#define EWOULDBLOCK EAGAIN  /* -"- */
-#define	ENOMEM      12      /* out of memory */
-#define EINVAL      22      /* negative offset or offset beyond end of file? Invalid address */
-#define ENFILE      23      /* too many open files (file table overflow) */
-#define	ENOTTY      25      /* not a typewriter */
-#define	EPIPE       32      /* broken pipe */
-
-/* global error code */
-extern int errno;
-~~~
-</details>  
-
-<details><summary>fcntl.h/</summary>
-
-~~~cpp
-#define O_RDONLY    0x0000      /* Read only. */
-#define O_WRONLY    0x0001      /* Write only. */
-#define O_RDWR      0x0002      /* Read and write. */
-#define	O_CREAT     0x0200      /* Create if nonexistant */
-#define	O_TRUNC     0x0400      /* Truncate to zero length */
-
-#define SEEK_SET    0
-#define SEEK_CUR    1
-#define SEEK_END    2
-
-/* Open file, return file descriptor. */
-extern int open(const char *pathname, int flags);
-
-/* Create file, return file descriptor. */
-extern int creat(const char *pathname);
-~~~
-</details>  
-
-<details><summary>float.h/</summary>
-
-~~~cpp
-#define FLT_RADIX       2
-#define FLT_MANT_DIG    24
-#define FLT_EPSILON     1.192092896E-07F
-#define FLT_DIG         6
-#define FLT_MIN_EXP     (-125)
-#define FLT_MIN         1.175494351E-38F
-#define FLT_MIN_10_EXP  (-37)
-#define FLT_MAX_EXP     (+128)
-#define FLT_MAX         3.402823466E+38F
-#define FLT_MAX_10_EXP  (+38)
-~~~
-</details>  
-
-
-<details><summary>limits.h/</summary>
-
-~~~cpp
-#define CHAR_BIT    8                   /* Bits in char. */
-#define SCHAR_MIN   -128
-#define SCHAR_MAX   +127
-#define UCHAR_MAX   255
-#define CHAR_MIN    -128
-#define CHAR_MAX    +127
-#define MB_LEN_MAX  8                   /* Max. bytes in multi byte char. */
-#define SHRT_MIN    -128
-#define SHRT_MAX    +127
-#define USHRT_MAX   255
-#define INT_MIN     -32768
-#define INT_MAX     +32767
-#define UINT_MAX    65535
-#define LONG_MIN    -2147483648
-#define LONG_MAX    +2147483647
-#define ULONG_MAX   4294967295
-#define SSIZE_MAX   65535               /* Max bytes for file read */
-~~~
-</details>  
-
-
-<details><summary>math.h/</summary>
-
-~~~cpp
-/* constants */
-#define HUGE_VAL    3.402823466e+38
-
-/* functions */
-extern float ceil(float x);
-extern float cos(float x);
-extern float cot(float x);
-extern float exp(float x);
-extern float fabs(float x);
-extern float frexp(float x, int *pw2);
-extern float floor(float x);
-extern float ldexp(float x, int pw2);
-extern float log(float x);
-extern float log10(float x);
-extern float modf(float x, float * y);
-extern float pow(float x, float y);
-extern float sin(float f);
-extern float sqrt(float x);
-extern float tan(float x);
-~~~
-</details> 
-
-
-<details><summary>stdarg.h/</summary>
-
-~~~cpp
-/* Standard C var arg macros */
-#define va_list                 unsigned char *
-#define va_start(marker, last)  { marker = (va_list)&last + sizeof(last); }
-#define va_arg(marker, type)    *((type *)((marker += sizeof(type)) - sizeof(type)))
-#define va_end(marker)          marker = (va_list) 0;
-~~~
-</details>  
-
-<details><summary>stdbool.h/</summary>
-
-~~~cpp
-#define bool int
-
-#define false 0
-#define FALSE 0
-#define true 1
-#define TRUE 1
-~~~
-</details>  
-
-<details><summary>stddef.h/</summary>
-
-~~~cpp
-typedef uint16_t    ptrdiff_t;          /* Result of sub. two pointers. */
-typedef uint16_t    size_t;             /* sizeof type */
-~~~
-</details>  
-
-<details><summary>stdint.h/</summary>
-
-~~~cpp
-typedef signed char     int8_t;
-typedef unsigned char   uint8_t;
-typedef int             int16_t;
-typedef unsigned int    uint16_t;
-typedef long            int32_t;
-typedef unsigned long   uint32_t;
-~~~
-</details>  
-
-<details><summary>stdio.h/</summary>
-
-~~~cpp
-#define EOF         0x1A	
-#define SEEK_SET    0
-#define SEEK_CUR    1
-#define SEEK_END    2
-
-/* FILE type. */
-typedef struct _iobuf {
-  char      flags[4];
-  int       fd;
-  bool      eof;
-} FILE; 
-
-extern FILE *stdin;
-extern FILE *stdout;
-extern FILE *stderr;
-
-/* Open file. */
-extern FILE *fopen(const char *path, const char *mode);
-
-/* Close a file. */
-extern int fclose(FILE *fp);
-
-/* Write a record. */
-extern size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *fp);
-
-/* Read a record. */
-extern size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp);
-
-/* Move to fpos. */
-extern int fseek(FILE *fp, long offset, int whence);
-
-/* EOF reached? */
-extern int feof(FILE *fp);
-
-/* Get file position. */
-extern long ftell(FILE *fp);
-
-/* Get char. */
-extern int fgetc(FILE *fp);
-
-/* Prints a string. */
-extern int puts(const char *s);
-
-/* Reads a string */
-extern char *gets(char *str);
-
-/* Print formatted string to stdout. */
-extern int printf(char *fmt, ...);
-
-/* Prints formated string to a string. */
-extern int sprintf(char *buf, char *fmt, ...);
-
-/* Prints a char. */
-extern int putchar(int c);
-
-/* Reads a char (blocks). */
-extern int getchar(void);
-~~~
-</details>  
-
-<details><summary>stdlib.h/</summary>
-
-~~~cpp
-/* Standard requires it here. */
-#ifndef NULL
-#define NULL 0
-#endif /* NULL */
-
-/* How console functions interpret \n? As \n or as \r\n? */
-#define NL_LF       0
-#define NL_CRLF     1
-#define NL_LFCR     2
-extern char nltype;
-
-/* Non standard extension, the name of the platform on
-   which library was build i.e. z80-none or z80-partner.
-   This is changed when adding PLATFORM=name to make call. */
-extern char *libplatform;
-
-/* Non standard extension, running program name.
-   Used for argv[0]. */
-extern char *progname;
-
-/* Exit application. */
-extern void exit(int status);
-
-/* Absolute value. */
-extern int abs (int i);
-
-/* Covert ascii to integer. */
-extern int atoi(const char *str);
-
-/* Convert integer to ascii. */
-extern char *itoa(int num, char *str, int base);
-
-/* Return random number */
-extern int rand(void);
-
-/* Set random seed. */
-extern void srand(unsigned int seed);
-
-/* String to long using base. */
-extern long strtol(char *nptr, char **endptr, int base);
-
-/* String to unsigned long using base, */
-extern unsigned long strtoul(const char *nptr, char **endptr, int base);
-
-/* Memory allocation. */
-extern void *malloc(size_t size);
-
-/* Allocate zero initialized block. */
-extern void *calloc (size_t num, size_t size);
-
-/* Free allocated memory block. */
-extern void free(void *ptr);
-
-/* Quick sort */
-extern void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void*));
-
-/* Non standard extension, this is a hook, called just
-   after intialization of the Standard library */
-extern void libinit();
-
-/* Non standard extension: path parser. 
-   Supported path formats are:
-   [<drive>:]filename.typ[[g]<user area>]
-   Returns 0 for success */
-#define MAX_DRIVE   1
-#define MAX_FNAME   8
-#define MAX_EXT     3
-extern int splitpath(
-   const char *path,
-   char *drive,
-   int *user,
-   char *fname,
-   char *ext
-);
-~~~
-</details>  
-
-<details><summary>string.h/</summary>
-
-~~~cpp
-#ifndef NULL
-#define NULL ( (void *) 0)
-#endif /* NULL */
-
-/* Set n bytes in memory block to the value c, */
-extern void *memset(void *s, int c, size_t n);
-
-/* Copy memory block, */
-extern void *memcpy(const void *dest, const void *src, size_t n);
-
-/* Searches for the first occurrence of the character c 
-(an unsigned char) in the first n bytes. */
-extern void *memchr(const void *s, int c, size_t n);
-
-/* Compare memory blocks. 0=equal. */
-extern int memcmp(const void *s1, const void *s2, size_t n);
-
-/* Zero terminated string length. */
-extern size_t strlen(const char *s);
-
-/* Copy string to another string */
-extern char *strcpy(char *dest, const char *src);
-
-/* Copy max num chars to another string. */
-extern char* strncpy(char* dst, const char* src, size_t num);
-
-/* Compare strings, 0=match. */
-extern int strcmp(const char *s1, const char *s2);
-
-/* Compare first n chars of string. */
-extern int strncmp(const char *s1, const char *s2, size_t n);
-
-/* Find first occurence of c in s. */
-extern char *strchr(const char *s, int c);
-
-/* Find first occurence of c in s frin the right (=last occurence). */
-extern char *strrchr(const char *s, int c);
-
-/* Reverse a string. */
-extern void strrev(char *s, register size_t n);
-
-/* Non standard (unix) tokenizer. */
-extern char *strsep(char **stringp, const char *delim);
-
-/* The length of the number of characters before the 1st occurrence 
-of character present in both the string. */
-extern size_t strcspn(const char *s1, const char *s2); 
-
-/* Tokenize string s using delimiters delim. */
-extern char *strtok(char *s, const char *delim);
-
-/* Return text of the errnum system error. */
-extern char *strerror(int errnum);
-
-/* Non standard extension: stoupper */
-extern void stoupper(char *s);
-
-/* Non standard extension: stolower */
-extern void stolower(char *s);
-~~~
-</details>  
-
-<details><summary>time.h/</summary>
-
-~~~cpp
-/* idp clock has a resolution of 1/100 sec */
-#define CLOCKS_PER_SEC  100
-typedef long clock_t;
-
-/* Std C defines this as number of seconds since  00:00, Jan 1 1970 UTC */
-typedef long time_t;
-
-/* Std C tm struct */
-struct tm {
-    /* seconds,  range 0 to 59 */
-    int tm_sec;
-    /* minutes, range 0 to 59 */
-    int tm_min;
-    /* hours, range 0 to 23 */
-    int tm_hour;
-    /* day of the month, range 1 to 31 */
-    int tm_mday;
-    /* month, range 0 to 11 */
-    int tm_mon;
-    /* The number of years since 1900 */
-    int tm_year;
-    /* day of the week, range 0 to 6 */
-    int tm_wday;
-    /* day in the year, range 0 to 365 */
-    int tm_yday;
-    /* daylight saving time */
-    int tm_isdst;
-};
-
-/* non standard for settimeofday and gettimeofday functions */
-struct timeval { 
-    time_t tv_sec;                      /* seconds since Jan. 1, 1970 */ 
-    int tv_hsec;                        /* and 1/100 seconds */
-}; 
-
-/* Converts given calendar time tm to a textual representation of 
-the following fixed 25-character form: Www Mmm dd hh:mm:ss yyyy. */
-extern char* asctime(const struct tm* time_ptr);
-
-/* Return current clock in 1/1000 seconds */
-extern clock_t clock(void);
-
-/* Convert current time to textual representation using the following
-format Www Mmm dd hh:mm:ss yyyy (uses asctime...).*/
-extern char* ctime(const time_t* ptt);
-
-/* Returns difference between two time points in seconds! */
-extern long difftime(time_t time_end,time_t time_beg);
-
-/* Get Greenwich mean time (politically correct: UTC), make localtime
-equal to UTC. */
-#define localtime gmtime
-extern struct tm *gmtime(const time_t *timer);
-
-/* Create time_t given tm structure. */
-extern time_t mktime(struct tm *tme);
-	
-/* Get current time. */
-extern time_t time(time_t *arg);
-
-/* Non standard function to get system date and time. */
-extern int gettimeofday(struct timeval *tv);
-
-/* Non standard function to set system date and time */
-extern int settimeofday(const struct timeval *tv);
-
-~~~
-</details>  
-
-
-<details><summary>unistd.h/</summary>
-
-~~~cpp
-/* Posix read. */
-extern ssize_t read(int fd, void *buf, size_t count);
-
-/* Posix close. */
-extern int close(int fd);
-
-/* Posix flush. */
-extern int fsync(int fd);
-
-/* Posix write. */
-ssize_t write(int fd, const void *buf, size_t count); 
-
-/* Posix lseek function */
-off_t lseek(int fd, off_t offset, int whence);
-
-/* Non standard function to sleep (in milliseconds).
-   NOTE: The libcpm3-z80 only provides an empty proxy 
-   to this function. If you want to use it you need to
-   compile the libcpm3-z80 with the PLATFORM switch and
-   inject your own implementation.  */
-extern void msleep(int millisec);
-~~~
-</details>  
-
-
-### Non-standard extensions
-
-Following functions and variables in *libcpm3-z80* are not part of the *Standard C library*.
-
-| Header      | Function                                            |
-|-------------|-----------------------------------------------------| 
-| sys/bdos.h  | bdos(), bdosret()                                   |
-| sys/stat.h  | stat()                                              |
-| time.h      | gettimeofday(), settimeofday()                      |
-| unistd.h    | msleep(), lseek(), close(), read(), write()         |
-| fcntl.h     | open(), creat(), fcntl()                            |
-| stdlib.h    | libplatform, libinit(), splitpath(), nl             |
-| string.h    | stoupper(), stolower(), strrev()                    |
+This library currently provides a small, test-backed subset of the C library,
+plus a CP/M-oriented POSIX-like layer and a few CP/M-specific extensions.
+
+### Standard C headers with working implementations
+
+These headers are present and backed by code in `src/`:
+
+| Header | Status | Implemented surface |
+|--------|--------|---------------------|
+| `ctype.h` | partial | `isalnum`, `isalpha`, `iscntrl`, `isdigit`, `isgraph`, `islower`, `isprint`, `ispunct`, `isspace`, `isupper`, `isxdigit`, `tolower`, `toupper` |
+| `assert.h` | implemented | `assert()` macro with `NDEBUG` support |
+| `errno.h` | partial | `errno` plus a small CP/M-oriented error set |
+| `float.h` | partial | single-precision constants only |
+| `inttypes.h` | partial | `intmax_t`, `uintmax_t`, `PRI*` macros, `strtoimax`, `strtoumax` |
+| `iso646.h` | implemented | alternative operator spellings |
+| `limits.h` | partial | integer and size limits for this target |
+| `math.h` | partial | `ceil`, `cos`, `cot`, `exp`, `fabs`, `floor`, `frexp`, `ldexp`, `log`, `log10`, `modf`, `pow`, `sin`, `sqrt`, `tan` |
+| `setjmp.h` | implemented | `setjmp`, `longjmp` |
+| `stdarg.h` | implemented | `va_list`, `va_start`, `va_arg`, `va_end` |
+| `stdbool.h` | implemented | `bool`, `true`, `false` macros |
+| `stddef.h` | partial | `size_t`, `ptrdiff_t` |
+| `stdint.h` | partial | fixed-width 8/16/32-bit integer types |
+| `stdio.h` | partial | `FILE`, `stdin`, `stdout`, `stderr`, `fopen`, `fclose`, `fflush`, `fgetc`, `fgets`, `fputc`, `fputs`, `fread`, `fseek`, `ftell`, `fwrite`, `feof`, `ferror`, `clearerr`, `getc`, `getc_unlocked`, `getchar`, `gets`, `getw`, `fprintf`, `perror`, `printf`, `putc`, `putchar`, `puts`, `remove`, `rewind`, `setbuf`, `setvbuf`, `sprintf`, `tmpfile`, `tmpnam`, `ungetc`, `vfprintf`, `vprintf`, `vsprintf` |
+| `stdnoreturn.h` | implemented | `noreturn` macro |
+| `stdlib.h` | partial | `abort`, `atexit`, `exit`, `abs`, `atof`, `atoi`, `atol`, `bsearch`, `div`, `itoa`, `labs`, `ldiv`, `rand`, `srand`, `strtol`, `strtoul`, `malloc`, `calloc`, `free`, `qsort` |
+| `string.h` | partial | `memchr`, `memcmp`, `memcpy`, `memset`, `strchr`, `strcmp`, `strcpy`, `strcspn`, `strlen`, `strncmp`, `strncpy`, `strrchr`, `strsep`, `strerror`, `strrev`, `strtok`, `stolower`, `stoupper` |
+| `time.h` | partial | `asctime`, `clock`, `ctime`, `difftime`, `gmtime`, `mktime`, `time` |
+
+### Standard C interfaces still missing from the provided partial headers
+
+All currently declared public interfaces are backed by code, but many headers
+are intentionally only a subset of the full ISO C surface. The main gaps are:
+
+| Header | Not yet provided |
+|--------|---------------------|
+| `math.h` | most of the wider C math surface beyond the current single-precision core |
+| `stdio.h` | `fscanf`, `rename`, `scanf`, `sscanf` |
+| `stdlib.h` | `getenv`, `system` |
+| `time.h` | `strftime` and timezone/DST extensions beyond UTC-style operation |
+
+### Standard C headers not currently provided
+
+This is not yet a full hosted C library. In particular, these standard headers
+are not shipped here:
+
+- `complex.h`
+- `fenv.h`
+- `locale.h`
+- `signal.h`
+- `stdalign.h`
+- `stdatomic.h`
+- `tgmath.h`
+- `threads.h`
+- `uchar.h`
+- `wchar.h`
+- `wctype.h`
+
+### POSIX / Unix-style extensions
+
+These are not part of ISO C. They are grouped separately because they form the
+library's Unix-like I/O layer on top of CP/M 3:
+
+| Header | Status | Implemented surface |
+|--------|--------|---------------------|
+| `fcntl.h` | partial | `open`, `creat`, `O_*`, `SEEK_*` |
+| `sys/types.h` | partial | `ssize_t`, `off_t` |
+| `sys/stat.h` | partial | `struct stat`, `stat` |
+| `unistd.h` | partial | `read`, `write`, `close`, `fsync`, `lseek`, `unlink` |
+| `dirent.h` | partial | `DIR`, `struct dirent`, `opendir`, `readdir`, `closedir` using CP/M wildcard search (`A:*.COM`, `*.TXT`, etc.) |
+
+### POSIX pieces still missing
+
+The POSIX layer is intentionally small. Common Unix interfaces not currently
+provided include:
+
+- `access`
+- `dup`, `dup2`
+- `isatty`
+- `mkdir`, `rmdir`
+- `pipe`
+- `rename` as a POSIX filesystem call
+- `stat` variants such as `fstat`
+- process APIs such as `exec*`, `fork`, `wait`
+
+### Non-standard libcpm3-z80 extensions
+
+These are project-specific or CP/M-specific APIs rather than ISO C or POSIX:
+
+| Header | Extension |
+|--------|-----------|
+| `sys/bdos.h` | `bdos()`, `bdosret()`, CP/M 3 BDOS constants, `bdos_ret_t` |
+| `time.h` | `gettimeofday()`, `settimeofday()`, `struct timeval` |
+| `stdlib.h` | `libplatform`, `progname`, `nltype`, `_libinit()`, `_splitpath()` |
+| `string.h` | `stoupper()`, `stolower()`, `strrev()` |
+| `unistd.h` | `_msleep()` placeholder hook |
 
 
 ## To Do
 
-`dirent.h` has no implementation.
+- Expand standard-header coverage if the project goal moves beyond the current
+  minimal subset.
 
 [language.url]:   https://en.wikipedia.org/wiki/ANSI_C
 [language.badge]: https://img.shields.io/badge/language-C-blue.svg

@@ -1,12 +1,12 @@
 /*
  * sprintf.c
  *
- * sprintf function (see:stdio.h)
+ * Format output into a caller-supplied memory buffer.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>

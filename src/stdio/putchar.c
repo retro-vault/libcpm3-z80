@@ -1,12 +1,13 @@
 /*
  * putchar.c
  *
- * putchar function (see:stdio.h)
+ * Write one byte to standard output, expanding newlines
+ * according to the current nltype setting.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>

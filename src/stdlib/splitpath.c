@@ -1,17 +1,17 @@
 /*
  * splitpath.c
  *
- * Parse CP/M path.
+ * Split a CP/M pathname into drive, user area, name, and extension.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdlib/_stdlib.h>
 
-int splitpath(
+int _splitpath(
     const char *path,
     char *drive,
     int *user,

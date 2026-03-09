@@ -1,12 +1,12 @@
 /*
  * strcmp.c
  *
- * strcmp function (see: string.h).
+ * Compare two strings lexicographically.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 08.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 int strcmp(const char *s1, const char *s2) {

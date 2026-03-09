@@ -1,12 +1,12 @@
 /*
  * fread.c
  *
- * fread function (see:stdio.h)
+ * Read nmemb objects of size bytes from a stream into a buffer.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>
@@ -24,6 +24,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp)
     /* Make sure fd is valid. */
     if (!_check_fp(fp)) {
         errno = EBADF;
+        if (fp)
+            fp->err = true;
         return 0;
     }
 
@@ -37,8 +39,10 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp)
             fp->eof = true;
             return cnt;
         }
-        else if (rd == -1) 
+        else if (rd == -1) {
+            fp->err = true;
             return 0; /* errno is propagated. */
+        }
         else if (rd == size) {
             /* If text mode file, find eof... */
             if (memchr(&fp->flags, 'b', 3) == NULL) {
@@ -52,8 +56,10 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *fp)
             cnt++;
         } else {
             errno = EIO;
+            fp->err = true;
             return cnt;
         }
     }
+    fp->err = false;
     return cnt;
 }

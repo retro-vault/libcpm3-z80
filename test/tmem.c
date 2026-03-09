@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
-#include "../src/util/list.h"
+#include "../src/util/_list.h"
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -26,19 +26,19 @@ const char *g_current_test = "";
 #define NEW           0x00
 #define ALLOCATED     0x01
 
-typedef struct block_s {
-    list_header_t hdr;
+typedef struct _block_s {
+    _list_header_t hdr;
     uint8_t       stat;
     uint16_t      size;
     uint8_t       data[1];
-} block_t;
+} _block_t;
 
 extern void _heap_init(uint16_t start, uint16_t size);
 extern void *_alloc(uint16_t heap, size_t size);
 extern void _dealloc(uint16_t heap, void *p);
 extern void _memory_init(void);
 extern size_t _memtop(void);
-extern void libinit(void);
+extern void _libinit(void);
 
 static uint8_t heapbuf[96];
 
@@ -50,13 +50,13 @@ static uint16_t initial_free_size(void) {
     return (uint16_t)(sizeof(heapbuf) - BLK_SIZE);
 }
 
-typedef struct node_s {
-    list_header_t hdr;
+typedef struct _node_s {
+    _list_header_t hdr;
     int id;
 } node_t;
 
 TEST(heap_init_single_block) {
-    block_t *b0 = (block_t *)heapbuf;
+    _block_t *b0 = (_block_t *)heapbuf;
     _heap_init(heap_start(), (uint16_t)sizeof(heapbuf));
     EXPECT_TRUE(b0->hdr.next == NULL);
     EXPECT_EQ_INT(NEW, b0->stat);
@@ -64,8 +64,8 @@ TEST(heap_init_single_block) {
 }
 
 TEST(alloc_splits_large_remainder) {
-    block_t *b0 = (block_t *)heapbuf;
-    block_t *b1;
+    _block_t *b0 = (_block_t *)heapbuf;
+    _block_t *b1;
     uint16_t expected_tail;
     void *p;
 
@@ -77,7 +77,7 @@ TEST(alloc_splits_large_remainder) {
     EXPECT_EQ_INT(ALLOCATED, b0->stat);
     EXPECT_EQ_INT(10, (int)b0->size);
 
-    b1 = (block_t *)b0->hdr.next;
+    b1 = (_block_t *)b0->hdr.next;
     ASSERT_TRUE(b1 != NULL);
     expected_tail = (uint16_t)(initial_free_size() - 10 - BLK_SIZE);
     EXPECT_EQ_INT(NEW, b1->stat);
@@ -85,7 +85,7 @@ TEST(alloc_splits_large_remainder) {
 }
 
 TEST(alloc_no_split_small_remainder) {
-    block_t *b0 = (block_t *)heapbuf;
+    _block_t *b0 = (_block_t *)heapbuf;
     void *p;
 
     _heap_init(heap_start(), (uint16_t)sizeof(heapbuf));
@@ -97,7 +97,7 @@ TEST(alloc_no_split_small_remainder) {
 }
 
 TEST(dealloc_merges_prev_and_next) {
-    block_t *b0 = (block_t *)heapbuf;
+    _block_t *b0 = (_block_t *)heapbuf;
     void *a, *b, *c;
 
     _heap_init(heap_start(), (uint16_t)sizeof(heapbuf));
@@ -118,7 +118,7 @@ TEST(dealloc_merges_prev_and_next) {
 }
 
 TEST(dealloc_unknown_pointer_noop) {
-    block_t *b0 = (block_t *)heapbuf;
+    _block_t *b0 = (_block_t *)heapbuf;
     void *a;
     void *old_next;
     uint16_t old_size;
@@ -143,9 +143,9 @@ TEST(dealloc_unknown_pointer_noop) {
 
 TEST(list_insert_find_remove) {
     node_t n1, n2, n3;
-    list_header_t *first = NULL;
-    list_header_t *prev = NULL;
-    list_header_t *found;
+    _list_header_t *first = NULL;
+    _list_header_t *prev = NULL;
+    _list_header_t *found;
 
     _list_insert(&first, &n1.hdr);
     _list_insert(&first, &n2.hdr);
@@ -164,7 +164,7 @@ TEST(list_insert_find_remove) {
 TEST(list_append_remove_first_and_missing) {
     node_t n1, n2;
     node_t nx;
-    list_header_t *first = NULL;
+    _list_header_t *first = NULL;
 
     _list_append(&first, &n1.hdr);
     _list_append(&first, &n2.hdr);
@@ -200,8 +200,8 @@ TEST(memory_init_and_memtop_smoke) {
 
 TEST(msleep_and_libinit_smoke) {
     int before = g_failures;
-    msleep(1);
-    libinit();
+    _msleep(1);
+    _libinit();
     EXPECT_EQ_INT(before, g_failures);
 }
 

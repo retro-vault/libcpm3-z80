@@ -1,11 +1,12 @@
 /*
  * ldexp.c
  *
- * Implementation of ldexp (see:math.h)
+ * Scale x by 2 raised to the power pw2.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

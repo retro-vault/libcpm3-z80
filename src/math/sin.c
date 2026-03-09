@@ -1,11 +1,12 @@
 /*
  * sin.c
  *
- * Implementation of sin (see:math.h)
+ * Compute the sine of x, where x is in radians.
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>

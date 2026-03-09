@@ -1,12 +1,12 @@
 /*
  * feof.c
  *
- * feof function (see:stdio.h)
+ * Test whether the stream end-of-file indicator is set.
  *
  * MIT License (see: LICENSE)
- * copyright (c) 2021 tomaz stih
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <stdio/_stdio.h>
@@ -17,6 +17,6 @@ int feof(FILE *fp)
     if (!_check_fp(fp)) {
         errno = EBADF;
         return -1;
-    } else 
-        return (fp->eof) ? 1 : 0;
+    }
+    return (fp->eof) ? 1 : 0;
 }

@@ -16,6 +16,7 @@
  *
  */
 #include <stdio.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -25,6 +26,8 @@ int g_failures = 0;
 int g_tests_run = 0;
 int g_tests_failed = 0;
 const char *g_current_test = "";
+
+static int int_cmp(const void *a, const void *b);
 
 /* ---- abs --------------------------------------------------------------- */
 
@@ -100,6 +103,29 @@ TEST(strtoul_hex) {
     EXPECT_EQ_LONG(0xFFFFUL, (long)strtoul("ffff", &end, 16));
 }
 
+TEST(strtoimax_decimal) {
+    char *end;
+    EXPECT_EQ_LONG(12345L, (long)strtoimax("12345", &end, 10));
+    EXPECT_EQ_LONG(-42L, (long)strtoimax("-42", &end, 10));
+}
+
+TEST(strtoumax_hex) {
+    char *end;
+    EXPECT_EQ_LONG(0x1234UL, (long)strtoumax("1234", &end, 16));
+}
+
+TEST(atol_decimal) {
+    EXPECT_EQ_LONG(0L, atol("0"));
+    EXPECT_EQ_LONG(123456L, atol("123456"));
+    EXPECT_EQ_LONG(-42L, atol("-42"));
+}
+
+TEST(atof_decimal) {
+    EXPECT_EQ_FLOAT(0.0f, atof("0"), 0.0001f);
+    EXPECT_EQ_FLOAT(12.5f, atof("12.5"), 0.0001f);
+    EXPECT_EQ_FLOAT(-3.25f, atof("-3.25"), 0.0001f);
+}
+
 /* ---- rand / srand ------------------------------------------------------ */
 
 TEST(rand_in_range) {
@@ -118,6 +144,37 @@ TEST(rand_reproducible) {
     srand(42);
     b = rand();
     EXPECT_EQ_INT(a, b);  /* same seed → same first value */
+}
+
+TEST(bsearch_found_and_missing) {
+    static const int arr[] = { 1, 3, 5, 7, 9, 11 };
+    int key;
+    int *found;
+
+    key = 7;
+    found = (int *)bsearch(&key, arr, 6, sizeof(arr[0]), int_cmp);
+    ASSERT_TRUE(found != NULL);
+    EXPECT_EQ_INT(7, *found);
+
+    key = 6;
+    found = (int *)bsearch(&key, arr, 6, sizeof(arr[0]), int_cmp);
+    EXPECT_TRUE(found == NULL);
+}
+
+TEST(div_helpers) {
+    div_t qr = div(17, 5);
+    ldiv_t lqr = ldiv(123456L, 1000L);
+
+    EXPECT_EQ_INT(3, qr.quot);
+    EXPECT_EQ_INT(2, qr.rem);
+    EXPECT_EQ_LONG(123L, lqr.quot);
+    EXPECT_EQ_LONG(456L, lqr.rem);
+}
+
+TEST(labs_values) {
+    EXPECT_EQ_LONG(0L, labs(0L));
+    EXPECT_EQ_LONG(42L, labs(42L));
+    EXPECT_EQ_LONG(42L, labs(-42L));
 }
 
 /* ---- qsort ------------------------------------------------------------- */
@@ -229,7 +286,7 @@ TEST(splitpath_basic) {
     char ext[MAX_EXT + 1];
     int  rc;
 
-    rc = splitpath("A:HELLO.TXT", drive, &user, fname, ext);
+    rc = _splitpath("A:HELLO.TXT", drive, &user, fname, ext);
     EXPECT_EQ_INT(0, rc);
     EXPECT_EQ_STR("A", drive);
     EXPECT_EQ_STR("HELLO", fname);
@@ -243,7 +300,7 @@ TEST(splitpath_no_drive) {
     char ext[MAX_EXT + 1];
     int  rc;
 
-    rc = splitpath("TEST.COM", drive, &user, fname, ext);
+    rc = _splitpath("TEST.COM", drive, &user, fname, ext);
     EXPECT_EQ_INT(0, rc);
     EXPECT_EQ_STR("TEST", fname);
     EXPECT_EQ_STR("COM", ext);
@@ -256,7 +313,7 @@ TEST(splitpath_with_user_area) {
     char ext[MAX_EXT + 1];
     int  rc;
 
-    rc = splitpath("B:NAME.BIN[15]", drive, &user, fname, ext);
+    rc = _splitpath("B:NAME.BIN[15]", drive, &user, fname, ext);
     EXPECT_EQ_INT(0, rc);
     EXPECT_EQ_STR("B", drive);
     EXPECT_EQ_INT(15, user);
@@ -271,7 +328,7 @@ TEST(splitpath_invalid_too_long_name) {
     char ext[MAX_EXT + 1];
     int  rc;
 
-    rc = splitpath("ABCDEFGHI.TXT", drive, &user, fname, ext);
+    rc = _splitpath("ABCDEFGHI.TXT", drive, &user, fname, ext);
     EXPECT_EQ_INT(-1, rc);
 }
 
@@ -294,8 +351,15 @@ int main(void) {
     RUN_TEST(strtol_endptr);
     RUN_TEST(strtoul_decimal);
     RUN_TEST(strtoul_hex);
+    RUN_TEST(strtoimax_decimal);
+    RUN_TEST(strtoumax_hex);
+    RUN_TEST(atol_decimal);
+    RUN_TEST(atof_decimal);
     RUN_TEST(rand_in_range);
     RUN_TEST(rand_reproducible);
+    RUN_TEST(bsearch_found_and_missing);
+    RUN_TEST(div_helpers);
+    RUN_TEST(labs_values);
     RUN_TEST(qsort_integers);
     RUN_TEST(qsort_single);
     RUN_TEST(qsort_sorted);

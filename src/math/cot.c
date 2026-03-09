@@ -1,11 +1,12 @@
 /*
  * cot.c
  *
- * Implementation of cot (see:math.h)
+ * Compute the cotangent of x in radians as cos(x) / sin(x).
  *
- * From SDCC C math library.
+ * MIT License (see: LICENSE)
+ * copyright (c) 2026 tomaz stih
  *
- * 05.07.2023   tstih
+ * 09.03.2026   tstih
  *
  */
 #include <math/_math.h>
