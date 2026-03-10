@@ -28,114 +28,375 @@
   <div class="abstract">
     <h2>Abstract</h2>
     <p>
-      <code>libcpm3-z80</code> is a minimal and readable C library targeting CP/M 3 on Z80 with SDCC.
-      It provides core headers and implementations for common C runtime areas such as
-      <code>stdio</code>, <code>string</code>, <code>stdlib</code>, <code>math</code>, <code>ctype</code>, and
-      <code>time</code>, plus CP/M-specific support in <code>sys/</code>.
-      This page documents build outputs, release artifacts, and link usage.
+      <code>libcpm3-z80</code> is a portable, readable, and minimal standard C library for CP/M 3 on Z80.
+      It targets SDCC, keeps platform-dependent code isolated, and exposes a small but test-backed subset of
+      ISO C together with a CP/M-oriented Unix-like I/O layer.
     </p>
   </div>
 
   <nav role="navigation" class="toc">
     <h2>Contents</h2>
     <ol>
-      <li><a href="#overview">Overview</a></li>
-      <li><a href="#build">Build</a></li>
-      <li><a href="#artifacts">Artifacts</a></li>
-      <li><a href="#use">Use In Your Program</a></li>
-      <li><a href="#headers">Provided Headers</a></li>
-      <li><a href="#notes">Notes</a></li>
+      <li><a href="#overview">Introduction</a></li>
+      <li><a href="#build">Building the Library</a></li>
+      <li><a href="#compile">Compiling Your CP/M Program</a></li>
+      <li><a href="#tests">Running the Tests</a></li>
+      <li><a href="#layout">Source Tree Layout</a></li>
+      <li><a href="#platform">Platform-dependent Functions</a></li>
+      <li><a href="#implemented">What Is Implemented?</a></li>
       <li><a href="#license">License</a></li>
     </ol>
   </nav>
 
   <main>
     <article>
-      <h2 id="overview">Overview</h2>
+      <h2 id="overview">Introduction</h2>
       <p>
-        The repository is structured into:
+        <code>libcpm3-z80</code> is an attempt to provide a library written in straightforward C, with a clear
+        separation between platform-independent code and the small amount of platform-specific support that CP/M 3
+        cannot provide through BDOS alone.
       </p>
-      <ul>
-        <li><code>src/</code>: library implementation and CRT0 source.</li>
-        <li><code>include/</code>: public headers to ship with the library.</li>
-        <li><code>docs/</code>: this documentation site.</li>
-        <li><code>test/</code>: test programs (not part of release artifacts).</li>
-      </ul>
       <div class="definition">
-        Release artifacts for this project are intentionally limited to library consumers:
-        <code>libcpm3-z80.lib</code>, <code>crt0cpm3-z80.rel</code>, and <code>include/</code>.
+        The implementation is now organized directly by public subsystem under <code>src/</code>:
+        <code>stdlib/</code>, <code>stdio/</code>, <code>string/</code>, <code>sys/</code>,
+        <code>platform/</code>, <code>setjmp/</code>, and related folders. The older
+        <code>src/_impl/</code> layout is gone.
       </div>
 
-      <h2 id="build">Build</h2>
+      <h2 id="build">Building the Library</h2>
       <p>
-        Docker is the default build path. To build library artifacts only (without tests), run:
+        Clone the repository first:
       </p>
-      <pre><code class="language-bash">make clean
-make docker-lib</code></pre>
+      <pre><code class="language-bash">git clone https://github.com/tstih/libcpm3-z80.git
+cd libcpm3-z80</code></pre>
       <p>
-        For a native build (requires SDCC toolchain installed), run:
-      </p>
-      <pre><code class="language-bash">make clean
-make lib</code></pre>
-
-      <h2 id="artifacts">Artifacts</h2>
-      <p>
-        A successful library-only build produces:
+        The supported build commands are:
       </p>
       <table>
         <thead>
           <tr>
-            <th>Path</th>
+            <th>Command</th>
             <th>Description</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><code>bin/libcpm3-z80.lib</code></td>
-            <td>Static library archive.</td>
+            <td><code>make</code></td>
+            <td>Build the library.</td>
           </tr>
           <tr>
-            <td><code>bin/crt0cpm3-z80.rel</code></td>
-            <td>CP/M 3 CRT0 object to link first.</td>
+            <td><code>make test</code></td>
+            <td>Build the library and tests, then run them in the CP/M emulator.</td>
           </tr>
           <tr>
-            <td><code>bin/include/</code></td>
-            <td>Public headers copied from <code>include/</code>.</td>
+            <td><code>make clean</code></td>
+            <td>Remove <code>build/</code> and <code>bin/</code>.</td>
           </tr>
         </tbody>
       </table>
-
-      <h2 id="use">Use In Your Program</h2>
       <p>
-        Link order matters on Z80/SDCC builds. Use CRT0 first, then your objects, then this library,
-        then SDCC runtime stubs.
+        Build parameters:
       </p>
-      <pre><code class="language-bash">sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
-  -Ibin/include -c myprog.c
-
-sdcc --std-c11 --no-std-crt0 --nostdinc --nostdlib \
-  -o myprog.ihx \
-  bin/crt0cpm3-z80.rel myprog.rel \
-  bin/libcpm3-z80.lib lib/libsdcc-z80.lib</code></pre>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Values</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>DOCKER</code></td>
+            <td><code>on</code>, <code>off</code></td>
+            <td><code>on</code></td>
+            <td><code>on</code> builds inside the <code>wischner/sdcc-z80</code> image; <code>off</code> builds natively and requires SDCC on <code>PATH</code>.</td>
+          </tr>
+          <tr>
+            <td><code>PLATFORM</code></td>
+            <td>name</td>
+            <td><code>none</code></td>
+            <td>Defines <code>PLATFORM_&lt;NAME&gt;</code> for conditional platform code. The default platform provides <code>msleep()</code> and <code>_libinit()</code>.</td>
+          </tr>
+          <tr>
+            <td><code>BUILD_DIR</code></td>
+            <td>path</td>
+            <td><code>build/</code></td>
+            <td>Intermediate build products.</td>
+          </tr>
+          <tr>
+            <td><code>BIN_DIR</code></td>
+            <td>path</td>
+            <td><code>bin/</code></td>
+            <td>Final outputs: library, CRT0, headers.</td>
+          </tr>
+        </tbody>
+      </table>
+      <pre><code class="language-bash">make
+make DOCKER=off
+make PLATFORM=myboard
+make DOCKER=off BUILD_DIR=out/build BIN_DIR=out/bin</code></pre>
       <div class="theorem">
-        Practical rule: CRT0 must be first on the link line for correct startup and symbol resolution.
+        <code>make test</code> requires Docker. With <code>DOCKER=off</code> the test binaries can be built, but they cannot be run through the emulator path.
       </div>
-
-      <h2 id="headers">Provided Headers</h2>
       <p>
-        The project ships standard C headers and CP/M specific system headers. Key examples:
+        Build outputs are placed in <code>bin/</code> unless <code>BIN_DIR</code> is overridden:
       </p>
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>crt0cpm3-z80.rel</code></td>
+            <td>C runtime start-up object. Link this first.</td>
+          </tr>
+          <tr>
+            <td><code>libcpm3-z80.lib</code></td>
+            <td>CP/M 3 standard C library archive.</td>
+          </tr>
+          <tr>
+            <td><code>include/</code></td>
+            <td>Public header files copied into the output directory.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <code>libsdcc-z80.lib</code> is downloaded to <code>lib/</code> on the first <code>make test</code> and must
+        also be linked into programs that use this library.
+      </p>
+      <p>
+        The library targets SDCC Z80 <code>__sdcccall(1)</code>. Use SDCC version 4.2.0 or newer.
+      </p>
+
+      <h2 id="compile">Compiling Your CP/M Program</h2>
+      <p>
+        You can use a local SDCC installation directly, or adapt the Docker invocation from
+        <code>test/Makefile</code>. The link order is fixed: CRT0 first, your object files next, then
+        <code>libcpm3-z80.lib</code>, and finally the SDCC runtime stubs.
+      </p>
+      <pre><code class="language-bash">sdcc -mz80 --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+     -I bin/include -c -o myprog.rel myprog.c
+
+sdcc -mz80 --std-c11 --no-std-crt0 --nostdinc --nostdlib \
+     --code-loc 0x100 --data-loc 0 \
+     -o myprog.ihx \
+     bin/crt0cpm3-z80.rel myprog.rel \
+     bin/libcpm3-z80.lib lib/libsdcc-z80.lib
+
+sdobjcopy -I ihex -O binary myprog.ihx myprog.com</code></pre>
+      <div class="theorem">
+        Practical rule: CRT0 must be first on the link line, and plain upstream SDCC must be told explicitly to use
+        <code>-mz80</code>, <code>--code-loc 0x100</code>, and <code>--data-loc 0</code> for CP/M <code>.COM</code> programs.
+      </div>
+      <p>
+        The project's Docker toolchain already defaults to Z80, but the memory layout requirements still matter if you
+        invoke upstream <code>sdcc</code> yourself.
+      </p>
+
+      <h2 id="tests">Running the Tests</h2>
+      <p>
+        Run the test suite with:
+      </p>
+      <pre><code class="language-bash">make test</code></pre>
+      <p>
+        This builds the library and all test <code>.com</code> programs inside Docker, then runs them automatically in
+        a RunCPM CP/M 3 emulator container. Results are written to <code>bin/&lt;name&gt;.txt</code>.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Binary</th>
+            <th>Coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>tctype.com</code></td><td><code>ctype.h</code> character classification</td></tr>
+          <tr><td><code>tstring.com</code></td><td><code>string.h</code> string functions</td></tr>
+          <tr><td><code>tstdlib.com</code></td><td><code>stdlib.h</code> general utilities</td></tr>
+          <tr><td><code>tstdio.com</code></td><td><code>stdio.h</code> file I/O</td></tr>
+          <tr><td><code>ttime.com</code></td><td><code>time.h</code> time functions</td></tr>
+          <tr><td><code>tmath.com</code></td><td><code>math.h</code> floating-point math</td></tr>
+          <tr><td><code>tmem.com</code></td><td>allocator internals and utility lists</td></tr>
+          <tr><td><code>tfile.com</code></td><td>low-level file API</td></tr>
+          <tr><td><code>tsdcc.com</code></td><td>SDCC runtime integration</td></tr>
+          <tr><td><code>tsetjmp.com</code></td><td><code>setjmp</code>/<code>longjmp</code></td></tr>
+        </tbody>
+      </table>
+      <p>
+        Each program prints <code>PASS</code> or <code>FAIL</code> per test case and ends with a summary line. The
+        produced <code>.com</code> files can also be copied to a real CP/M disk or run under another emulator.
+      </p>
+
+      <h2 id="layout">Source Tree Layout</h2>
+      <p>
+        Implementation files are grouped by the public library area they support:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Folder</th>
+            <th>Contents</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>src/sys/</code></td><td>CP/M system bindings such as <code>bdos.s</code> and <code>crt0cpm3-z80.s</code></td></tr>
+          <tr><td><code>src/stdlib/</code></td><td><code>stdlib</code> implementation plus allocator, list, and startup internals</td></tr>
+          <tr><td><code>src/stdio/</code></td><td><code>stdio</code> implementation plus internal formatting helpers</td></tr>
+          <tr><td><code>src/platform/</code></td><td>platform-specific hooks and timing helpers</td></tr>
+          <tr><td><code>src/setjmp/</code></td><td><code>setjmp</code> and <code>longjmp</code></td></tr>
+          <tr><td><code>src/string/</code>, <code>src/time/</code>, <code>src/math/</code>, <code>src/file/</code>, ...</td><td>subsystem implementations</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="platform">Platform-dependent Functions</h2>
+      <p>
+        Hardware-specific behavior is isolated behind the <code>PLATFORM</code> build parameter. Typical values are
+        <code>none</code> for the built-in default platform and project-specific names such as
+        <code>partner</code> or <code>myboard</code> for custom ports.
+      </p>
+      <pre><code class="language-bash">make PLATFORM=none
+make PLATFORM=partner
+make PLATFORM=myboard</code></pre>
+      <p>
+        At build time this defines <code>PLATFORM_&lt;NAME&gt;</code> and also exposes the bare token
+        <code>PLATFORM_NAME</code> together with the string form <code>PLATFORM_NAME_STR</code>.
+      </p>
+      <p>
+        All platform-specific symbols are declared in <code>platform.h</code>. In particular:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>libplatform</code></td><td>Platform name string, usually initialized from <code>PLATFORM_NAME_STR</code></td></tr>
+          <tr><td><code>nltype</code></td><td>Newline translation mode for all console output</td></tr>
+          <tr><td><code>progname</code></td><td>Optional program name if your startup code provides one</td></tr>
+          <tr><td><code>msleep()</code></td><td>Busy-wait delay in milliseconds</td></tr>
+          <tr><td><code>_libinit()</code></td><td>Platform initializer called once at startup</td></tr>
+        </tbody>
+      </table>
       <ul>
-        <li><code>stdio.h</code>, <code>stdlib.h</code>, <code>string.h</code>, <code>math.h</code>, <code>time.h</code>.</li>
-        <li><code>ctype.h</code>, <code>errno.h</code>, <code>fcntl.h</code>, <code>unistd.h</code>.</li>
-        <li><code>sys/bdos.h</code>, <code>sys/types.h</code>, <code>sys/stat.h</code>.</li>
+        <li><code>NL_LF</code>: emit <code>\n</code> only.</li>
+        <li><code>NL_CRLF</code>: emit <code>\r\n</code>, the built-in default for CP/M-style console output.</li>
+        <li><code>NL_LFCR</code>: emit <code>\n\r</code>.</li>
       </ul>
-
-      <h2 id="notes">Notes</h2>
       <p>
-        The release pipeline publishes only library-consumer assets and does not package test programs.
-        GitHub Pages publishing is independent from release publishing.
+        If you choose a <code>PLATFORM</code> other than <code>none</code>, the library does not provide
+        <code>msleep()</code> or <code>_libinit()</code>; you must supply them yourself and link your object before
+        the library.
       </p>
+      <pre><code class="language-c">#include &lt;platform.h&gt;
+
+void _libinit(void) {
+    libplatform = PLATFORM_NAME_STR;
+    nltype      = NL_CRLF;
+}</code></pre>
+
+      <h2 id="implemented">What Is Implemented?</h2>
+      <p>
+        The project currently provides a small, test-backed subset of the standard C library, plus a CP/M-oriented
+        POSIX-like layer and a few project-specific extensions.
+      </p>
+      <h3>Standard C headers with working implementations</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Header</th>
+            <th>Status</th>
+            <th>Implemented surface</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>assert.h</code></td><td>implemented</td><td><code>assert()</code> with <code>NDEBUG</code> support</td></tr>
+          <tr><td><code>ctype.h</code></td><td>partial</td><td>character classification and case conversion</td></tr>
+          <tr><td><code>errno.h</code></td><td>partial</td><td><code>errno</code> plus a small CP/M-oriented error set</td></tr>
+          <tr><td><code>float.h</code></td><td>partial</td><td>single-precision constants</td></tr>
+          <tr><td><code>inttypes.h</code></td><td>partial</td><td><code>intmax_t</code>, <code>uintmax_t</code>, <code>PRI*</code>, <code>strtoimax</code>, <code>strtoumax</code></td></tr>
+          <tr><td><code>iso646.h</code></td><td>implemented</td><td>alternative operator spellings</td></tr>
+          <tr><td><code>limits.h</code></td><td>partial</td><td>target integer and size limits</td></tr>
+          <tr><td><code>math.h</code></td><td>partial</td><td><code>ceil</code>, <code>cos</code>, <code>cot</code>, <code>exp</code>, <code>fabs</code>, <code>floor</code>, <code>frexp</code>, <code>ldexp</code>, <code>log</code>, <code>log10</code>, <code>modf</code>, <code>pow</code>, <code>sin</code>, <code>sqrt</code>, <code>tan</code></td></tr>
+          <tr><td><code>setjmp.h</code></td><td>implemented</td><td><code>setjmp</code>, <code>longjmp</code></td></tr>
+          <tr><td><code>stdarg.h</code></td><td>implemented</td><td>variadic argument macros</td></tr>
+          <tr><td><code>stdbool.h</code></td><td>implemented</td><td><code>bool</code>, <code>true</code>, <code>false</code></td></tr>
+          <tr><td><code>stddef.h</code></td><td>partial</td><td><code>size_t</code>, <code>ptrdiff_t</code></td></tr>
+          <tr><td><code>stdint.h</code></td><td>partial</td><td>fixed-width 8/16/32-bit integer types</td></tr>
+          <tr><td><code>stdio.h</code></td><td>partial</td><td>stream I/O, formatted output, temp files, positioning, buffering, and error handling</td></tr>
+          <tr><td><code>stdnoreturn.h</code></td><td>implemented</td><td><code>noreturn</code> macro</td></tr>
+          <tr><td><code>stdlib.h</code></td><td>partial</td><td>process exit, conversion, search/sort, memory allocation, random, integer helpers</td></tr>
+          <tr><td><code>string.h</code></td><td>partial</td><td>memory and string primitives plus <code>strrev</code>, <code>stoupper</code>, <code>stolower</code></td></tr>
+          <tr><td><code>time.h</code></td><td>partial</td><td><code>asctime</code>, <code>clock</code>, <code>ctime</code>, <code>difftime</code>, <code>gmtime</code>, <code>mktime</code>, <code>time</code></td></tr>
+        </tbody>
+      </table>
+      <h3>Standard C interfaces still missing from partial headers</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Header</th>
+            <th>Not yet provided</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>math.h</code></td><td>Most of the wider C math surface beyond the current single-precision core</td></tr>
+          <tr><td><code>stdio.h</code></td><td><code>fscanf</code>, <code>rename</code>, <code>scanf</code>, <code>sscanf</code></td></tr>
+          <tr><td><code>stdlib.h</code></td><td><code>getenv</code>, <code>system</code></td></tr>
+          <tr><td><code>time.h</code></td><td><code>strftime</code> and timezone or DST extensions beyond UTC-style behavior</td></tr>
+        </tbody>
+      </table>
+      <h3>Standard C headers not currently provided</h3>
+      <ul>
+        <li><code>complex.h</code>, <code>fenv.h</code>, <code>locale.h</code>, <code>signal.h</code></li>
+        <li><code>stdalign.h</code>, <code>stdatomic.h</code>, <code>tgmath.h</code>, <code>threads.h</code></li>
+        <li><code>uchar.h</code>, <code>wchar.h</code>, <code>wctype.h</code></li>
+      </ul>
+      <h3>POSIX / Unix-style extensions</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Header</th>
+            <th>Status</th>
+            <th>Implemented surface</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>fcntl.h</code></td><td>partial</td><td><code>open</code>, <code>creat</code>, <code>O_*</code>, <code>SEEK_*</code></td></tr>
+          <tr><td><code>sys/types.h</code></td><td>partial</td><td><code>ssize_t</code>, <code>off_t</code></td></tr>
+          <tr><td><code>sys/stat.h</code></td><td>partial</td><td><code>struct stat</code>, <code>stat</code></td></tr>
+          <tr><td><code>unistd.h</code></td><td>partial</td><td><code>read</code>, <code>write</code>, <code>close</code>, <code>fsync</code>, <code>lseek</code>, <code>unlink</code></td></tr>
+          <tr><td><code>dirent.h</code></td><td>partial</td><td><code>DIR</code>, <code>struct dirent</code>, <code>opendir</code>, <code>readdir</code>, <code>closedir</code> using CP/M wildcard search</td></tr>
+        </tbody>
+      </table>
+      <h3>POSIX pieces still missing</h3>
+      <ul>
+        <li><code>access</code>, <code>dup</code>, <code>dup2</code>, <code>isatty</code></li>
+        <li><code>mkdir</code>, <code>rmdir</code>, <code>pipe</code>, POSIX-style <code>rename</code></li>
+        <li><code>fstat</code> and related <code>stat</code> variants</li>
+        <li>process APIs such as <code>exec*</code>, <code>fork</code>, and <code>wait</code></li>
+      </ul>
+      <h3>Non-standard <code>libcpm3-z80</code> extensions</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Header</th>
+            <th>Extension</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>platform.h</code></td><td><code>nltype</code>, <code>NL_LF</code>/<code>NL_CRLF</code>/<code>NL_LFCR</code>, <code>libplatform</code>, <code>progname</code>, <code>msleep()</code>, <code>_libinit()</code></td></tr>
+          <tr><td><code>sys/bdos.h</code></td><td><code>bdos()</code>, <code>bdosret()</code>, CP/M 3 BDOS constants, <code>bdos_ret_t</code></td></tr>
+          <tr><td><code>time.h</code></td><td><code>gettimeofday()</code>, <code>settimeofday()</code>, <code>struct timeval</code></td></tr>
+          <tr><td><code>stdlib.h</code></td><td><code>_splitpath()</code></td></tr>
+          <tr><td><code>string.h</code></td><td><code>stoupper()</code>, <code>stolower()</code>, <code>strrev()</code></td></tr>
+        </tbody>
+      </table>
 
       <h2 id="license">License</h2>
       <p>
