@@ -22,7 +22,7 @@ jobs:
       - name: Build library artifacts (no tests)
         run: |
           make clean
-          make docker-lib
+          make
 
       - name: Package
         id: package
