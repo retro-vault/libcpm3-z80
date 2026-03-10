@@ -84,6 +84,10 @@ All outputs are placed in `bin/` (or `BIN_DIR` if overridden):
 `libsdcc-z80.lib` (SDCC integer/float stubs) is downloaded automatically to
 `lib/` on the first `make test` and must also be linked with your program.
 
+> **Urgent:** `libcpm3-z80.lib` alone is not enough. Any program using this
+> library must also link `lib/libsdcc-z80.lib`, or the final link will be
+> incomplete. Repository: https://github.com/retro-vault/libsdcc-z80
+
 ### SDCC calling convention
 
 The library targets SDCC Z80 `__sdcccall(1)`. You need SDCC version >= 4.2.0.
@@ -93,6 +97,10 @@ The library targets SDCC Z80 `__sdcccall(1)`. You need SDCC version >= 4.2.0.
 You need SDCC installed locally, or you can adapt the Docker invocation from
 the `test/Makefile` as a template. The link order is fixed: CRT0 first,
 your object files, then the library, then the SDCC stubs last.
+
+> **Urgent:** Always link `lib/libsdcc-z80.lib` together with
+> `bin/libcpm3-z80.lib`. The SDCC support library is required and lives here:
+> https://github.com/retro-vault/libsdcc-z80
 
 If you use upstream `sdcc` directly, add `-mz80` on both the compile and
 link commands. Also set the code and data locations explicitly when linking:

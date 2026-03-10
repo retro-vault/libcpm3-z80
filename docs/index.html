@@ -169,6 +169,11 @@ make DOCKER=off BUILD_DIR=out/build BIN_DIR=out/bin</code></pre>
         <code>libsdcc-z80.lib</code> is downloaded to <code>lib/</code> on the first <code>make test</code> and must
         also be linked into programs that use this library.
       </p>
+      <div class="theorem">
+        Urgent: <code>libcpm3-z80.lib</code> alone is not enough. Any program using this library must also link
+        <code>lib/libsdcc-z80.lib</code>. Repository:
+        <a href="https://github.com/retro-vault/libsdcc-z80">retro-vault/libsdcc-z80</a>
+      </div>
       <p>
         The library targets SDCC Z80 <code>__sdcccall(1)</code>. Use SDCC version 4.2.0 or newer.
       </p>
@@ -189,6 +194,11 @@ sdcc -mz80 --std-c11 --no-std-crt0 --nostdinc --nostdlib \
      bin/libcpm3-z80.lib lib/libsdcc-z80.lib
 
 sdobjcopy -I ihex -O binary myprog.ihx myprog.com</code></pre>
+      <div class="theorem">
+        Urgent: always link <code>lib/libsdcc-z80.lib</code> together with
+        <code>bin/libcpm3-z80.lib</code>. The SDCC support library repository is
+        <a href="https://github.com/retro-vault/libsdcc-z80">https://github.com/retro-vault/libsdcc-z80</a>.
+      </div>
       <div class="theorem">
         Practical rule: CRT0 must be first on the link line, and plain upstream SDCC must be told explicitly to use
         <code>-mz80</code>, <code>--code-loc 0x100</code>, and <code>--data-loc 0</code> for CP/M <code>.COM</code> programs.
