@@ -11,5 +11,11 @@
  */
 #include <stdlib/_stdlib.h>
 
-/* Newline type. */
-char nltype=NL_LF;
+/* Newline translation mode (set per-platform in _libinit). */
+char nltype = NL_LF;
+
+/* Platform name string (set in _libinit to PLATFORM_NAME_STR). */
+const char *libplatform = NULL;
+
+/* Running program name for argv[0] (set in _libinit if needed). */
+const char *progname = NULL;

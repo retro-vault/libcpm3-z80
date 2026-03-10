@@ -17,7 +17,10 @@
 /* Saved register set: IX, return PC, caller SP. */
 typedef uint16_t jmp_buf[3];
 
+/* Save execution context. */
 extern int setjmp(jmp_buf env);
+
+/* Restore execution context. */
 extern void longjmp(jmp_buf env, int val);
 
 #endif /* LIBCPM3_SETJMP_H */

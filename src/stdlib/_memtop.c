@@ -10,7 +10,7 @@
  * 09.03.2026   tstih
  *
  */
-#include <_impl/mem/_mem.h>
+#include "_mem.h"
 
 /* On CP/M, address 0x0005 is a JP instruction to BDOS.
    The 16-bit destination address at 0x0006 is the BDOS entry

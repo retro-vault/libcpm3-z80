@@ -29,21 +29,6 @@ typedef struct {
 #define NULL 0
 #endif /* NULL */
 
-/* How console functions interpret \n? As \n or as \r\n? */
-#define NL_LF       0
-#define NL_CRLF     1
-#define NL_LFCR     2
-extern char nltype;
-
-/* Non standard extension, the name of the platform on
-   which library was build i.e. z80-none or z80-partner.
-   This is changed when adding PLATFORM=name to make call. */
-extern char *libplatform;
-
-/* Non standard extension, running program name.
-   Used for argv[0]. */
-extern char *progname;
-
 /* Exit application. */
 extern void exit(int status);
 
@@ -106,11 +91,7 @@ extern div_t div(int numer, int denom);
 /* Long division. */
 extern ldiv_t ldiv(long numer, long denom);
 
-/* Non standard extension, this is a hook, called just
-   after intialization of the Standard library */
-extern void _libinit(void);
-
-/* Non standard extension: path parser. 
+/* Non standard extension: path parser.
    Supported path formats are:
    [<drive>:]filename.typ[[g]<user area>]
    Returns 0 for success */

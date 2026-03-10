@@ -14,7 +14,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
-#include "../src/util/_list.h"
+#include <platform.h>
+#include "../src/stdlib/_list.h"
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -200,7 +201,7 @@ TEST(memory_init_and_memtop_smoke) {
 
 TEST(msleep_and_libinit_smoke) {
     int before = g_failures;
-    _msleep(1);
+    msleep(1);
     _libinit();
     EXPECT_EQ_INT(before, g_failures);
 }

@@ -191,8 +191,14 @@ int _vsprintf(char **out, const char *format, va_list ap)
 
         switch (*format) {
             case 'd':
+            case 'i':
                 pc += _outputi(out, (long)va_arg(ap, int),
                     10, 1, width, flags, 'a');
+                break;
+
+            case 'o':
+                pc += _outputi(out, (long)va_arg(ap, unsigned int),
+                    8, 0, width, flags, 'a');
                 break;
 
             case 'u':
@@ -224,8 +230,14 @@ int _vsprintf(char **out, const char *format, va_list ap)
                 ++format;
                 switch (*format) {
                     case 'd':
+                    case 'i':
                         pc += _outputi(out, va_arg(ap, long),
                             10, 1, width, flags, 'a');
+                        break;
+
+                    case 'o':
+                        pc += _outputi(out, (long)va_arg(ap, unsigned long),
+                            8, 0, width, flags, 'a');
                         break;
 
                     case 'u':
@@ -262,9 +274,17 @@ int _vsprintf(char **out, const char *format, va_list ap)
                     ++format;
                     switch (*format) {
                         case 'd':
+                        case 'i':
                             pc += _outputi(out,
                                 (long)(signed char)va_arg(ap, int),
                                 10, 1, width, flags, 'a');
+                            break;
+
+                        case 'o':
+                            pc += _outputi(out,
+                                (long)(unsigned char)
+                                va_arg(ap, unsigned int),
+                                8, 0, width, flags, 'a');
                             break;
 
                         case 'u':
@@ -302,9 +322,17 @@ int _vsprintf(char **out, const char *format, va_list ap)
                 } else {
                     switch (*format) {
                         case 'd':
+                        case 'i':
                             pc += _outputi(out,
                                 (long)(short)va_arg(ap, int),
                                 10, 1, width, flags, 'a');
+                            break;
+
+                        case 'o':
+                            pc += _outputi(out,
+                                (long)(unsigned short)
+                                va_arg(ap, unsigned int),
+                                8, 0, width, flags, 'a');
                             break;
 
                         case 'u':

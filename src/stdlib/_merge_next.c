@@ -9,7 +9,7 @@
  * 09.03.2026   tstih
  *
  */
-#include <_impl/mem/_mem.h>
+#include "_mem.h"
 
 void _merge_with_next(_block_t *b)
 {

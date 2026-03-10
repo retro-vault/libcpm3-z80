@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <platform.h>
 #include "test_macros.h"
 
 int g_failures = 0;

@@ -10,7 +10,8 @@
  *
  */
 #include <string.h>
-#include <_impl/mem/_mem.h>
+
+#include "_mem.h"
 
 void _heap_init(uint16_t start, uint16_t size) {
     /* First block is the heap. s*/

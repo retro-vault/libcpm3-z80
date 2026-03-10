@@ -9,6 +9,7 @@
 - [Compiling your CP/M program](#compiling-your-cpm-program)
 - [Running the Tests](#running-the-tests)
 - [Platform-dependent Functions](#platform-dependent-functions)
+- [Source Tree Layout](#source-tree-layout)
 - [What is implemented?](#what-is-implemented-)
 - [Standard C headers with working implementations](#standard-c-headers-with-working-implementations)
 - [Standard C interfaces still missing from the provided partial headers](#standard-c-interfaces-still-missing-from-the-provided-partial-headers)
@@ -27,6 +28,10 @@ only known to god and a few earthlings.
 
 **libcpm3-z80** is an attempt to provide a library, written in purest *C*, with a clear separation of platform independent and platform dependent code. To port it to your architecture you need to provide a handful of well documented platform specific functions that the standard requires and are not available in *CP/M*'s *BDOS*.
 
+The library is now organized directly by public subsystem under `src/`:
+`stdlib/`, `stdio/`, `string/`, `sys/`, `platform/`, `setjmp/`, and so on.
+There is no longer a separate `src/_impl/` tree.
+
 
 ## Building the library
 
@@ -37,34 +42,38 @@ git clone https://github.com/tstih/libcpm3-z80.git
 cd libcpm3-z80
 ```
 
-### Quick start (Docker, recommended)
+### Commands
 
-Bare `make` builds the library inside the `wischner/sdcc-z80` Docker image —
-no local SDCC installation required:
+| Command | Description |
+|---------|-------------|
+| `make` | Build the library |
+| `make test` | Build library + tests and run them in the CP/M emulator |
+| `make clean` | Remove `build/` and `bin/` |
+
+### Parameters
+
+| Parameter | Values | Default | Description |
+|-----------|--------|---------|-------------|
+| `DOCKER` | `on`, `off` | `on` | `on` builds inside the `wischner/sdcc-z80` Docker image, no local SDCC needed. `off` builds natively and requires SDCC on `PATH`. |
+| `PLATFORM` | name | `none` | Defines `PLATFORM_<NAME>` for conditional platform code. The default platform provides implementations of `msleep()` and `_libinit()`. Any other value omits them — link your own. |
+| `BUILD_DIR` | path | `build/` | Intermediate build products (`.rel`, archive). |
+| `BIN_DIR` | path | `bin/` | Final outputs: library, CRT0, headers. |
+
+Examples:
 
 ```sh
-make
+make                          # build inside Docker (default)
+make DOCKER=off               # build natively with local SDCC
+make PLATFORM=myboard         # custom platform, no no-op stubs
+make DOCKER=off BUILD_DIR=out/build BIN_DIR=out/bin
 ```
 
-### Build targets
-
-| Target | Description |
-|--------|-------------|
-| `make` | Build library inside Docker (default) |
-| `make test` | Build library + tests inside Docker, run tests in CP/M emulator |
-| `make native` | Build library natively (requires SDCC on PATH; no tests) |
-| `make deps` | Download `libsdcc-z80` runtime helpers to `lib/` (run once before `make test`) |
-| `make install` | Install library and headers to `DESTDIR$(PREFIX)` |
-| `make clean` | Remove build artifacts from `build/` and `bin/` |
-| `make docker-clean` | Remove artifacts via Docker (handles root-owned files from old builds) |
-| `make docker-test-rebuild` | Force-rebuild the CP/M emulator Docker image |
-
-> **Note:** `make native` builds the library only. There is no native test
-> target — tests require the CP/M emulator Docker image.
+> **Warning:** `make test` requires `DOCKER=on`. With `DOCKER=off` the test
+> binaries will be built but cannot be run — `make test` will error out.
 
 ### Output files
 
-All outputs are placed in `bin/`:
+All outputs are placed in `bin/` (or `BIN_DIR` if overridden):
 
 | File | Description |
 |------|-------------|
@@ -72,39 +81,12 @@ All outputs are placed in `bin/`:
 | `libcpm3-z80.lib`  | CP/M 3 standard C library archive |
 | `include/`         | Public header files |
 
-`libsdcc-z80.lib` (SDCC integer/float stubs) is placed in `lib/` by
-`make deps` and must also be linked with your program.
+`libsdcc-z80.lib` (SDCC integer/float stubs) is downloaded automatically to
+`lib/` on the first `make test` and must also be linked with your program.
 
-### Overriding output directories
+### SDCC calling convention
 
-The top-level Makefile supports overriding:
-
-- `BUILD_DIR`: intermediate `.rel`, `.ihx`, and archive build products
-- `BIN_DIR`: final outputs copied for consumption (`.lib`, `.rel`, headers)
-
-This is useful when `libcpm3-z80` is a sub-project and you want its artifacts
-placed into your own project's output tree:
-
-```sh
-make native \
-  BUILD_DIR="$PWD/out/libcpm3/build" \
-  BIN_DIR="$PWD/out/libcpm3/bin"
-```
-
-Or when using `make -C` from a parent project:
-
-```sh
-make -C third_party/libcpm3-z80 native \
-  BUILD_DIR="$PWD/build/libcpm3" \
-  BIN_DIR="$PWD/toolchain/cpm3"
-```
-
-### Cleaning up
-
-```sh
-make clean          # remove build/ and bin/
-make docker-clean   # same, but via Docker (for root-owned artifacts)
-```
+The library targets SDCC Z80 `__sdcccall(1)`. You need SDCC version >= 4.2.0.
 
 ## Compiling your CP/M program
 
@@ -143,14 +125,6 @@ See `test/Makefile` for a complete working example.
 
 ## Running the tests
 
-Download the SDCC runtime helpers first (needed to link test binaries):
-
-```sh
-make deps
-```
-
-Then build and run all tests in the CP/M emulator with a single command:
-
 ```sh
 make test
 ```
@@ -158,6 +132,10 @@ make test
 This builds the library and all test `.com` binaries inside Docker, then runs
 them automatically inside a RunCPM CP/M 3 emulator container. Results are
 written to `bin/<name>.txt`.
+
+> **Note:** `make test` requires Docker (`DOCKER=on`, the default). With
+> `DOCKER=off` only the test binaries are compiled — they cannot be run
+> without the CP/M emulator.
 
 The test suite comprises:
 
@@ -178,27 +156,145 @@ Each program prints `PASS` or `FAIL` per test case and a summary line at the
 end. You can also copy any `.com` file to a real CP/M disk and run it on
 hardware or an emulator such as [z80pack](https://www.autometer.de/unix4fun/z80pack/).
 
+## Source Tree Layout
+
+Implementation files are grouped by the public library area they support:
+
+| Folder | Contents |
+|--------|----------|
+| `src/sys/` | CP/M system bindings such as `bdos.s` and `crt0cpm3-z80.s` |
+| `src/stdlib/` | `stdlib` implementation plus allocator, list, and startup internals |
+| `src/stdio/` | `stdio` implementation plus internal formatting helpers |
+| `src/platform/` | platform-specific hooks and timing helpers |
+| `src/setjmp/` | `setjmp` / `longjmp` |
+| `src/string/`, `src/time/`, `src/math/`, `src/file/`, ... | subsystem implementations |
+
+The old `src/_impl/` layout has been retired.
+
 ## Platform-dependent functions
 
-Two functions have no CP/M 3 BDOS equivalent and ship as no-ops:
+### The PLATFORM system
 
-| Function | Declared in | Default implementation |
-|----------|-------------|------------------------|
-| `msleep()`  | `unistd.h` | no-op — CP/M 3 has no timer |
-| `libinit()` | `stdlib.h` | no-op — user startup hook  |
+The library is designed to be portable. Everything that depends on specific
+hardware is isolated behind a single `PLATFORM` make parameter. The value is
+just a short build-time name for your target-specific support code:
 
-To override any of these, define the function in your own source file and link
-it **before** the library. The linker resolves the first definition it finds,
-so your version takes precedence over the one in the archive.
+| Example | Meaning |
+|---------|---------|
+| `none` | Built-in default platform (the default) |
+| `partner` | Iskra Delta Partner with your own `platform.c` |
+| `myboard` | Any custom target with your own platform support |
 
-`libinit()` is called at the end of C runtime initialization (after the heap,
-file descriptors, and command-line arguments are set up). Use it for any
-platform-specific startup code.
+The name is not parsed or validated by the build system. Choose something
+short and descriptive so that `libplatform` is meaningful at runtime.
 
-There is also one platform-dependent variable: `progname` (`stdlib.h`).
-Set it inside `libinit()` to populate `argv[0]`; otherwise `argv[0]` is an
-empty string. All other command-line arguments are parsed from the CP/M
-program tail automatically.
+```sh
+make PLATFORM=none      # built-in default
+make PLATFORM=partner   # your own Partner platform.c
+make PLATFORM=myboard   # any custom platform
+```
+
+At build time this defines two preprocessor macros:
+
+| Macro | Example value | Purpose |
+|-------|--------------|---------|
+| `PLATFORM_NONE` | (defined/not defined) | Guards the built-in default platform code |
+| `PLATFORM_NAME` | `none` | Bare token of the platform name |
+| `PLATFORM_NAME_STR` | `"none"` | String literal, derived via `#` stringification in `platform.h` |
+
+### Platform header
+
+All platform-specific symbols are declared in `platform.h`. Include it in any
+file that uses `nltype`, `libplatform`, `progname`, or `msleep()`:
+
+```c
+#include <platform.h>
+```
+
+### Platform variables
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `libplatform` | `const char *` | `NULL` | Platform name string; set to `PLATFORM_NAME_STR` by `_libinit()` |
+| `nltype` | `char` | `NL_LF` | Newline translation mode for all console output |
+| `progname` | `const char *` | `NULL` | Program name; CP/M does not pass `argv[0]`, so set this explicitly in your own startup code if you need it |
+
+`nltype` controls how `\n` is expanded by all output functions (`putchar`,
+`printf`, `fwrite`, etc.):
+
+| Value | Constant | Console output |
+|-------|----------|---------------|
+| `0` | `NL_LF` | `\n` only (Unix style) |
+| `1` | `NL_CRLF` | `\r\n` (CP/M / DOS style, **default for the built-in platform**) |
+| `2` | `NL_LFCR` | `\n\r` |
+
+### Platform functions
+
+Two functions have no CP/M 3 BDOS equivalent and must be provided per platform:
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `msleep()` | `void msleep(int millisec)` | Busy-wait delay in milliseconds |
+| `_libinit()` | `void _libinit(void)` | Platform initializer, called once at startup |
+
+Both are declared in `platform.h`.
+
+`_libinit()` is called at the very end of C runtime initialization — after the
+heap, file descriptors, and command-line arguments are ready. Use it to set
+platform variables and do any hardware-specific startup.
+
+The default `none` platform implements both:
+
+```c
+void _libinit(void) {
+    libplatform = PLATFORM_NAME_STR;  /* "none"            */
+    nltype      = NL_CRLF;           /* CP/M needs CR+LF  */
+}
+```
+
+```c
+void msleep(int millisec) {
+    /* Calls _delay_1ms() once per millisecond.
+       _delay_1ms() is a Z80 assembly routine that burns
+       exactly 4000 T-states (= 1 ms) on a 4 MHz CPU.
+
+       T-state budget:
+         Static:  CALL=17  RET=10  LD B,n=7  final DJNZ=8  => 42
+         Dynamic: 209 × DEC HL(6) + 208 × DJNZ(13)         => 3958
+         Total:   4000 T-states = 1 ms at 4 MHz
+
+       Note: the C loop itself adds ~30-50 uncounted T-states per
+       iteration. Long delays accumulate a small positive error
+       (~0.1-0.2 ms per 100 ms). For tight timing call _delay_1ms()
+       directly from assembly.                               */
+    while (millisec-- > 0)
+        _delay_1ms();
+}
+```
+
+### Providing your own platform
+
+If you pass a `PLATFORM` other than `none` the library does **not**
+include `msleep()` or `_libinit()`. You get unresolved externals at link time
+until you supply your own implementations. Link your object file before the
+library:
+
+```sh
+sdcc ... myprog.rel myplatform.rel bin/libcpm3-z80.lib ...
+```
+
+Inside your `_libinit()` set `libplatform` and `nltype` as appropriate for
+your hardware. Set `progname` only if your startup environment provides a
+program name:
+
+```c
+#include <platform.h>
+
+void _libinit(void) {
+    libplatform = PLATFORM_NAME_STR;  /* set by the build system */
+    nltype      = NL_CRLF;           /* or NL_LF, NL_LFCR      */
+}
+```
 
 ## What is implemented?
 
@@ -292,11 +388,11 @@ These are project-specific or CP/M-specific APIs rather than ISO C or POSIX:
 
 | Header | Extension |
 |--------|-----------|
+| `platform.h` | `nltype`, `NL_LF/NL_CRLF/NL_LFCR`, `libplatform`, `progname`, `msleep()`, `_libinit()` |
 | `sys/bdos.h` | `bdos()`, `bdosret()`, CP/M 3 BDOS constants, `bdos_ret_t` |
 | `time.h` | `gettimeofday()`, `settimeofday()`, `struct timeval` |
-| `stdlib.h` | `libplatform`, `progname`, `nltype`, `_libinit()`, `_splitpath()` |
+| `stdlib.h` | `_splitpath()` |
 | `string.h` | `stoupper()`, `stolower()`, `strrev()` |
-| `unistd.h` | `_msleep()` placeholder hook |
 
 
 ## To Do

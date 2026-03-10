@@ -55,12 +55,12 @@ LIB     = $(BIN_DIR)/libcpm3-z80.lib
 
 # SDCC runtime helpers (integer/float stubs). Inherited from root make or
 # downloaded here if test/Makefile is invoked directly.
-LIBSDCC_VER ?= 0.0.1
+LIBSDCC_VER ?= 1.0.1
 LIBSDCC_URL ?= https://github.com/retro-vault/libsdcc-z80/releases/download/v$(LIBSDCC_VER)/libsdcc-z80-$(LIBSDCC_VER).tar.gz
 SDCCLIB     ?= $(ROOT)/lib/libsdcc-z80.lib
 
 # One binary per test module (8.3 names for comfort on CP/M).
-TESTS   = tctype tstring tstdlib tstdio ttime tmath tmem tfile tsdcc tsetjmp
+TESTS   = tctype tstring tstdlib tstdio ttime tmath tmem tfile tsdcc tsetjmp textraa textrab
 BINS    = $(addprefix $(OUT_DIR)/, $(addsuffix .com, $(TESTS)))
 
 .PHONY: all

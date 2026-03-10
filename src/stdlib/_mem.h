@@ -16,7 +16,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#include <_impl/list/_list.h>
+#include "_list.h"
 
 #ifndef NONE
 #define NONE 0

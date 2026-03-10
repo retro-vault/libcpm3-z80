@@ -10,7 +10,8 @@
  *
  */
 #include <string.h>
-#include <_impl/mem/_mem.h>
+
+#include "_mem.h"
 
 void _memory_init(void)
 {

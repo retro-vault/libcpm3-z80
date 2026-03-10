@@ -106,17 +106,37 @@ extern int putchar(int c);
 /* Reads a char (blocks). */
 extern int getchar(void);
 
-/* stdio wrappers */
+/* Get char from stream. */
 extern int getc(FILE *fp);
+
+/* Get char from stream without locking. */
 extern int getc_unlocked(FILE *fp);
+
+/* Put char to stream. */
 extern int putc(int c, FILE *fp);
+
+/* Read 16-bit word from stream. */
 extern int getw(FILE *fp);
+
+/* Open temporary file. */
 extern FILE *tmpfile(void);
+
+/* Generate temporary filename. */
 extern char *tmpnam(char *s);
+
+/* Rewind stream to start. */
 extern void rewind(FILE *fp);
+
+/* Push character back to stream. */
 extern int ungetc(int c, FILE *fp);
+
+/* Print errno message to stderr. */
 extern void perror(const char *s);
+
+/* Set stream buffer. */
 extern void setbuf(FILE *fp, char *buf);
+
+/* Configure stream buffering mode. */
 extern int setvbuf(FILE *fp, char *buf, int mode, size_t size);
 
 /* Remove file. */

@@ -10,9 +10,11 @@
  * 09.03.2026   tstih
  *
  */
-#include <_impl/init/_cmdline.h>
-#include <_impl/mem/_mem.h>
+#include <platform.h>
 #include <file/_fd.h>
+
+#include "_cmdline.h"
+#include "_mem.h"
 
 void _stdlib_init(void) {
     /* Initialize comamnd line args. */

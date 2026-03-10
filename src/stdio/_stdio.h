@@ -22,8 +22,9 @@
 #include <sys/types.h>
 #include <sys/bdos.h>
 
-#include <_impl/print/_print.h>
-#include <_impl/print/_nltype.h>
+#include <platform.h>
+
+#include "_print.h"
 
 #include <file/_fd.h>
 

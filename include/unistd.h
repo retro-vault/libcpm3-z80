@@ -28,10 +28,10 @@ extern int fsync(int fd);
 /* Posix write. */
 ssize_t write(int fd, const void *buf, size_t count); 
 
-/* Posix lseek function */
+/* Posix lseek function. */
 off_t lseek(int fd, off_t offset, int whence);
 
-/* Posix unlink */
+/* Posix unlink. */
 extern int unlink(const char *path);
 
 /* Non standard function to sleep (in milliseconds).

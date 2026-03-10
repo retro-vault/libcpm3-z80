@@ -10,7 +10,7 @@
  * 09.03.2026   tstih
  *
  */
-#include <_impl/mem/_mem.h>
+#include "_mem.h"
 
 void _split(_block_t *b, uint16_t size)
 {

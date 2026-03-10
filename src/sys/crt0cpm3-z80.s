@@ -1,13 +1,14 @@
         ;; crt0cpm3-z80.s
         ;;
-        ;; CP/M 3 application startup code for Z80.
-        ;; Uses the SDCC __sdcccall(1) register-based calling convention:
-        ;;   HL = argc, DE = argv
+        ;; crt0 for CP/M 3 on Z80 / SDCC __sdcccall(1).
+        ;;
+        ;; Initializes data and the standard library, then calls main().
+        ;; Passes argc in HL and argv in DE, and exits through BDOS.
         ;;
         ;; MIT License (see: LICENSE)
         ;; copyright (c) 2021 tomaz stih
         ;;
-        ;; 01.03.2026   tstih
+        ;; 10.03.2026   tstih
         ;;
         .module crt0cpm
 
@@ -34,8 +35,16 @@
         ;; call main
         call    _main
 
-        ;; CP/M 3 return code: main() returns a 16-bit int in DE under
-        ;; __sdcccall(1), and BDOS function 108 takes the code in DE.
+        ;; ------------
+        ;; void _exit()
+        ;; ------------
+        ;; exits the current CP/M 3 process through BDOS
+        ;; NOTES:
+        ;;  expects the main return code in DE under SDCC(1)
+        ;;  first sets BDOS process return code, then terminates to CCP
+        ;; inputs: de=process return code
+        ;; outputs: does not return
+        ;; affects: af, bc
 _exit::
         ld      c,#108
         call    5
@@ -60,7 +69,16 @@ _exit::
         .area   _HEAP
 
 
-        ;; init code for functions/var.
+        ;; -------------------
+        ;; void gsinit(void)
+        ;; -------------------
+        ;; initializes zeroed and statically initialized data
+        ;; NOTES:
+        ;;  clears the DATA segment, copies INITIALIZER to INITIALIZED,
+        ;;  and calls the standard library initializer before main
+        ;; inputs: none
+        ;; outputs: initialized runtime data segments
+        ;; affects: af, bc, de, hl
         .area   _GSINIT
 gsinit::
         ;; zero out data.
@@ -97,9 +115,9 @@ gsinit_done:
 
         .area   _DATA
 __argc::
-        .dw 1                           ; default argc is 1 (filename)
+        .dw 1                           ;; default argc is 1 (filename)
 __argv::
-        .ds 16                          ; space for up to 8 argv pointers
+        .ds 16                          ;; space for up to 8 argv pointers
 
 
         .area   _STACK
@@ -108,4 +126,4 @@ stack:
 
 
         .area   _HEAP
-__heap::                                ; start of heap
+__heap::                                ;; start of heap

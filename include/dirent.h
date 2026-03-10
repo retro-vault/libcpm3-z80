@@ -19,8 +19,13 @@ struct dirent {
     char           d_name[256]; /* filename */
 };
 
+/* Open directory stream. */
 DIR* opendir(const char *);
+
+/* Close directory stream. */
 int closedir(DIR *);
+
+/* Read next directory entry. */
 struct dirent* readdir(DIR *);
 
 #endif /* LIBCPM3_DIRENT_H */

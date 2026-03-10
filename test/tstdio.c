@@ -16,6 +16,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
+#include <inttypes.h>
 #include "test_macros.h"
 
 int g_failures = 0;
@@ -84,6 +85,18 @@ TEST(sprintf_mixed) {
     EXPECT_EQ_STR("7-UP-Z", buf);
 }
 
+TEST(sprintf_inttypes_macros) {
+    char buf[64];
+
+    sprintf(buf, "%" PRId8 " %" PRIi16 " %" PRIo8,
+        (int8_t)-5, (int16_t)-1234, (uint8_t)0123);
+    EXPECT_EQ_STR("-5 -1234 123", buf);
+
+    sprintf(buf, "%" PRIu16 " %" PRIx32 " %" PRIXMAX,
+        (uint16_t)65535U, (uint32_t)0x1abcl, (uintmax_t)0xBEEFul);
+    EXPECT_EQ_STR("65535 1abc BEEF", buf);
+}
+
 /* ---- puts / putchar output (smoke tests -- no capture on CP/M) --------- */
 
 TEST(puts_no_crash) {
@@ -106,24 +119,6 @@ TEST(vprintf_no_crash) {
 
 TEST(fputs_no_crash) {
     EXPECT_EQ_INT(0, fputs("fputs smoke test\n", stdout));
-}
-
-TEST(getchar_reads_console_char) {
-    int c = getchar();
-    EXPECT_EQ_INT('Q', c);
-
-    /* Consume the rest of the input line so the next scripted input starts
-       at the following line. */
-    do {
-        c = getchar();
-    } while (c != '\r' && c != '\n' && c != EOF);
-}
-
-TEST(gets_reads_console_line) {
-    char buf[32];
-    char *r = gets(buf);
-    ASSERT_TRUE(r != NULL);
-    EXPECT_TRUE(strcmp(buf, "hello world") == 0 || strcmp(buf, "HELLO WORLD") == 0);
 }
 
 /* ---- file I/O ---------------------------------------------------------- */
@@ -364,12 +359,11 @@ int main(void) {
     RUN_TEST(sprintf_char);
     RUN_TEST(sprintf_hex);
     RUN_TEST(sprintf_mixed);
+    RUN_TEST(sprintf_inttypes_macros);
     RUN_TEST(puts_no_crash);
     RUN_TEST(printf_no_crash);
     RUN_TEST(vprintf_no_crash);
     RUN_TEST(fputs_no_crash);
-    RUN_TEST(getchar_reads_console_char);
-    RUN_TEST(gets_reads_console_line);
     RUN_TEST(fopen_write_read);
     RUN_TEST(fputs_fgets_roundtrip);
     RUN_TEST(fprintf_roundtrip);

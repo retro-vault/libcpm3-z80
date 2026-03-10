@@ -3,6 +3,10 @@
  *
  * Standard integer format helpers.
  *
+ * This header only provides the printf conversion macros supported by
+ * libcpm3-z80's formatter: d, i, o, u, x, X with optional h, hh, and l.
+ * scanf SCN* macros are not provided.
+ *
  * MIT License (see: LICENSE)
  * copyright (c) 2021 tomaz stih
  *
@@ -45,7 +49,10 @@ typedef uint32_t uintmax_t;
 #define PRIxMAX PRIx32
 #define PRIXMAX PRIX32
 
+/* Convert string to intmax_t using base. */
 extern intmax_t strtoimax(const char *nptr, char **endptr, int base);
+
+/* Convert string to uintmax_t using base. */
 extern uintmax_t strtoumax(const char *nptr, char **endptr, int base);
 
 #endif /* LIBCPM3_INTTYPES_H */

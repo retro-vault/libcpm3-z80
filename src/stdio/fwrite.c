@@ -28,6 +28,23 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *fp)
         return 0;
     }
 
+    /* stdout/stderr: route through putchar() so nltype is respected. */
+    if (fp->fd == 1 || fp->fd == 2) {
+        size_t j;
+        for (i = 0; i < nmemb; i++) {
+            for (j = 0; j < size; j++) {
+                if (putchar(data[j]) == -1) {
+                    fp->err = true;
+                    return i;
+                }
+            }
+            data += size;
+        }
+        fp->eof = false;
+        fp->err = false;
+        return i;
+    }
+
     for (i = 0; i < nmemb; i++) {
         if ((wr = write(fp->fd, data, size)) == -1) {
             fp->err = true;
